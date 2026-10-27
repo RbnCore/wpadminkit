@@ -1,7 +1,7 @@
 # AdminKit tr_TR
 msgid ""
 msgstr ""
-"Project-Id-Version: AdminKit 0.1.0\n"
+"Project-Id-Version: AdminKit 0.2.0\n"
 "Language: tr_TR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -130,3 +130,129 @@ msgstr "Kapalı"
 
 msgid "Nothing to choose from."
 msgstr "Seçilecek öğe yok."
+
+msgid "Night"
+msgstr "Gece"
+
+msgid "Ocean"
+msgstr "Okyanus"
+
+msgid "Forest"
+msgstr "Orman"
+
+msgid "Sunset"
+msgstr "Gün batımı"
+
+msgid "Graphite"
+msgstr "Grafit"
+
+msgid "Color theme"
+msgstr "Renk teması"
+
+msgid "Changes the colors of the admin bar, side menu and links. Pick a ready theme or your own colors, per user, with a live preview."
+msgstr "Yönetim çubuğunun, yan menünün ve bağlantıların renklerini değiştirir. Hazır bir tema ya da kendi renklerinizi seçersiniz; kullanıcı bazlıdır, canlı önizleme vardır."
+
+msgid "WordPress default"
+msgstr "WordPress varsayılanı"
+
+msgid "Custom"
+msgstr "Özel"
+
+msgid "Let users choose their own colors"
+msgstr "Kullanıcılar kendi rengini seçebilsin"
+
+msgid "Users pick their colors under Users → Admin colors. The choice below is the default for everyone who has not picked one."
+msgstr "Kullanıcılar renklerini Kullanıcılar → Panel renkleri sayfasından seçer. Aşağıdaki seçim, kendi rengini seçmemiş herkes için varsayılandır."
+
+msgid "Default theme"
+msgstr "Varsayılan tema"
+
+msgid "Top bar"
+msgstr "Üst çubuk"
+
+msgid "Side menu"
+msgstr "Yan menü"
+
+msgid "Accent"
+msgstr "Vurgu"
+
+msgid "Shell tone"
+msgstr "Kabuk tonu"
+
+msgid "Dark"
+msgstr "Koyu"
+
+msgid "Light"
+msgstr "Açık"
+
+msgid "Default colors"
+msgstr "Varsayılan renkler"
+
+msgid "Admin colors"
+msgstr "Panel renkleri"
+
+msgid "OK"
+msgstr "Uygun"
+
+msgid "Too low — applied as %s instead"
+msgstr "Çok düşük — yerine %s uygulanır"
+
+msgid "Fix"
+msgstr "Düzelt"
+
+msgid "Side menu text on menu"
+msgstr "Yan menü yazısı, menü zemininde"
+
+msgid "Top bar text on bar"
+msgstr "Üst çubuk yazısı, çubuk zemininde"
+
+msgid "Accent (links, buttons) on white"
+msgstr "Vurgu (bağlantı, düğme), beyaz üzerinde"
+
+msgid "Accent on page background"
+msgstr "Vurgu, sayfa zemininde"
+
+msgid "Preview — not saved yet"
+msgstr "Önizleme — henüz kaydedilmedi"
+
+msgid "Showing the saved colors"
+msgstr "Kayıtlı renkler gösteriliyor"
+
+msgid "You are not allowed to change these colors."
+msgstr "Bu renkleri değiştirme yetkiniz yok."
+
+msgid "Your colors were saved."
+msgstr "Renkleriniz kaydedildi."
+
+msgid "Your colors were reset."
+msgstr "Renkleriniz sıfırlandı."
+
+msgid "The site administrator chose the admin colors. You cannot change them."
+msgstr "Site yöneticisi panel renklerini belirledi. Değiştiremezsiniz."
+
+msgid "Only you see these colors. The preview changes this page right away; nothing is saved until you press Save."
+msgstr "Bu renkleri yalnız siz görürsünüz. Önizleme bu sayfayı hemen değiştirir; Kaydet'e basana kadar hiçbir şey kaydedilmez."
+
+msgid "Save"
+msgstr "Kaydet"
+
+msgid "Cancel preview"
+msgstr "Vazgeç"
+
+msgid "Back to default"
+msgstr "Varsayılana dön"
+
+msgid "Theme"
+msgstr "Tema"
+
+msgid "Custom colors (used when Custom is selected)"
+msgstr "Özel renkler (Özel seçiliyken kullanılır)"
+
+msgid "Dark (white text)"
+msgstr "Koyu (beyaz yazı)"
+
+msgid "Light (dark text)"
+msgstr "Açık (koyu yazı)"
+
+msgid "Contrast (WCAG AA needs at least 4.5:1)"
+msgstr "Karşıtlık (WCAG AA en az 4,5:1 ister)"

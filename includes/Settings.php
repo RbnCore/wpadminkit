@@ -41,6 +41,9 @@ final class Settings {
 			'enabled' => array_key_exists( 'enabled', $mine ) ? (bool) $mine['enabled'] : $module->default_enabled(),
 		);
 		foreach ( $module->settings_schema() as $field ) {
+			if ( 'custom' === $field['type'] ) {
+				continue; // Yalnız arayüz: değer saklanmaz.
+			}
 			$key         = (string) $field['key'];
 			$out[ $key ] = array_key_exists( $key, $mine ) ? self::clean_field( $field, $mine[ $key ] ) : self::default_of( $field );
 		}
@@ -68,7 +71,7 @@ final class Settings {
 			$mine = isset( $posted[ $id ] ) && is_array( $posted[ $id ] ) ? $posted[ $id ] : array();
 			$row  = array( 'enabled' => ! empty( $mine['enabled'] ) );
 			foreach ( $module->settings_schema() as $field ) {
-				if ( ! empty( $field['locked'] ) ) {
+				if ( ! empty( $field['locked'] ) || 'custom' === $field['type'] ) {
 					continue;
 				}
 				$key         = (string) $field['key'];
@@ -120,6 +123,8 @@ final class Settings {
 			case 'select':
 				$value = is_scalar( $value ) ? (string) $value : '';
 				return array_key_exists( $value, (array) $field['options'] ) ? $value : self::default_of( $field );
+			case 'color':
+				return Color::hex( $value ) ?: self::default_of( $field );
 			case 'checklist':
 				$clean = array();
 				foreach ( is_array( $value ) ? $value : array() as $item ) {

@@ -108,7 +108,11 @@ final class SettingsPage {
 			<?php if ( $module->settings_schema() ) : ?>
 				<div class="rbn-card__body">
 					<?php foreach ( $module->settings_schema() as $field ) : ?>
-						<?php self::field( $field, $base, $settings ); ?>
+						<?php
+						if ( empty( $field['hidden'] ) ) {
+							self::field( $field, $base, $settings );
+						}
+						?>
 					<?php endforeach; ?>
 				</div>
 			<?php endif; ?>
@@ -130,6 +134,12 @@ final class SettingsPage {
 		$desc  = isset( $field['help'] ) ? ' aria-describedby="' . esc_attr( $fid ) . '-h"' : '';
 		echo '<div class="rbn-field">';
 		switch ( $field['type'] ) {
+			case 'custom':
+				call_user_func( $field['render'], $base, $settings );
+				break;
+			case 'color':
+				echo '<label for="' . esc_attr( $fid ) . '">' . esc_html( (string) $field['label'] ) . '</label><input type="text" id="' . esc_attr( $fid ) . '" name="' . esc_attr( $name ) . '" value="' . esc_attr( (string) $value ) . '" maxlength="7" size="9" />' . $help; // phpcs:ignore WordPress.Security.EscapeOutput
+				break;
 			case 'checkbox':
 				$locked = ! empty( $field['locked'] );
 				echo '<label class="rbn-check"><input type="checkbox" id="' . esc_attr( $fid ) . '"' . $desc . ( $locked ? ' checked disabled' : ' name="' . esc_attr( $name ) . '" value="1"' . checked( ! empty( $value ), true, false ) ) . ' /> ' . esc_html( (string) $field['label'] ) . '</label>' . $help; // phpcs:ignore WordPress.Security.EscapeOutput

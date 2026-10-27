@@ -28,6 +28,7 @@ final class Registry {
 			new Modules\StickySave(),
 			new Modules\NoticeTidy(),
 			new Modules\MenuTrim(),
+			new Modules\ColorTheme(),
 		);
 		/**
 		 * Yeni modül ekleme noktası: `Module` uygulayan nesneleri diziye ekleyin.

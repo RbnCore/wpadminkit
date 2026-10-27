@@ -24,8 +24,9 @@ interface Module {
 	public function default_enabled(): bool;
 
 	/**
-	 * Modülün ayar alanları. Her alan: key, type (number|select|checkbox|checklist), label, default;
-	 * ayrıca min/max/step/unit (number), options (select/checklist; dizi ya da çağrılabilir), help, locked.
+	 * Modülün ayar alanları. Her alan: key, type (number|select|checkbox|checklist|color|custom), label, default;
+	 * ayrıca min/max/step/unit (number); `custom` alanı yalnız arayüzdür (render: çağrılabilir, değer saklanmaz);
+	 * ayrıca options (select/checklist; dizi ya da çağrılabilir), help, locked, hidden (genel çizimde gösterilmez; modül kendi arayüzünde çizer).
 	 *
 	 * @return array<int, array<string, mixed>>
 	 */

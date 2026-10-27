@@ -1,0 +1,23 @@
+/*! AdminKit renk teması arayüzü. Yalnız Ayarlar → AdminKit ve Kullanıcılar → Panel renkleri sayfalarında yüklenir. */
+.adminkit-ct{display:grid;gap:1rem;margin-top:.25rem}
+.adminkit-ct fieldset{margin:0;padding:0;border:0;min-width:0}
+.adminkit-ct legend{font-weight:600;margin-bottom:.4rem;padding:0}
+.adminkit-ct__themes{display:flex;flex-wrap:wrap;gap:.6rem}
+.adminkit-ct__themes legend{width:100%}
+.adminkit-ct__opt{position:relative;display:flex;flex-direction:column;gap:.35rem;width:8.5rem;padding:.55rem;border:2px solid transparent;border-radius:8px;background:rgba(127,127,127,.12);cursor:pointer}
+.adminkit-ct__opt input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.adminkit-ct__opt:has(input:checked){border-color:currentColor}
+.adminkit-ct__opt:has(input:focus-visible){outline:2px solid currentColor;outline-offset:2px}
+.adminkit-ct__sw{display:flex;height:1.6rem;border-radius:4px;overflow:hidden;border:1px solid rgba(127,127,127,.5)}
+.adminkit-ct__sw:empty{background:repeating-linear-gradient(45deg,transparent 0 6px,rgba(127,127,127,.3) 6px 12px)}
+.adminkit-ct__sw i{flex:1}
+.adminkit-ct__nm{font-size:.9rem;font-weight:600}
+.adminkit-ct__row{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem;margin:.35rem 0}
+.adminkit-ct__row label{min-width:7.5rem;font-weight:600}
+.adminkit-ct__row input[type=color]{width:2.6rem;height:2.4rem;padding:0;cursor:pointer}
+.adminkit-ct__rep ul{margin:.4rem 0;padding:0;list-style:none}
+.adminkit-ct__rep li{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;margin:.25rem 0}
+.adminkit-ct__rep li.bad{color:#b32d2e;font-weight:600}
+.rbn-wrap[data-tone=koyu] .adminkit-ct__rep li.bad{color:#ff9a9a}
+.adminkit-ct__st{margin:.25rem 0 0;font-size:.9rem}
+@media (max-width:782px){.adminkit-ct__opt{width:calc(50% - .3rem)}}

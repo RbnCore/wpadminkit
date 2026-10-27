@@ -1,0 +1,132 @@
+# AdminKit tr_TR
+msgid ""
+msgstr ""
+"Project-Id-Version: AdminKit 0.1.0\n"
+"Language: tr_TR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Hide side menu items"
+msgstr "Yan menü öğelerini gizle"
+
+msgid "Example module: hides the menu items you pick. They are only hidden from view; access stays."
+msgstr "Örnek modül: seçtiğiniz menü öğelerini gizler. Yalnız görünümden gizlenir, erişim açık kalır."
+
+msgid "Menu items to hide"
+msgstr "Gizlenecek menü öğeleri"
+
+msgid "Settings and Plugins can not be hidden, so you can always find this page."
+msgstr "Ayarlar ve Eklentiler gizlenemez; bu sayfaya her zaman ulaşabilirsiniz."
+
+msgid "Notice organizer"
+msgstr "Bildirim düzenleyici"
+
+msgid "Collects admin notices into one box. Errors always stay visible where they are."
+msgstr "Yönetim bildirimlerini tek kutuda toplar. Hatalar her zaman yerinde ve görünür kalır."
+
+msgid "Keep the box closed until opened"
+msgstr "Kutu siz açana kadar kapalı kalsın"
+
+msgid "Your own open/closed choice is remembered per user and overrides this."
+msgstr "Sizin açık/kapalı seçiminiz kullanıcı bazında hatırlanır ve bunun yerine geçer."
+
+msgid "Always show error notices"
+msgstr "Hata bildirimlerini her zaman göster"
+
+msgid "Locked on: errors are never hidden or removed."
+msgstr "Kilitli açık: hatalar hiçbir zaman gizlenmez ya da silinmez."
+
+msgid "Notices"
+msgstr "Bildirimler"
+
+msgid "errors stay visible below"
+msgstr "hata aşağıda görünür kalıyor"
+
+msgid "Show or hide the collected notices"
+msgstr "Toplanan bildirimleri göster ya da gizle"
+
+msgid "Back to top"
+msgstr "Yukarı çık"
+
+msgid "Shows a button on every admin page that scrolls back to the top."
+msgstr "Her yönetim sayfasında sayfanın başına dönen bir düğme gösterir."
+
+msgid "Position"
+msgstr "Konum"
+
+msgid "Bottom right"
+msgstr "Sağ alt"
+
+msgid "Bottom left"
+msgstr "Sol alt"
+
+msgid "Show after scrolling"
+msgstr "Şu kadar kaydırınca göster"
+
+msgid "Distance from the edge"
+msgstr "Kenardan uzaklık"
+
+msgid "Also show in the block editor"
+msgstr "Blok düzenleyicide de göster"
+
+msgid "The block editor scrolls on its own, so the button is hidden there by default."
+msgstr "Blok düzenleyicinin kendi kaydırması vardır; düğme orada varsayılan olarak gizlidir."
+
+msgid "Sticky save bar"
+msgstr "Yapışkan kaydet çubuğu"
+
+msgid "Keeps a save button at the bottom of long settings pages and warns about unsaved changes."
+msgstr "Uzun ayar sayfalarında ekranın altında bir kaydet düğmesi tutar ve kaydedilmemiş değişiklikleri bildirir."
+
+msgid "Where to show it"
+msgstr "Nerede gösterilsin"
+
+msgid "Settings screens only (options.php forms)"
+msgstr "Yalnız ayar ekranlarında (options.php formları)"
+
+msgid "Every admin form with a main save button"
+msgstr "Ana kaydet düğmesi olan her yönetim formunda"
+
+msgid "Only on pages taller than"
+msgstr "Şu yükseklikten uzun sayfalarda"
+
+msgid "Short pages already show the save button; the bar appears when the page is at least this tall."
+msgstr "Kısa sayfalarda kaydet düğmesi zaten görünür; çubuk, sayfa en az bu kadar uzunsa çıkar."
+
+msgid "Save changes"
+msgstr "Değişiklikleri kaydet"
+
+msgid "You have unsaved changes"
+msgstr "Kaydedilmemiş değişiklikler var"
+
+msgid "All changes saved"
+msgstr "Tüm değişiklikler kaydedildi"
+
+msgid "Save bar"
+msgstr "Kaydet çubuğu"
+
+msgid "AdminKit"
+msgstr "AdminKit"
+
+msgid "Settings"
+msgstr "Ayarlar"
+
+msgid "You are not allowed to manage these settings."
+msgstr "Bu ayarları yönetme yetkiniz yok."
+
+msgid "%1$d of %2$d modules on"
+msgstr "%2$d modülden %1$d tanesi açık"
+
+msgid "Each module adds one feature to the admin area. Turn on only what you need. Nothing here changes the public site."
+msgstr "Her modül yönetim paneline bir özellik ekler. Yalnız ihtiyacınız olanı açın. Buradaki hiçbir şey ön yüzü değiştirmez."
+
+msgid "On"
+msgstr "Açık"
+
+msgid "Off"
+msgstr "Kapalı"
+
+msgid "Nothing to choose from."
+msgstr "Seçilecek öğe yok."

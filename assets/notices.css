@@ -1,0 +1,14 @@
+.adminkit-nt{margin:5px 0 15px;background:#fff;border:1px solid #c3c4c7;border-left:4px solid var(--wp-admin-theme-color,#3858e9);box-shadow:0 1px 1px rgba(0,0,0,.04)}
+.adminkit-nt[hidden]{display:none}
+.adminkit-nt__btn{display:flex;align-items:center;gap:.75rem;width:100%;min-height:2.75rem;padding:.5rem 1rem;border:0;background:none;color:#1d2327;font:600 14px/1.4 inherit;text-align:start;cursor:pointer}
+.adminkit-nt__btn::after{content:"";margin-inline-start:auto;width:.5rem;height:.5rem;border:solid currentColor;border-width:0 2px 2px 0;transform:rotate(45deg);transition:transform .15s}
+.adminkit-nt__btn[aria-expanded=true]::after{transform:rotate(-135deg)}
+.adminkit-nt__btn:focus-visible{outline:2px solid var(--wp-admin-theme-color,#3858e9);outline-offset:-2px}
+.adminkit-nt__e{padding:.1rem .6rem;border-radius:999px;background:#fcf0f1;color:#b32d2e;font-size:13px;font-weight:600}
+.adminkit-nt__p{padding:0 1rem .5rem;border-top:1px solid #dcdcde}
+.adminkit-nt__p[hidden]{display:none}
+.adminkit-nt__p .notice,.adminkit-nt__p .updated,.adminkit-nt__p .update-nag{margin:.75rem 0 0}
+.admin-color-midnight .adminkit-nt{background:#1d2327;border-color:#3c434a}
+.admin-color-midnight .adminkit-nt__btn{color:#e8edf0}
+.admin-color-midnight .adminkit-nt__e{background:#3a1a1c;color:#ff9a9a}
+@media (prefers-reduced-motion:reduce){.adminkit-nt__btn::after{transition:none}}

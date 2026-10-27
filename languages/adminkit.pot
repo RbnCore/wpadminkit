@@ -1,0 +1,132 @@
+# AdminKit
+msgid ""
+msgstr ""
+"Project-Id-Version: AdminKit 0.1.0\n"
+"Language: tr_TR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Hide side menu items"
+msgstr ""
+
+msgid "Example module: hides the menu items you pick. They are only hidden from view; access stays."
+msgstr ""
+
+msgid "Menu items to hide"
+msgstr ""
+
+msgid "Settings and Plugins can not be hidden, so you can always find this page."
+msgstr ""
+
+msgid "Notice organizer"
+msgstr ""
+
+msgid "Collects admin notices into one box. Errors always stay visible where they are."
+msgstr ""
+
+msgid "Keep the box closed until opened"
+msgstr ""
+
+msgid "Your own open/closed choice is remembered per user and overrides this."
+msgstr ""
+
+msgid "Always show error notices"
+msgstr ""
+
+msgid "Locked on: errors are never hidden or removed."
+msgstr ""
+
+msgid "Notices"
+msgstr ""
+
+msgid "errors stay visible below"
+msgstr ""
+
+msgid "Show or hide the collected notices"
+msgstr ""
+
+msgid "Back to top"
+msgstr ""
+
+msgid "Shows a button on every admin page that scrolls back to the top."
+msgstr ""
+
+msgid "Position"
+msgstr ""
+
+msgid "Bottom right"
+msgstr ""
+
+msgid "Bottom left"
+msgstr ""
+
+msgid "Show after scrolling"
+msgstr ""
+
+msgid "Distance from the edge"
+msgstr ""
+
+msgid "Also show in the block editor"
+msgstr ""
+
+msgid "The block editor scrolls on its own, so the button is hidden there by default."
+msgstr ""
+
+msgid "Sticky save bar"
+msgstr ""
+
+msgid "Keeps a save button at the bottom of long settings pages and warns about unsaved changes."
+msgstr ""
+
+msgid "Where to show it"
+msgstr ""
+
+msgid "Settings screens only (options.php forms)"
+msgstr ""
+
+msgid "Every admin form with a main save button"
+msgstr ""
+
+msgid "Only on pages taller than"
+msgstr ""
+
+msgid "Short pages already show the save button; the bar appears when the page is at least this tall."
+msgstr ""
+
+msgid "Save changes"
+msgstr ""
+
+msgid "You have unsaved changes"
+msgstr ""
+
+msgid "All changes saved"
+msgstr ""
+
+msgid "Save bar"
+msgstr ""
+
+msgid "AdminKit"
+msgstr ""
+
+msgid "Settings"
+msgstr ""
+
+msgid "You are not allowed to manage these settings."
+msgstr ""
+
+msgid "%1$d of %2$d modules on"
+msgstr ""
+
+msgid "Each module adds one feature to the admin area. Turn on only what you need. Nothing here changes the public site."
+msgstr ""
+
+msgid "On"
+msgstr ""
+
+msgid "Off"
+msgstr ""
+
+msgid "Nothing to choose from."
+msgstr ""

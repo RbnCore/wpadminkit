@@ -1,0 +1,103 @@
+/*! AdminKit — bildirim düzenleyici. Hata bildirimleri yerinde kalır; hiçbir bildirim silinmez, yalnız taşınır. */
+( function () {
+	'use strict';
+	var cfg = ( window.AdminKit || {} ).notices;
+	var area = document.getElementById( 'wpbody-content' );
+	if ( ! cfg || ! area ) {
+		return;
+	}
+	var SEL = '.notice, div.updated, div.error, .update-nag';
+	var box = null;
+	var panel = null;
+	var count = null;
+	var open = !! cfg.open;
+
+	function isError( el ) {
+		return el.classList.contains( 'notice-error' ) || el.classList.contains( 'error' );
+	}
+	// Kullanıcının kendi eyleminin geri bildirimi (ayar kaydedildi) ve satır içi bildirimler yerinde kalır.
+	function collectable( el ) {
+		return ! isError( el ) && ! el.hidden && ! el.classList.contains( 'inline' ) && ! el.classList.contains( 'settings-error' ) &&
+			! el.closest( '.adminkit-nt, .rbn-wrap, .rbn-dlg, form, .postbox, #screen-meta' );
+	}
+	function save() {
+		var body = new URLSearchParams( { action: 'adminkit_notices', nonce: cfg.nonce, open: open ? '1' : '0' } );
+		window.fetch( cfg.ajax, { method: 'POST', credentials: 'same-origin', body: body } ).catch( function () {} );
+	}
+	function build( before ) {
+		box = document.createElement( 'div' );
+		var head = document.createElement( 'button' );
+		var errs = document.createElement( 'span' );
+		count = document.createElement( 'span' );
+		panel = document.createElement( 'div' );
+		box.className = 'adminkit-nt';
+		head.type = 'button';
+		head.className = 'adminkit-nt__btn';
+		head.setAttribute( 'aria-controls', 'adminkit-nt-panel' );
+		head.title = cfg.i18n.toggle;
+		count.className = 'adminkit-nt__n';
+		errs.className = 'adminkit-nt__e';
+		errs.hidden = true;
+		head.appendChild( count );
+		head.appendChild( errs );
+		panel.id = 'adminkit-nt-panel';
+		panel.className = 'adminkit-nt__p';
+		box.appendChild( head );
+		box.appendChild( panel );
+		before.parentNode.insertBefore( box, before );
+		// WordPress kapatılan bildirimi kaldırır: sayı güncel kalsın.
+		new MutationObserver( sync ).observe( panel, { childList: true } );
+		head.addEventListener( 'click', function () {
+			open = ! open;
+			sync();
+			save();
+		} );
+	}
+	function sync() {
+		var n = panel.children.length;
+		var e = 0;
+		var list = area.querySelectorAll( SEL );
+		var i;
+		for ( i = 0; i < list.length; i++ ) {
+			if ( isError( list[ i ] ) && ! list[ i ].closest( '.adminkit-nt' ) && list[ i ].offsetParent !== null ) {
+				e++;
+			}
+		}
+		box.hidden = 0 === n;
+		count.textContent = cfg.i18n.title + ' (' + n + ')';
+		var errs = box.querySelector( '.adminkit-nt__e' );
+		errs.hidden = 0 === e;
+		errs.textContent = e + ' ' + cfg.i18n.errors;
+		panel.hidden = ! open;
+		box.firstChild.setAttribute( 'aria-expanded', open ? 'true' : 'false' );
+	}
+	function run() {
+		var list = area.querySelectorAll( SEL );
+		var i;
+		for ( i = 0; i < list.length; i++ ) {
+			if ( collectable( list[ i ] ) ) {
+				if ( ! box ) {
+					build( list[ i ] );
+				}
+				panel.appendChild( list[ i ] );
+			}
+		}
+		if ( box ) {
+			sync();
+		}
+	}
+	// WordPress (common.js) bildirimleri DOM hazır olunca başlığın altına taşır; jQuery.ready sırası bizi ondan sonra çalıştırır.
+	if ( window.jQuery ) {
+		window.jQuery( run );
+	} else if ( 'loading' === document.readyState ) {
+		document.addEventListener( 'DOMContentLoaded', run );
+	} else {
+		run();
+	}
+	window.addEventListener( 'load', function () {
+		if ( ! box || ! area.querySelector( SEL ) ) {
+			return;
+		}
+		run();
+	} );
+}() );

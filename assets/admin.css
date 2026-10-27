@@ -1,0 +1,40 @@
+/*! AdminKit ayar sayfası — rbn-admin-ui kitinin gereken alt kümesi (ContentHealth kitinden kopya; ortak dosya değildir). Yalnız Ayarlar → AdminKit'te yüklenir. */
+.rbn-wrap{--rbn-bg:#f0f0f1;--rbn-surface:#fff;--rbn-surface-2:#f6f7f7;--rbn-line:#dcdcde;--rbn-line-strong:#8c8f94;--rbn-text:#1d2327;--rbn-muted:#50575e;--rbn-ok:#007017;--rbn-ok-bg:#edfaef;--rbn-ac:var(--wp-admin-theme-color-darker-10,#2145e6);--rbn-r:6px;--rbn-r-lg:10px;color:var(--rbn-text);font-size:17px;line-height:1.55;max-width:60rem;margin:0;padding:1.5rem 1.5rem 4rem 0}
+.rbn-wrap[data-tone=koyu]{--rbn-bg:#0f1316;--rbn-surface:#1a2025;--rbn-surface-2:#222a30;--rbn-line:#343d44;--rbn-line-strong:#8695a0;--rbn-text:#e8edf0;--rbn-muted:#a9b4bb;--rbn-ok:#5fd07c;--rbn-ok-bg:#12301c;--rbn-ac:#8aa4ff;background:var(--rbn-bg);padding-left:1.5rem;margin-top:1rem;border-radius:var(--rbn-r-lg)}
+.rbn-wrap *,.rbn-wrap *::before,.rbn-wrap *::after{box-sizing:border-box}
+.rbn-wrap h1,.rbn-wrap h2{color:var(--rbn-text)}
+.rbn-wrap :focus-visible{outline:2px solid var(--rbn-ac);outline-offset:2px;border-radius:3px}
+.rbn-sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.rbn-muted{color:var(--rbn-muted)}
+.rbn-head{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem 1.5rem;margin-bottom:1rem}
+.rbn-head__id{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem .75rem}
+.rbn-head h1{margin:0;padding:0;font-size:1.6rem;line-height:1.3;font-weight:600}
+.rbn-chip{display:inline-flex;align-items:center;gap:.4rem;min-height:1.75rem;padding:0 .7rem;border:1px solid var(--rbn-line);border-radius:999px;background:var(--rbn-surface);color:var(--rbn-muted);font-size:.8rem;font-weight:600;white-space:nowrap}
+.rbn-chip--ok{color:var(--rbn-ok);background:var(--rbn-ok-bg);border-color:transparent}
+.rbn-dot{width:.5rem;height:.5rem;border-radius:50%;background:currentColor}
+.rbn-cards{list-style:none;margin:1.25rem 0;padding:0;display:grid;gap:1rem}
+.rbn-card{margin:0;padding:1.25rem 1.5rem;background:var(--rbn-surface);border:1px solid var(--rbn-line);border-radius:var(--rbn-r-lg)}
+.rbn-card__top{display:flex;align-items:flex-start;justify-content:space-between;gap:1.5rem}
+.rbn-card h2{margin:0 0 .25rem;padding:0;font-size:1.15rem;font-weight:600}
+.rbn-card p{margin:0;font-size:1rem}
+.rbn-card__body{margin-top:1rem;padding-top:1rem;border-top:1px solid var(--rbn-line);display:grid;gap:1rem}
+.rbn-field label,.rbn-field legend{font-size:1rem;font-weight:600;color:var(--rbn-text)}
+.rbn-field .rbn-check{display:flex;align-items:center;gap:.5rem;font-weight:400;margin:.35rem 0}
+.rbn-field select,.rbn-field input[type=number]{min-height:2.5rem;font-size:1rem}
+.rbn-field input[type=number]{width:6.5rem}
+.rbn-field>label:not(.rbn-check){display:block;margin-bottom:.35rem}
+.rbn-num{display:inline-flex;align-items:center;gap:.5rem}
+.rbn-help{display:block;font-size:.95rem;margin-top:.25rem}
+.rbn-field fieldset{margin:0;padding:0;border:0;min-width:0}
+.rbn-field fieldset .rbn-check{display:inline-flex;margin-inline-end:1.25rem}
+.rbn-switch{flex:none;display:inline-flex;align-items:center;gap:.6rem;font-weight:600;cursor:pointer}
+.rbn-switch input{position:absolute;opacity:0;width:1px;height:1px}
+.rbn-switch__ui{position:relative;width:2.9rem;height:1.6rem;border-radius:999px;background:var(--rbn-line-strong);transition:background-color .15s}
+.rbn-switch__ui::after{content:"";position:absolute;top:.2rem;left:.2rem;width:1.2rem;height:1.2rem;border-radius:50%;background:#fff;transition:transform .15s}
+.rbn-switch input:checked+.rbn-switch__ui{background:var(--rbn-ac)}
+.rbn-switch input:checked+.rbn-switch__ui::after{transform:translateX(1.3rem)}
+.rbn-switch input:focus-visible+.rbn-switch__ui{outline:2px solid var(--rbn-ac);outline-offset:3px}
+.rbn-switch__txt{min-width:3.2rem}
+.rbn-wrap .submit .button-primary{min-height:2.5rem;font-size:1rem}
+@media (prefers-reduced-motion:reduce){.rbn-switch__ui,.rbn-switch__ui::after{transition:none}}
+@media (max-width:782px){.rbn-wrap{padding-right:.75rem}.rbn-card__top{flex-direction:column;gap:.75rem}}

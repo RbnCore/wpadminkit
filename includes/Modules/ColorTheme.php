@@ -16,6 +16,7 @@ use AdminKit\Assets;
 use AdminKit\Color;
 use AdminKit\Module;
 use AdminKit\Settings;
+use AdminKit\SettingsPage;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -158,7 +159,7 @@ final class ColorTheme implements Module {
 	}
 
 	public static function enqueue( string $hook ): void {
-		if ( 'settings_page_adminkit' !== $hook && ( '' === self::$page_hook || self::$page_hook !== $hook ) ) {
+		if ( ( '' === SettingsPage::screen() || SettingsPage::screen() !== $hook ) && ( '' === self::$page_hook || self::$page_hook !== $hook ) ) {
 			return;
 		}
 		$themes = array();
@@ -345,7 +346,7 @@ final class ColorTheme implements Module {
 				}
 				update_option( Settings::OPTION, $stored );
 			}
-			wp_safe_redirect( admin_url( 'options-general.php?page=adminkit' ) );
+			wp_safe_redirect( SettingsPage::url() );
 			exit;
 		}
 		delete_user_meta( get_current_user_id(), self::META );

@@ -243,7 +243,7 @@ final class Color {
 	 */
 	public static function template( bool $editor = false ): string {
 		// WP vurgu değişkenini body.admin-color-* üzerinde tanımlar; :root yetmez, aynı gövdede daha özgül seçici gerekir.
-		$c = ( $editor ? ':root' : ':root,body.wp-admin,body.wp-admin[class*=admin-color-]' ) . '{--adminkit-accent:%acc%;';
+		$c = ( $editor ? ':root' : ':root,body.wp-admin,body.wp-admin[class*=admin-color-]' ) . '{--adminkit-accent:%acc%;--adminkit-accent-contrast:%w%;--adminkit-accent-hover:%d10%;--adminkit-accent-active:%d20%;';
 		if ( ! $editor ) {
 			$c .= '--wp-admin-theme-color:%acc%;--wp-admin-theme-color--rgb:%acc_rgb%;--wp-admin-theme-color-darker-10:%d10%;--wp-admin-theme-color-darker-10--rgb:%d10_rgb%;--wp-admin-theme-color-darker-20:%d20%;--wp-admin-theme-color-darker-20--rgb:%d20_rgb%;';
 		}

@@ -1,6 +1,6 @@
 <?php
 /**
- * Ayarlar → AdminKit: her modül bir kart (ad, açıklama, aç/kapat anahtarı, ayarlar).
+ * RBN Kit → AdminKit: her modül bir kart (ad, açıklama, aç/kapat anahtarı, ayarlar).
  *
  * @package AdminKit
  */
@@ -16,12 +16,28 @@ final class SettingsPage {
 	private const SLUG = 'adminkit';
 
 	public static function hooks(): void {
-		add_action( 'admin_menu', array( self::class, 'menu' ) );
+		\RbnKitMenu::add(
+			array(
+				'slug'       => self::SLUG,
+				'title'      => __( 'AdminKit', 'adminkit' ),
+				'menu_title' => __( 'AdminKit', 'adminkit' ),
+				'cap'        => 'manage_options',
+				'callback'   => array( self::class, 'render' ),
+				'order'      => 90,
+				'version'    => ADMINKIT_VERSION,
+			)
+		);
 		add_action( 'admin_enqueue_scripts', array( self::class, 'assets' ) );
 	}
 
-	public static function menu(): void {
-		add_options_page( __( 'AdminKit', 'adminkit' ), __( 'AdminKit', 'adminkit' ), 'manage_options', self::SLUG, array( self::class, 'render' ) );
+	/** Ayar sayfasının adresi (RBN Kit → AdminKit). */
+	public static function url(): string {
+		return admin_url( 'admin.php?page=' . self::SLUG );
+	}
+
+	/** Bu sayfanın ekran kimliği (varlık kapıları için); menü kaydedilmediyse boş dize. */
+	public static function screen(): string {
+		return \RbnKitMenu::hook( self::SLUG );
 	}
 
 	/**
@@ -29,15 +45,15 @@ final class SettingsPage {
 	 * @return string[]
 	 */
 	public static function action_links( array $links ): array {
-		array_unshift( $links, '<a href="' . esc_url( admin_url( 'options-general.php?page=' . self::SLUG ) ) . '">' . esc_html__( 'Settings', 'adminkit' ) . '</a>' );
+		array_unshift( $links, '<a href="' . esc_url( self::url() ) . '">' . esc_html__( 'Settings', 'adminkit' ) . '</a>' );
 		return $links;
 	}
 
 	public static function assets( string $hook ): void {
-		if ( 'settings_page_' . self::SLUG !== $hook ) {
+		if ( '' === self::screen() || self::screen() !== $hook ) {
 			return;
 		}
-		wp_enqueue_style( 'adminkit-admin', ADMINKIT_URL . 'assets/admin.css', array(), ADMINKIT_VERSION );
+		wp_enqueue_style( 'adminkit-admin', ADMINKIT_URL . 'assets/admin.css', array(), Assets::ver( 'admin.css' ) );
 	}
 
 	/** Koyu ton: WP "Gece yarısı" şeması; süzgeçle ezilebilir. */

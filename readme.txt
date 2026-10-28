@@ -4,13 +4,13 @@ Tags: admin, back to top, sticky save, notices, admin color scheme, dashboard
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 0.2.0
+Stable tag: 0.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Bağlantı: https://github.com/RbnCore
 
-WordPress yönetim paneline modül modül özellik ekler. Her modül Ayarlar → AdminKit'ten açılıp kapatılır.
+WordPress yönetim paneline modül modül özellik ekler. Her modül RBN Kit → AdminKit'ten açılıp kapatılır.
 
 == Description ==
 
@@ -24,16 +24,13 @@ WordPress yönetim paneline modül modül özellik ekler. Her modül Ayarlar →
 == Installation ==
 
 1. Klasörü `wp-content/plugins/` altına yükleyin ve etkinleştirin.
-2. Ayarlar → AdminKit sayfasından modülleri açın ya da kapatın.
+2. Yan menüde Başlangıç'ın altındaki RBN Kit → AdminKit sayfasından modülleri açın ya da kapatın.
 
 == Changelog ==
 
-= 0.2.0 =
-* Yeni modül: Renk teması (`color_theme`, varsayılan kapalı). Gece, Okyanus, Orman, Gün batımı, Grafit hazır temaları ve Özel renkler; Kullanıcılar → Panel renkleri'nden kişisel seçim, Ayarlar → AdminKit'ten tüm kullanıcılar için varsayılan.
-* Canlı önizleme (kaydetmeden), Kaydet, Vazgeç, Varsayılana dön. Kontrast hesabı WCAG göreli parlaklıkla; 4,5:1 altı renk uyarı + Düzelt ile gösterilir ve uygulanırken otomatik düzeltilir.
-* Modül kapalıyken WordPress "Yönetici renk düzeni" aynen çalışır; kişisel seçimde "WordPress varsayılanı" ile modül devre dışı kalır.
-* `--adminkit-accent` CSS değişkeni yayınlanır. Ön yüze çıktı yoktur.
-* tr_TR çeviri güncellendi.
-
 = 0.1.0 =
-* İlk sürüm: 4 modül, modül kayıt arayüzü, tr_TR çeviri.
+* İlk sürüm: 5 modül (yukarı çık, yapışkan kaydet çubuğu, bildirim düzenleyici, yan menü gizleme, renk teması), modül kayıt arayüzü, tr_TR çeviri.
+* Renk teması (`color_theme`, varsayılan kapalı): Gece, Okyanus, Orman, Gün batımı, Grafit hazır temaları ve Özel renkler; Kullanıcılar → Panel renkleri'nden kişisel seçim, RBN Kit → AdminKit'ten tüm kullanıcılar için varsayılan. Canlı önizleme, Kaydet, Vazgeç, Varsayılana dön; kontrast WCAG göreli parlaklıkla denetlenir (4,5:1 altı uyarı + Düzelt).
+* Renk uyumu: yukarı çık düğmesi, yapışkan kaydet çubuğu, bildirim kutusu ve ayar kartları seçilen vurgu rengine uyar (`--adminkit-accent`, `-contrast`, `-hover`, `-active`); renk teması kapalıyken görünüm değişmez.
+* Menü: AdminKit, yan menüde Başlangıç'ın hemen altındaki ortak **RBN Kit** menüsünde (Genel bakış + AdminKit); Ayarlar altında kaydı yoktur.
+* Ön yüze çıktı yoktur, dış servis çağrılmaz.

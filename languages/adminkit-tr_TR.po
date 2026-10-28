@@ -1,7 +1,7 @@
 # AdminKit tr_TR
 msgid ""
 msgstr ""
-"Project-Id-Version: AdminKit 0.2.0\n"
+"Project-Id-Version: AdminKit 0.1.0\n"
 "Language: tr_TR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -17,8 +17,8 @@ msgstr "Örnek modül: seçtiğiniz menü öğelerini gizler. Yalnız görünüm
 msgid "Menu items to hide"
 msgstr "Gizlenecek menü öğeleri"
 
-msgid "Settings and Plugins can not be hidden, so you can always find this page."
-msgstr "Ayarlar ve Eklentiler gizlenemez; bu sayfaya her zaman ulaşabilirsiniz."
+msgid "RBN Kit, Settings and Plugins can not be hidden, so you can always find this page."
+msgstr "RBN Kit, Ayarlar ve Eklentiler gizlenemez; bu sayfaya her zaman ulaşabilirsiniz."
 
 msgid "Notice organizer"
 msgstr "Bildirim düzenleyici"

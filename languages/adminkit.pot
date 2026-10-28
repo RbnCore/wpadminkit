@@ -1,7 +1,7 @@
 # AdminKit
 msgid ""
 msgstr ""
-"Project-Id-Version: AdminKit 0.2.0\n"
+"Project-Id-Version: AdminKit 0.1.0\n"
 "Language: tr_TR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -17,7 +17,7 @@ msgstr ""
 msgid "Menu items to hide"
 msgstr ""
 
-msgid "Settings and Plugins can not be hidden, so you can always find this page."
+msgid "RBN Kit, Settings and Plugins can not be hidden, so you can always find this page."
 msgstr ""
 
 msgid "Notice organizer"

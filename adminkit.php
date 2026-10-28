@@ -3,7 +3,7 @@
  * Plugin Name:       AdminKit — Yönetim Paneli Araçları
  * Plugin URI:        https://github.com/RbnCore
  * Description:       WordPress yönetim paneline modül modül özellik ekler: yukarı çık düğmesi, yapışkan kaydet çubuğu, bildirim düzenleyici, renk teması ve örnek özelleştirme. Her modül açılıp kapatılır. Ön yüze çıktı vermez, dış servis çağırmaz.
- * Version:           0.2.0
+ * Version:           0.1.0
  * Requires at least: 6.4
  * Requires PHP:      8.0
  * Author:            RBN Bilişim
@@ -20,7 +20,7 @@ declare(strict_types=1);
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'ADMINKIT_VERSION', '0.2.0' );
+define( 'ADMINKIT_VERSION', '0.1.0' );
 define( 'ADMINKIT_FILE', __FILE__ );
 define( 'ADMINKIT_DIR', plugin_dir_path( __FILE__ ) );
 define( 'ADMINKIT_URL', plugin_dir_url( __FILE__ ) );
@@ -42,5 +42,6 @@ register_activation_hook( __FILE__, array( \AdminKit\Plugin::class, 'activate' )
 
 // Yalnız yönetim paneli: ön yüzde hiçbir kanca, varlık ya da çıktı yoktur.
 if ( is_admin() ) {
+	require_once ADMINKIT_DIR . 'includes/RbnKitMenu.php';
 	add_action( 'plugins_loaded', array( \AdminKit\Plugin::class, 'boot' ) );
 }

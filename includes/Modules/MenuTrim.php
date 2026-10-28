@@ -15,8 +15,8 @@ defined( 'ABSPATH' ) || exit;
 
 final class MenuTrim implements Module {
 
-	/** Kilitlenmeyi önlemek için asla gizlenmeyen öğeler (Ayarlar ve Eklentiler). */
-	private const PROTECTED = array( 'options-general.php', 'plugins.php' );
+	/** Kilitlenmeyi önlemek için asla gizlenmeyen öğeler (RBN Kit, Ayarlar ve Eklentiler). */
+	private const PROTECTED = array( 'rbn-kit', 'options-general.php', 'plugins.php' );
 
 	public function id(): string {
 		return 'menu_trim';
@@ -42,7 +42,7 @@ final class MenuTrim implements Module {
 				'label'   => __( 'Menu items to hide', 'adminkit' ),
 				'default' => array(),
 				'options' => array( self::class, 'menu_choices' ),
-				'help'    => __( 'Settings and Plugins can not be hidden, so you can always find this page.', 'adminkit' ),
+				'help'    => __( 'RBN Kit, Settings and Plugins can not be hidden, so you can always find this page.', 'adminkit' ),
 			),
 		);
 	}

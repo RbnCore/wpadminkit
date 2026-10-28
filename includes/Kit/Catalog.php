@@ -73,13 +73,18 @@ final class Catalog {
 			$out[ $key ] = trim( $row[ $key ] );
 		}
 		$id = $out['id'];
-		if ( 1 !== preg_match( '/^[a-z0-9\-]{2,40}$/', $id ) || 'RbnCore/' . $id !== $out['repo'] || $id . '/' . $id . '.php' !== $out['plugin_file'] ) {
+		if ( 1 !== preg_match( '/^[a-z0-9\-]{2,40}$/', $id ) || 1 !== preg_match( '#^RbnCore/[a-z0-9\-]{2,42}$#', $out['repo'] ) || $id . '/' . $id . '.php' !== $out['plugin_file'] ) {
 			return null;
 		}
 		if ( ! in_array( $out['status'], array( 'released', 'soon' ), true ) || 1 !== preg_match( '/^[a-z0-9\-]{1,40}$/', $out['dashicon'] ) || 1 !== preg_match( '/^[a-z0-9_\-]+$/', $out['settings_slug'] ) ) {
 			return null;
 		}
 		return $out;
+	}
+
+	/** Katalog öğesinin GitHub depo adı (`RbnCore/` öneki olmadan). */
+	public static function repo_name( array $item ): string {
+		return substr( $item['repo'], strlen( 'RbnCore/' ) );
 	}
 
 	/** @return array<string, string>|null */
@@ -127,7 +132,7 @@ final class Catalog {
 
 	/**
 	 * GitHub "latest release" yanıtını doğrular. Varlık adları `<id>-<sürüm>.zip` (+ `.sha256`, `.sig`) ve adresleri
-	 * tam `https://github.com/RbnCore/<id>/releases/download/<sürüm>/...` olmalı; eksik/bozuksa null.
+	 * tam `https://github.com/<repo>/releases/download/<sürüm>/...` olmalı (repo adı kataloğun açık `repo` alanından gelir, id'den türetilmez); eksik/bozuksa null.
 	 *
 	 * @param array<string, string> $item Katalog öğesi.
 	 * @param mixed                 $data json_decode çıktısı.
@@ -142,7 +147,7 @@ final class Catalog {
 			return null;
 		}
 		$id     = $item['id'];
-		$prefix = self::PKG_BASE . $id . '/releases/download/' . rawurlencode( $version ) . '/';
+		$prefix = self::PKG_BASE . self::repo_name( $item ) . '/releases/download/' . rawurlencode( $version ) . '/';
 		$want   = array(
 			'package' => $id . '-' . $version . '.zip',
 			'sha'     => $id . '-' . $version . '.zip.sha256',

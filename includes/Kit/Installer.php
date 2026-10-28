@@ -5,7 +5,7 @@
  * - Paket WordPress'in kendi `Plugin_Upgrader::install` akışıyla kurulur; indirmeden önce SHA-256 ve Ed25519 imzası
  *   doğrulanır (`upgrader_pre_download`), açılan klasör de denetlenir (`upgrader_source_selection`). Bu kontrol kapatılamaz.
  * - İmzalanan ileti: `<ad>|<sürüm>|<sha256>`. Genel anahtar `includes/update-pubkey.php` (CookieKit'tekiyle aynı).
- * - Yalnız `https://github.com/RbnCore/<ad>/releases/download/...` adresleri; kancalar yalnız kurulum sürerken takılıdır.
+ * - Yalnız `https://github.com/RbnCore/<depo>/releases/download/...` adresleri; kancalar yalnız kurulum sürerken takılıdır.
  * - Kurulumdan sonra eklenti etkinleşmez; "Etkinleştir" ayrı bir tıklamadır.
  * - `DISALLOW_FILE_MODS` ya da canlı sorgu kapalıyken kurulum yapılmaz.
  *
@@ -231,12 +231,13 @@ final class Installer {
 			return $reply;
 		}
 		self::$verified = null;
-		if ( 1 !== preg_match( '#^' . preg_quote( Catalog::PKG_BASE, '#' ) . '([a-z0-9\-]{2,40})/releases/download/(\d{1,4}\.\d{1,4}\.\d{1,4})/\1-\2\.zip$#', $package, $m ) ) {
+		if ( 1 !== preg_match( '#^' . preg_quote( Catalog::PKG_BASE, '#' ) . '([a-z0-9\-]{2,42})/releases/download/(\d{1,4}\.\d{1,4}\.\d{1,4})/([a-z0-9\-]{2,40})-\2\.zip$#', $package, $m ) ) {
 			return new \WP_Error( 'adminkit_bad_url', __( 'The package address is not in the expected format. Nothing was installed.', 'adminkit' ) );
 		}
-		$id      = $m[1];
+		$id      = $m[3];
 		$version = $m[2];
-		if ( null === Catalog::find( $id ) ) {
+		$item    = Catalog::find( $id );
+		if ( null === $item || Catalog::repo_name( $item ) !== $m[1] ) {
 			return new \WP_Error( 'adminkit_unknown', __( 'This plugin is not in the catalog.', 'adminkit' ) );
 		}
 		$sha = self::fetch_text( $package . '.sha256' );

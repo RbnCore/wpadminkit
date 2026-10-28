@@ -19,7 +19,8 @@ WordPress yönetim paneline modül modül özellik ekler. Her modül RBN Kit →
 * Bildirim düzenleyici: bilgi bildirimlerini tek kutuda toplar. Hata bildirimleri hiçbir zaman gizlenmez.
 * Yan menü öğelerini gizle (örnek modül, varsayılan kapalı): yalnız görünümü değiştirir, erişimi kapatmaz.
 * Renk teması (varsayılan kapalı): 5 hazır tema ya da kendi renkleriniz; kullanıcı bazlı, canlı önizlemeli, WCAG AA (4,5:1) kontrastı denetlenir.
-* Ön yüze çıktı vermez, dış servis çağırmaz.
+* Ön yüze çıktı vermez. Dış bağlantı yalnız RBN Kit → Genel bakış sayfası açılınca ve yalnız GitHub'a yapılır (eklenti kataloğu); AdminKit ayarlarındaki "Eklenti kataloğunu GitHub'dan canlı sorgula" kapatılırsa hiç ağ çağrısı olmaz.
+* RBN Kit → Genel bakış: **Kurulu** ve **Eklenti kataloğu** sekmeleri. Katalogdan tek tıkla kurulum: imzalı GitHub sürümü, SHA-256 + Ed25519 doğrulaması zorunlu; kurulum sonrası eklentiyi ayrıca "Etkinleştir" dersiniz.
 
 == Installation ==
 
@@ -33,4 +34,4 @@ WordPress yönetim paneline modül modül özellik ekler. Her modül RBN Kit →
 * Renk teması (`color_theme`, varsayılan kapalı): Gece, Okyanus, Orman, Gün batımı, Grafit hazır temaları ve Özel renkler; Kullanıcılar → Panel renkleri'nden kişisel seçim, RBN Kit → AdminKit'ten tüm kullanıcılar için varsayılan. Canlı önizleme, Kaydet, Vazgeç, Varsayılana dön; kontrast WCAG göreli parlaklıkla denetlenir (4,5:1 altı uyarı + Düzelt).
 * Renk uyumu: yukarı çık düğmesi, yapışkan kaydet çubuğu, bildirim kutusu ve ayar kartları seçilen vurgu rengine uyar (`--adminkit-accent`, `-contrast`, `-hover`, `-active`); renk teması kapalıyken görünüm değişmez.
 * Menü: AdminKit, yan menüde Başlangıç'ın hemen altındaki ortak **RBN Kit** menüsünde (Genel bakış + AdminKit); Ayarlar altında kaydı yoktur.
-* Ön yüze çıktı yoktur, dış servis çağrılmaz.
+* Ön yüze çıktı yoktur. GitHub'a yalnız eklenti kataloğu sayfası açılınca (düz GET, 12 saat önbellek) bağlanılır; ayardan kapatılabilir. `DISALLOW_FILE_MODS` açıksa Kur/Etkinleştir gizlenir.

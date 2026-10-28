@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       AdminKit — Yönetim Paneli Araçları
  * Plugin URI:        https://github.com/RbnCore
- * Description:       WordPress yönetim paneline modül modül özellik ekler: yukarı çık düğmesi, yapışkan kaydet çubuğu, bildirim düzenleyici, renk teması ve örnek özelleştirme. Her modül açılıp kapatılır. Ön yüze çıktı vermez, dış servis çağırmaz.
+ * Description:       WordPress yönetim paneline modül modül özellik ekler: yukarı çık düğmesi, yapışkan kaydet çubuğu, bildirim düzenleyici, renk teması ve örnek özelleştirme. Her modül açılıp kapatılır. Ön yüze çıktı vermez; yalnız eklenti kataloğu için GitHub'a bağlanır (ayardan kapatılabilir).
  * Version:           0.1.0
  * Requires at least: 6.4
  * Requires PHP:      8.0

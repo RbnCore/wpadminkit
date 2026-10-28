@@ -93,9 +93,32 @@ final class SettingsPage {
 						<?php self::card( $module ); ?>
 					<?php endforeach; ?>
 				</ul>
+				<?php self::catalog_card(); ?>
 				<?php submit_button( __( 'Save changes', 'adminkit' ) ); ?>
 			</form>
 		</div>
+		<?php
+	}
+
+	/** RBN Kit → Genel bakış kataloğunun GitHub sorgusu (modül değil; kendi ayar satırı). */
+	private static function catalog_card(): void {
+		?>
+		<ul class="rbn-cards">
+			<li class="rbn-card" id="adminkit-katalog">
+				<div class="rbn-card__top">
+					<div>
+						<h2><?php esc_html_e( 'Eklenti kataloğu', 'adminkit' ); ?></h2>
+						<p class="rbn-muted"><?php esc_html_e( 'RBN Kit → Genel bakış sayfasındaki katalog, yeni sürümleri ve kurulum paketlerini GitHub’dan öğrenir. Yalnız o sayfa açıldığında düz bir GET isteği gider; site adresiniz ya da kullanıcı bilginiz gönderilmez.', 'adminkit' ); ?></p>
+					</div>
+				</div>
+				<div class="rbn-card__body">
+					<div class="rbn-field">
+						<label class="rbn-check"><input type="checkbox" name="<?php echo esc_attr( Kit\Catalog::OPT_LIVE ); ?>" value="1" <?php checked( Kit\Catalog::live() ); ?> aria-describedby="adminkit-katalog-h" /> <?php esc_html_e( 'Eklenti kataloğunu GitHub’dan canlı sorgula', 'adminkit' ); ?></label>
+						<span class="rbn-muted rbn-help" id="adminkit-katalog-h"><?php esc_html_e( 'Kapalıyken katalog yalnız eklentiyle gelen yerel listeden gösterilir, hiç ağ çağrısı yapılmaz ve “Kur” düğmeleri pasif olur.', 'adminkit' ); ?></span>
+					</div>
+				</div>
+			</li>
+		</ul>
 		<?php
 	}
 

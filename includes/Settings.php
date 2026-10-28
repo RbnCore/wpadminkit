@@ -25,6 +25,15 @@ final class Settings {
 				'sanitize_callback' => array( self::class, 'sanitize' ),
 			)
 		);
+		register_setting(
+			self::GROUP,
+			Kit\Catalog::OPT_LIVE,
+			array(
+				'type'              => 'string',
+				'default'           => '1',
+				'sanitize_callback' => array( Kit\Catalog::class, 'sanitize_live' ),
+			)
+		);
 	}
 
 	/**

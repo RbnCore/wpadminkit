@@ -1,0 +1,34 @@
+/*! AdminKit — RBN Kit Genel bakış (Kurulu + Eklenti kataloğu). admin.css (rbn-admin-ui alt kümesi) üstüne eklenir; yalnız RBN Kit sayfasında yüklenir. */
+.adminkit-kit{max-width:64rem}
+.rbn-kit__tabs{display:flex;flex-wrap:wrap;gap:.25rem;margin:1rem 0 0;border-bottom:2px solid var(--rbn-line)}
+.rbn-kit__tab{display:inline-flex;align-items:center;min-height:2.75rem;padding:0 1.1rem;margin-bottom:-2px;border:2px solid transparent;border-bottom:0;border-radius:var(--rbn-r) var(--rbn-r) 0 0;color:var(--rbn-muted);font-size:1.0625rem;font-weight:600;text-decoration:none}
+.rbn-kit__tab:hover{color:var(--rbn-text)}
+.rbn-kit__tab[aria-selected=true]{background:var(--rbn-surface);border-color:var(--rbn-line);color:var(--rbn-text);box-shadow:inset 0 3px 0 var(--adminkit-accent,var(--wp-admin-theme-color,#3858e9))}
+.rbn-kit__panel{padding-top:1.25rem}
+.rbn-kit__panel[hidden]{display:none}
+.rbn-kit__lead{margin:0 0 1rem}
+.rbn-kit__note{margin:1rem 0 0;padding:.75rem 1rem;border:1px solid var(--rbn-line);border-left-width:4px;border-radius:var(--rbn-r);background:var(--rbn-surface);font-size:1.0625rem}
+.rbn-kit__note.is-ok{border-left-color:var(--rbn-ok)}
+.rbn-kit__note.is-err{border-left-color:#b32d2e}
+.rbn-kit__info{margin:0 0 1rem;padding:.6rem .9rem;border:1px solid var(--rbn-line);border-radius:var(--rbn-r);background:var(--rbn-surface-2);font-size:1.0625rem}
+.rbn-kit__list{margin-top:0}
+.rbn-kit__row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.75rem 1.5rem}
+.rbn-kit__id{display:flex;align-items:center;gap:.9rem}
+.rbn-kit__id h2{margin:0}
+.rbn-kit__side{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem}
+.rbn-kit__side form,.rbn-kit__act form{margin:0}
+.rbn-kit__upd{color:#7a4a00;background:#fff4e0;border-color:transparent}
+.rbn-kit__grid{list-style:none;margin:0;padding:0;display:grid;gap:1rem;grid-template-columns:repeat(auto-fill,minmax(min(100%,18.5rem),1fr))}
+.rbn-kit__card{display:flex;flex-direction:column;gap:.6rem}
+.rbn-kit__head{display:flex;align-items:center;gap:.7rem}
+.rbn-kit__head h2{margin:0}
+.rbn-kit__card .dashicons,.rbn-kit__id .dashicons{flex:none;width:2.25rem;height:2.25rem;font-size:1.5rem;line-height:2.25rem;text-align:center;border-radius:var(--rbn-r);background:var(--rbn-surface-2);color:var(--adminkit-accent-hover,var(--rbn-ac))}
+.rbn-card .rbn-kit__tag{flex:1;margin:0;font-size:1.0625rem;color:var(--rbn-muted)}
+.rbn-kit__act{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem .9rem;min-height:2.75rem}
+.rbn-kit__link{font-size:1.0625rem;font-weight:600;color:var(--rbn-ac)}
+.rbn-kit__soon{color:var(--rbn-muted);background:var(--rbn-surface-2)}
+.adminkit-kit .button,.adminkit-kit .button-primary{min-height:2.5rem;font-size:1.0625rem;line-height:2.3}
+.adminkit-kit .button[disabled]{opacity:1;color:var(--rbn-muted)!important;background:var(--rbn-surface-2)!important;border-color:var(--rbn-line)!important;cursor:not-allowed}
+.adminkit-kit[data-tone=koyu] .rbn-kit__upd{color:#ffd9a3;background:#3a2a10}
+.adminkit-kit[data-tone=koyu] .rbn-kit__note.is-err{border-left-color:#ff8a8a}
+@media (max-width:782px){.adminkit-kit{padding-right:.75rem}.rbn-kit__grid{grid-template-columns:1fr}.rbn-kit__tab{flex:1;justify-content:center;padding:0 .5rem}}

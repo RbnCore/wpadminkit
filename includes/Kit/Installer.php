@@ -62,15 +62,15 @@ final class Installer {
 	 */
 	public static function verify_signature( string $message, string $sig_b64, string $key_override = '' ) {
 		if ( ! function_exists( 'sodium_crypto_sign_verify_detached' ) ) {
-			return new \WP_Error( 'adminkit_no_sodium', __( 'Paket imzası doğrulanamadı: sunucuda imza doğrulama (sodium) yok; kurulmadı.', 'adminkit' ) );
+			return new \WP_Error( 'adminkit_no_sodium', __( 'Could not verify the package signature: this server has no signature support (sodium). Nothing was installed.', 'adminkit' ) );
 		}
 		$key = '' !== $key_override ? $key_override : self::public_key();
 		$sig = base64_decode( trim( $sig_b64 ), true );
 		if ( 32 !== strlen( $key ) ) {
-			return new \WP_Error( 'adminkit_no_key', __( 'Paket imzası doğrulanamadı: eklentide geçerli imza anahtarı yok; kurulmadı.', 'adminkit' ) );
+			return new \WP_Error( 'adminkit_no_key', __( 'Could not verify the package signature: the plugin has no valid signature key. Nothing was installed.', 'adminkit' ) );
 		}
 		if ( ! is_string( $sig ) || 64 !== strlen( $sig ) || ! sodium_crypto_sign_verify_detached( $sig, $message, $key ) ) {
-			return new \WP_Error( 'adminkit_bad_sig', __( 'Paket imzası doğrulanamadı; kurulmadı.', 'adminkit' ) );
+			return new \WP_Error( 'adminkit_bad_sig', __( 'Could not verify the package signature. Nothing was installed.', 'adminkit' ) );
 		}
 		return true;
 	}
@@ -83,14 +83,14 @@ final class Installer {
 	public static function check_package( string $id, string $file, string $version, string $sha_body, string $sig_b64, string $key_override = '' ) {
 		$size = is_file( $file ) ? (int) filesize( $file ) : 0;
 		if ( $size < 1 || $size > self::MAX_ZIP ) {
-			return new \WP_Error( 'adminkit_bad_size', __( 'Paket boyutu beklenen aralıkta değil; kurulmadı.', 'adminkit' ) );
+			return new \WP_Error( 'adminkit_bad_size', __( 'The package size is outside the expected range. Nothing was installed.', 'adminkit' ) );
 		}
 		if ( 1 !== preg_match( '/^\s*([0-9a-fA-F]{64})(?:\s|$)/', $sha_body, $m ) ) {
-			return new \WP_Error( 'adminkit_bad_sha_file', __( 'Özet (SHA-256) dosyası okunamadı; kurulmadı.', 'adminkit' ) );
+			return new \WP_Error( 'adminkit_bad_sha_file', __( 'Could not read the digest (SHA-256) file. Nothing was installed.', 'adminkit' ) );
 		}
 		$actual = (string) hash_file( 'sha256', $file );
 		if ( ! hash_equals( strtolower( $m[1] ), $actual ) ) {
-			return new \WP_Error( 'adminkit_sha_mismatch', __( 'Paketin SHA-256 özeti eşleşmiyor; kurulmadı.', 'adminkit' ) );
+			return new \WP_Error( 'adminkit_sha_mismatch', __( 'The SHA-256 digest of the package does not match. Nothing was installed.', 'adminkit' ) );
 		}
 		return self::verify_signature( self::signed_message( $id, $version, $actual ), $sig_b64, $key_override );
 	}
@@ -104,12 +104,12 @@ final class Installer {
 		$dir  = rtrim( str_replace( '\\', '/', $source ), '/' );
 		$main = $dir . '/' . $id . '.php';
 		if ( basename( $dir ) !== $id || ! is_file( $main ) ) {
-			/* translators: %s: eklenti klasör adı */
-			return new \WP_Error( 'adminkit_bad_layout', sprintf( __( 'Paketin kök klasörü “%s” değil ya da ana dosya yok; kurulmadı.', 'adminkit' ), $id ) );
+			/* translators: %s: plugin folder name */
+			return new \WP_Error( 'adminkit_bad_layout', sprintf( __( 'The package root folder is not “%s” or the main file is missing. Nothing was installed.', 'adminkit' ), $id ) );
 		}
 		$head = get_file_data( $main, array( 'v' => 'Version', 'n' => 'Plugin Name' ) );
 		if ( '' === $head['n'] || $head['v'] !== $version ) {
-			return new \WP_Error( 'adminkit_bad_version', __( 'Paketteki sürüm, yayınlanan sürümle uyuşmuyor; kurulmadı.', 'adminkit' ) );
+			return new \WP_Error( 'adminkit_bad_version', __( 'The version in the package does not match the released version. Nothing was installed.', 'adminkit' ) );
 		}
 		return true;
 	}
@@ -124,23 +124,23 @@ final class Installer {
 	public static function install( string $id ) {
 		$item = Catalog::find( $id );
 		if ( null === $item ) {
-			return new \WP_Error( 'adminkit_unknown', __( 'Bu eklenti katalogda yok.', 'adminkit' ) );
+			return new \WP_Error( 'adminkit_unknown', __( 'This plugin is not in the catalog.', 'adminkit' ) );
 		}
 		if ( ! self::file_mods_allowed() ) {
-			return new \WP_Error( 'adminkit_file_mods', __( 'Bu sitede eklenti kurma kapalı (DISALLOW_FILE_MODS); kurulmadı.', 'adminkit' ) );
+			return new \WP_Error( 'adminkit_file_mods', __( 'Plugin installation is turned off on this site (DISALLOW_FILE_MODS). Nothing was installed.', 'adminkit' ) );
 		}
 		if ( ! Catalog::live() ) {
-			return new \WP_Error( 'adminkit_offline', __( 'Eklenti kataloğu GitHub sorgusu ayardan kapatılmış; kurulmadı.', 'adminkit' ) );
+			return new \WP_Error( 'adminkit_offline', __( 'The plugin catalog GitHub lookup is turned off in the settings. Nothing was installed.', 'adminkit' ) );
 		}
 		if ( 'released' !== $item['status'] ) {
-			return new \WP_Error( 'adminkit_soon', __( 'Bu eklenti henüz yayında değil.', 'adminkit' ) );
+			return new \WP_Error( 'adminkit_soon', __( 'This plugin is not released yet.', 'adminkit' ) );
 		}
 		if ( Catalog::state( $item )['installed'] ) {
-			return new \WP_Error( 'adminkit_installed', __( 'Bu eklenti zaten kurulu.', 'adminkit' ) );
+			return new \WP_Error( 'adminkit_installed', __( 'This plugin is already installed.', 'adminkit' ) );
 		}
 		$rec = Catalog::release( $item );
 		if ( null === $rec || 'ok' !== $rec['status'] || ! is_array( $rec['release'] ) ) {
-			return new \WP_Error( 'adminkit_no_release', __( 'Yayınlanmış sürüm bilgisi alınamadı; kurulmadı.', 'adminkit' ) );
+			return new \WP_Error( 'adminkit_no_release', __( 'Could not get the released version information. Nothing was installed.', 'adminkit' ) );
 		}
 		$rel = $rec['release'];
 
@@ -174,7 +174,7 @@ final class Installer {
 		} elseif ( $skin->get_errors()->has_errors() ) {
 			$error = $skin->get_errors();
 		} elseif ( true !== $result ) {
-			$error = new \WP_Error( 'adminkit_install_failed', __( 'Kurulum tamamlanamadı.', 'adminkit' ) );
+			$error = new \WP_Error( 'adminkit_install_failed', __( 'The installation could not be completed.', 'adminkit' ) );
 		}
 		if ( null !== $error ) {
 			if ( ! $existed ) {
@@ -191,7 +191,7 @@ final class Installer {
 			if ( ! $existed ) {
 				self::remove_dir( $target );
 			}
-			return new \WP_Error( 'adminkit_install_missing', __( 'Kurulum sonrası eklenti dosyası bulunamadı; kurulmadı.', 'adminkit' ) );
+			return new \WP_Error( 'adminkit_install_missing', __( 'The plugin file was not found after the installation. Nothing was installed.', 'adminkit' ) );
 		}
 		return true;
 	}
@@ -232,12 +232,12 @@ final class Installer {
 		}
 		self::$verified = null;
 		if ( 1 !== preg_match( '#^' . preg_quote( Catalog::PKG_BASE, '#' ) . '([a-z0-9\-]{2,40})/releases/download/(\d{1,4}\.\d{1,4}\.\d{1,4})/\1-\2\.zip$#', $package, $m ) ) {
-			return new \WP_Error( 'adminkit_bad_url', __( 'Paket adresi beklenen biçimde değil; kurulmadı.', 'adminkit' ) );
+			return new \WP_Error( 'adminkit_bad_url', __( 'The package address is not in the expected format. Nothing was installed.', 'adminkit' ) );
 		}
 		$id      = $m[1];
 		$version = $m[2];
 		if ( null === Catalog::find( $id ) ) {
-			return new \WP_Error( 'adminkit_unknown', __( 'Bu eklenti katalogda yok.', 'adminkit' ) );
+			return new \WP_Error( 'adminkit_unknown', __( 'This plugin is not in the catalog.', 'adminkit' ) );
 		}
 		$sha = self::fetch_text( $package . '.sha256' );
 		$sig = is_wp_error( $sha ) ? $sha : self::fetch_text( $package . '.sig' );
@@ -249,7 +249,7 @@ final class Installer {
 		}
 		$tmp = download_url( $package, 300 );
 		if ( is_wp_error( $tmp ) ) {
-			return new \WP_Error( 'adminkit_download_fail', __( 'Paket indirilemedi; kurulmadı.', 'adminkit' ) );
+			return new \WP_Error( 'adminkit_download_fail', __( 'Could not download the package. Nothing was installed.', 'adminkit' ) );
 		}
 		$ok = self::check_package( $id, $tmp, $version, $sha, $sig );
 		if ( is_wp_error( $ok ) ) {
@@ -272,7 +272,7 @@ final class Installer {
 			)
 		);
 		if ( is_wp_error( $res ) || 200 !== (int) wp_remote_retrieve_response_code( $res ) ) {
-			return new \WP_Error( 'adminkit_fetch_fail', __( 'Özet ya da imza dosyası indirilemedi; kurulmadı.', 'adminkit' ) );
+			return new \WP_Error( 'adminkit_fetch_fail', __( 'Could not download the digest or signature file. Nothing was installed.', 'adminkit' ) );
 		}
 		return (string) wp_remote_retrieve_body( $res );
 	}
@@ -293,7 +293,7 @@ final class Installer {
 		$version = self::$verified;
 		$id      = self::$verified_id;
 		if ( null === $version || '' === $id ) {
-			return new \WP_Error( 'adminkit_unverified', __( 'Paket doğrulamadan geçmedi; kurulmadı.', 'adminkit' ) );
+			return new \WP_Error( 'adminkit_unverified', __( 'The package did not pass verification. Nothing was installed.', 'adminkit' ) );
 		}
 		$ok = self::check_source( $id, (string) $source, $version );
 		return is_wp_error( $ok ) ? $ok : $source;
@@ -304,14 +304,14 @@ final class Installer {
 	/** Başarı kodu → ileti. */
 	public static function note_text( string $code ): string {
 		$map = array(
-			'kuruldu' => __( 'Eklenti kuruldu. Kullanmak için “Etkinleştir” deyin.', 'adminkit' ),
-			'etkin'   => __( 'Eklenti etkinleştirildi.', 'adminkit' ),
+			'kuruldu' => __( 'The plugin was installed. Select “Activate” to use it.', 'adminkit' ),
+			'etkin'   => __( 'The plugin was activated.', 'adminkit' ),
 		);
 		return $map[ $code ] ?? '';
 	}
 
 	private static function cap_fail(): void {
-		wp_die( esc_html__( 'Bu işlem için yetkiniz yok.', 'adminkit' ), '', array( 'response' => 403 ) );
+		wp_die( esc_html__( 'You are not allowed to do this.', 'adminkit' ), '', array( 'response' => 403 ) );
 	}
 
 	private static function posted_id(): string {
@@ -340,7 +340,7 @@ final class Installer {
 		check_admin_referer( self::ACT_ACTIVE . '_' . $id );
 		$item = Catalog::find( $id );
 		if ( null === $item || ! Catalog::state( $item )['installed'] ) {
-			self::done( 'hata', __( 'Etkinleştirilecek eklenti bulunamadı.', 'adminkit' ) );
+			self::done( 'hata', __( 'The plugin to activate was not found.', 'adminkit' ) );
 		}
 		if ( ! function_exists( 'activate_plugin' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';

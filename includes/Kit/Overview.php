@@ -77,7 +77,7 @@ final class Overview {
 
 	public static function render(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'Bu sayfayı görme yetkiniz yok.', 'adminkit' ), '', array( 'response' => 403 ) );
+			wp_die( esc_html__( 'You are not allowed to view this page.', 'adminkit' ), '', array( 'response' => 403 ) );
 		}
 		$tab   = isset( $_GET['tab'] ) && 'katalog' === $_GET['tab'] ? 'katalog' : 'kurulu'; // phpcs:ignore WordPress.Security.NonceVerification -- yalnız sekme seçimi.
 		$note  = Installer::take_note();
@@ -91,8 +91,8 @@ final class Overview {
 			);
 		}
 		$tabs = array(
-			'kurulu'  => __( 'Kurulu', 'adminkit' ),
-			'katalog' => __( 'Eklenti kataloğu', 'adminkit' ),
+			'kurulu'  => __( 'Installed', 'adminkit' ),
+			'katalog' => __( 'Plugin catalog', 'adminkit' ),
 		);
 		?>
 		<div class="wrap rbn-wrap adminkit-kit"<?php echo self::tone(); // phpcs:ignore WordPress.Security.EscapeOutput ?>>
@@ -102,9 +102,9 @@ final class Overview {
 				$ok   = 'hata' !== $note['code'];
 				$text = $ok ? Installer::note_text( $note['code'] ) : $note['message'];
 				?>
-				<div class="rbn-kit__note <?php echo $ok ? 'is-ok' : 'is-err'; ?>" role="<?php echo $ok ? 'status' : 'alert'; ?>"><?php echo esc_html( '' !== $text ? $text : __( 'İşlem tamamlanamadı.', 'adminkit' ) ); ?></div>
+				<div class="rbn-kit__note <?php echo $ok ? 'is-ok' : 'is-err'; ?>" role="<?php echo $ok ? 'status' : 'alert'; ?>"><?php echo esc_html( '' !== $text ? $text : __( 'The action could not be completed.', 'adminkit' ) ); ?></div>
 			<?php endif; ?>
-			<div class="rbn-kit__tabs" role="tablist" aria-label="<?php esc_attr_e( 'RBN Kit sekmeleri', 'adminkit' ); ?>">
+			<div class="rbn-kit__tabs" role="tablist" aria-label="<?php esc_attr_e( 'RBN Kit tabs', 'adminkit' ); ?>">
 				<?php foreach ( $tabs as $key => $label ) : ?>
 					<a role="tab" id="rbn-kit-tab-<?php echo esc_attr( $key ); ?>" class="rbn-kit__tab" href="<?php echo esc_url( self::url( $key ) ); ?>" aria-controls="rbn-kit-panel-<?php echo esc_attr( $key ); ?>" aria-selected="<?php echo $tab === $key ? 'true' : 'false'; ?>" tabindex="<?php echo $tab === $key ? '0' : '-1'; ?>"><?php echo esc_html( $label ); ?></a>
 				<?php endforeach; ?>
@@ -133,33 +133,33 @@ final class Overview {
 			$update = is_array( $row['rel'] ) && 'ok' === $row['rel']['status'] && is_array( $row['rel']['release'] ) && version_compare( $row['rel']['release']['version'], $state['version'], '>' ) ? $row['rel']['release']['version'] : '';
 			$url    = $state['active'] ? self::settings_url( $item ) : '';
 			echo '<li class="rbn-card rbn-kit__row"><div class="rbn-kit__id"><span class="dashicons dashicons-' . esc_attr( $item['dashicon'] ) . '" aria-hidden="true"></span><div><h2>' . esc_html( $item['name'] ) . '</h2><p class="rbn-muted">' . esc_html( 'v' . $state['version'] ) . '</p></div></div><div class="rbn-kit__side">';
-			echo '<span class="rbn-chip ' . ( $state['active'] ? 'rbn-chip--ok' : '' ) . '">' . esc_html( $state['active'] ? __( 'Etkin', 'adminkit' ) : __( 'Etkin değil', 'adminkit' ) ) . '</span>';
+			echo '<span class="rbn-chip ' . ( $state['active'] ? 'rbn-chip--ok' : '' ) . '">' . esc_html( $state['active'] ? __( 'Active', 'adminkit' ) : __( 'Not active', 'adminkit' ) ) . '</span>';
 			if ( '' !== $update ) {
-				/* translators: %s: yeni sürüm */
-				echo '<span class="rbn-chip rbn-kit__upd">' . esc_html( sprintf( __( 'Güncelleme var: %s', 'adminkit' ), $update ) ) . '</span>';
+				/* translators: %s: new version */
+				echo '<span class="rbn-chip rbn-kit__upd">' . esc_html( sprintf( __( 'Update available: %s', 'adminkit' ), $update ) ) . '</span>';
 			}
 			if ( ! $state['active'] ) {
 				self::activate_form( $item );
 			} elseif ( '' !== $url ) {
-				echo '<a class="button" href="' . esc_url( $url ) . '">' . esc_html__( 'Ayarlara git', 'adminkit' ) . '<span class="rbn-sr"> — ' . esc_html( $item['name'] ) . '</span></a>';
+				echo '<a class="button" href="' . esc_url( $url ) . '">' . esc_html__( 'Go to settings', 'adminkit' ) . '<span class="rbn-sr"> — ' . esc_html( $item['name'] ) . '</span></a>';
 			}
 			echo '</div></li>';
 		}
 		echo '</ul>';
 		if ( ! $any ) {
-			echo '<p class="rbn-muted">' . esc_html__( 'Kurulu RBN eklentisi yok.', 'adminkit' ) . '</p>';
+			echo '<p class="rbn-muted">' . esc_html__( 'No RBN plugins are installed.', 'adminkit' ) . '</p>';
 		}
 	}
 
 	/** @param array<int, array<string, mixed>> $rows Katalog satırları. */
 	private static function catalog_panel( array $rows ): void {
 		$live = Catalog::live();
-		echo '<p class="rbn-muted rbn-kit__lead">' . esc_html__( 'RBN Bilişim’in WordPress eklentileri. Kurulum tek tıkla yapılır; paketin SHA-256 özeti ve imzası doğrulanamazsa kurulmaz.', 'adminkit' ) . '</p>';
+		echo '<p class="rbn-muted rbn-kit__lead">' . esc_html__( 'WordPress plugins by RBN. Installation takes one click; a package is not installed if its SHA-256 digest and signature cannot be verified.', 'adminkit' ) . '</p>';
 		if ( ! $live ) {
-			echo '<p class="rbn-kit__info">' . esc_html__( 'Katalog çevrimdışı: GitHub sorgusu AdminKit ayarlarından kapatılmış. Bu sayfa hiç ağ çağrısı yapmaz; “Kur” düğmeleri pasiftir.', 'adminkit' ) . ' <a href="' . esc_url( \AdminKit\SettingsPage::url() . '#adminkit-katalog' ) . '">' . esc_html__( 'Ayarı aç', 'adminkit' ) . '</a></p>';
+			echo '<p class="rbn-kit__info">' . esc_html__( 'The catalog is offline: the GitHub lookup is turned off in the AdminKit settings. This page makes no network request; the “Install” buttons are disabled.', 'adminkit' ) . ' <a href="' . esc_url( \AdminKit\SettingsPage::url() . '#adminkit-katalog' ) . '">' . esc_html__( 'Open the setting', 'adminkit' ) . '</a></p>';
 		}
 		if ( ! Installer::file_mods_allowed() ) {
-			echo '<p class="rbn-kit__info">' . esc_html__( 'Bu sitede eklenti kurma kapalı (DISALLOW_FILE_MODS); “Kur” ve “Etkinleştir” düğmeleri gösterilmez.', 'adminkit' ) . '</p>';
+			echo '<p class="rbn-kit__info">' . esc_html__( 'Plugin installation is turned off on this site (DISALLOW_FILE_MODS); the “Install” and “Activate” buttons are not shown.', 'adminkit' ) . '</p>';
 		}
 		echo '<ul class="rbn-kit__grid">';
 		foreach ( $rows as $row ) {
@@ -175,7 +175,7 @@ final class Overview {
 		$rel   = $row['rel'];
 		echo '<li class="rbn-card rbn-kit__card" id="rbn-kit-' . esc_attr( $item['id'] ) . '"><div class="rbn-kit__head"><span class="dashicons dashicons-' . esc_attr( $item['dashicon'] ) . '" aria-hidden="true"></span><h2>' . esc_html( $item['name'] ) . '</h2></div><p class="rbn-kit__tag">' . esc_html( $item['tagline'] ) . '</p><div class="rbn-kit__act">';
 		if ( $state['installed'] ) {
-			echo '<span class="rbn-chip rbn-chip--ok">' . esc_html__( 'Kurulu ✓', 'adminkit' ) . '</span>';
+			echo '<span class="rbn-chip rbn-chip--ok">' . esc_html__( 'Installed ✓', 'adminkit' ) . '</span>';
 			if ( ! $state['active'] ) {
 				if ( Installer::file_mods_allowed() ) {
 					self::activate_form( $item );
@@ -183,21 +183,21 @@ final class Overview {
 			} else {
 				$url = self::settings_url( $item );
 				if ( '' !== $url ) {
-					echo '<a class="rbn-kit__link" href="' . esc_url( $url ) . '">' . esc_html__( 'Ayarlara git', 'adminkit' ) . '<span class="rbn-sr"> — ' . esc_html( $item['name'] ) . '</span></a>';
+					echo '<a class="rbn-kit__link" href="' . esc_url( $url ) . '">' . esc_html__( 'Go to settings', 'adminkit' ) . '<span class="rbn-sr"> — ' . esc_html( $item['name'] ) . '</span></a>';
 				}
 			}
 		} elseif ( 'released' !== $item['status'] ) {
-			echo '<span class="rbn-chip rbn-kit__soon">' . esc_html__( 'Yakında', 'adminkit' ) . '</span>';
+			echo '<span class="rbn-chip rbn-kit__soon">' . esc_html__( 'Coming soon', 'adminkit' ) . '</span>';
 		} elseif ( ! Installer::file_mods_allowed() || ! current_user_can( 'install_plugins' ) ) {
-			echo '<span class="rbn-muted">' . esc_html__( 'Bu sitede kurulum yapılamıyor.', 'adminkit' ) . '</span>';
+			echo '<span class="rbn-muted">' . esc_html__( 'Plugins cannot be installed on this site.', 'adminkit' ) . '</span>';
 		} else {
 			$ready = is_array( $rel ) && 'ok' === $rel['status'] && is_array( $rel['release'] );
 			if ( $ready ) {
-				$label = sprintf( /* translators: %s: sürüm */ __( 'Kur (v%s)', 'adminkit' ), $rel['release']['version'] );
+				$label = sprintf( /* translators: %s: version */ __( 'Install (v%s)', 'adminkit' ), $rel['release']['version'] );
 				echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '"><input type="hidden" name="action" value="' . esc_attr( Installer::ACT_INSTAL ) . '" /><input type="hidden" name="id" value="' . esc_attr( $item['id'] ) . '" />' . wp_nonce_field( Installer::ACT_INSTAL . '_' . $item['id'], '_wpnonce', true, false ) . '<button type="submit" class="button button-primary">' . esc_html( $label ) . '<span class="rbn-sr"> — ' . esc_html( $item['name'] ) . '</span></button></form>'; // phpcs:ignore WordPress.Security.EscapeOutput -- parçalar kaçışlı.
 			} else {
-				$why = ! Catalog::live() ? __( 'Çevrimdışı kip', 'adminkit' ) : ( is_array( $rel ) && 'none' === $rel['status'] ? __( 'Yayın bulunamadı', 'adminkit' ) : __( 'Sürüm bilgisi alınamadı', 'adminkit' ) );
-				echo '<button type="button" class="button" disabled>' . esc_html__( 'Kur', 'adminkit' ) . '<span class="rbn-sr"> — ' . esc_html( $item['name'] ) . '</span></button><span class="rbn-muted">' . esc_html( $why ) . '</span>';
+				$why = ! Catalog::live() ? __( 'Offline mode', 'adminkit' ) : ( is_array( $rel ) && 'none' === $rel['status'] ? __( 'No release found', 'adminkit' ) : __( 'Could not get version information', 'adminkit' ) );
+				echo '<button type="button" class="button" disabled>' . esc_html__( 'Install', 'adminkit' ) . '<span class="rbn-sr"> — ' . esc_html( $item['name'] ) . '</span></button><span class="rbn-muted">' . esc_html( $why ) . '</span>';
 			}
 		}
 		echo '</div></li>';
@@ -208,6 +208,6 @@ final class Overview {
 		if ( ! current_user_can( 'activate_plugins' ) || ! Installer::file_mods_allowed() ) {
 			return;
 		}
-		echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '"><input type="hidden" name="action" value="' . esc_attr( Installer::ACT_ACTIVE ) . '" /><input type="hidden" name="id" value="' . esc_attr( $item['id'] ) . '" />' . wp_nonce_field( Installer::ACT_ACTIVE . '_' . $item['id'], '_wpnonce', true, false ) . '<button type="submit" class="button button-primary">' . esc_html__( 'Etkinleştir', 'adminkit' ) . '<span class="rbn-sr"> — ' . esc_html( $item['name'] ) . '</span></button></form>'; // phpcs:ignore WordPress.Security.EscapeOutput -- parçalar kaçışlı.
+		echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '"><input type="hidden" name="action" value="' . esc_attr( Installer::ACT_ACTIVE ) . '" /><input type="hidden" name="id" value="' . esc_attr( $item['id'] ) . '" />' . wp_nonce_field( Installer::ACT_ACTIVE . '_' . $item['id'], '_wpnonce', true, false ) . '<button type="submit" class="button button-primary">' . esc_html__( 'Activate', 'adminkit' ) . '<span class="rbn-sr"> — ' . esc_html( $item['name'] ) . '</span></button></form>'; // phpcs:ignore WordPress.Security.EscapeOutput -- parçalar kaçışlı.
 	}
 }

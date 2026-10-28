@@ -271,3 +271,173 @@ msgstr "Kaldı"
 
 msgid "Write each color as #rrggbb to see the contrast."
 msgstr "Karşıtlığı görmek için her rengi #rrggbb biçiminde yazın."
+
+msgid "Could not verify the package signature: this server has no signature support (sodium). Nothing was installed."
+msgstr "Paket imzası doğrulanamadı: sunucuda imza doğrulama (sodium) yok; kurulmadı."
+
+msgid "Could not verify the package signature: the plugin has no valid signature key. Nothing was installed."
+msgstr "Paket imzası doğrulanamadı: eklentide geçerli imza anahtarı yok; kurulmadı."
+
+msgid "Could not verify the package signature. Nothing was installed."
+msgstr "Paket imzası doğrulanamadı; kurulmadı."
+
+msgid "The package size is outside the expected range. Nothing was installed."
+msgstr "Paket boyutu beklenen aralıkta değil; kurulmadı."
+
+msgid "Could not read the digest (SHA-256) file. Nothing was installed."
+msgstr "Özet (SHA-256) dosyası okunamadı; kurulmadı."
+
+msgid "The SHA-256 digest of the package does not match. Nothing was installed."
+msgstr "Paketin SHA-256 özeti eşleşmiyor; kurulmadı."
+
+msgid "The package root folder is not “%s” or the main file is missing. Nothing was installed."
+msgstr "Paketin kök klasörü “%s” değil ya da ana dosya yok; kurulmadı."
+
+msgid "The version in the package does not match the released version. Nothing was installed."
+msgstr "Paketteki sürüm, yayınlanan sürümle uyuşmuyor; kurulmadı."
+
+msgid "This plugin is not in the catalog."
+msgstr "Bu eklenti katalogda yok."
+
+msgid "Plugin installation is turned off on this site (DISALLOW_FILE_MODS). Nothing was installed."
+msgstr "Bu sitede eklenti kurma kapalı (DISALLOW_FILE_MODS); kurulmadı."
+
+msgid "The plugin catalog GitHub lookup is turned off in the settings. Nothing was installed."
+msgstr "Eklenti kataloğu GitHub sorgusu ayardan kapatılmış; kurulmadı."
+
+msgid "This plugin is not released yet."
+msgstr "Bu eklenti henüz yayında değil."
+
+msgid "This plugin is already installed."
+msgstr "Bu eklenti zaten kurulu."
+
+msgid "Could not get the released version information. Nothing was installed."
+msgstr "Yayınlanmış sürüm bilgisi alınamadı; kurulmadı."
+
+msgid "The installation could not be completed."
+msgstr "Kurulum tamamlanamadı."
+
+msgid "The plugin file was not found after the installation. Nothing was installed."
+msgstr "Kurulum sonrası eklenti dosyası bulunamadı; kurulmadı."
+
+msgid "The package address is not in the expected format. Nothing was installed."
+msgstr "Paket adresi beklenen biçimde değil; kurulmadı."
+
+msgid "Could not download the package. Nothing was installed."
+msgstr "Paket indirilemedi; kurulmadı."
+
+msgid "Could not download the digest or signature file. Nothing was installed."
+msgstr "Özet ya da imza dosyası indirilemedi; kurulmadı."
+
+msgid "The package did not pass verification. Nothing was installed."
+msgstr "Paket doğrulamadan geçmedi; kurulmadı."
+
+msgid "The plugin was installed. Select “Activate” to use it."
+msgstr "Eklenti kuruldu. Kullanmak için “Etkinleştir” deyin."
+
+msgid "The plugin was activated."
+msgstr "Eklenti etkinleştirildi."
+
+msgid "You are not allowed to do this."
+msgstr "Bu işlem için yetkiniz yok."
+
+msgid "The plugin to activate was not found."
+msgstr "Etkinleştirilecek eklenti bulunamadı."
+
+msgid "You are not allowed to view this page."
+msgstr "Bu sayfayı görme yetkiniz yok."
+
+msgid "Installed"
+msgstr "Kurulu"
+
+msgid "Plugin catalog"
+msgstr "Eklenti kataloğu"
+
+msgid "The action could not be completed."
+msgstr "İşlem tamamlanamadı."
+
+msgid "RBN Kit tabs"
+msgstr "RBN Kit sekmeleri"
+
+msgid "Active"
+msgstr "Etkin"
+
+msgid "Not active"
+msgstr "Etkin değil"
+
+msgid "Update available: %s"
+msgstr "Güncelleme var: %s"
+
+msgid "Go to settings"
+msgstr "Ayarlara git"
+
+msgid "No RBN plugins are installed."
+msgstr "Kurulu RBN eklentisi yok."
+
+msgid "WordPress plugins by RBN. Installation takes one click; a package is not installed if its SHA-256 digest and signature cannot be verified."
+msgstr "RBN Bilişim’in WordPress eklentileri. Kurulum tek tıkla yapılır; paketin SHA-256 özeti ve imzası doğrulanamazsa kurulmaz."
+
+msgid "The catalog is offline: the GitHub lookup is turned off in the AdminKit settings. This page makes no network request; the “Install” buttons are disabled."
+msgstr "Katalog çevrimdışı: GitHub sorgusu AdminKit ayarlarından kapatılmış. Bu sayfa hiç ağ çağrısı yapmaz; “Kur” düğmeleri pasiftir."
+
+msgid "Open the setting"
+msgstr "Ayarı aç"
+
+msgid "Plugin installation is turned off on this site (DISALLOW_FILE_MODS); the “Install” and “Activate” buttons are not shown."
+msgstr "Bu sitede eklenti kurma kapalı (DISALLOW_FILE_MODS); “Kur” ve “Etkinleştir” düğmeleri gösterilmez."
+
+msgid "Installed ✓"
+msgstr "Kurulu ✓"
+
+msgid "Coming soon"
+msgstr "Yakında"
+
+msgid "Plugins cannot be installed on this site."
+msgstr "Bu sitede kurulum yapılamıyor."
+
+msgid "Install (v%s)"
+msgstr "Kur (v%s)"
+
+msgid "Offline mode"
+msgstr "Çevrimdışı kip"
+
+msgid "No release found"
+msgstr "Yayın bulunamadı"
+
+msgid "Could not get version information"
+msgstr "Sürüm bilgisi alınamadı"
+
+msgid "Install"
+msgstr "Kur"
+
+msgid "Activate"
+msgstr "Etkinleştir"
+
+msgid "The server asks for extra information (such as FTP) to write files; install the plugin from Plugins → Add New instead."
+msgstr "Sunucu dosya yazma için ek bilgi (ör. FTP) istiyor; kurulum Eklentiler → Yeni ekle üzerinden yapılmalı."
+
+msgid "The catalog on the RBN Kit → Overview page learns about new versions and install packages from GitHub. A plain GET request is sent only when that page is opened; your site address and user details are not sent."
+msgstr "RBN Kit → Genel bakış sayfasındaki katalog, yeni sürümleri ve kurulum paketlerini GitHub’dan öğrenir. Yalnız o sayfa açıldığında düz bir GET isteği gider; site adresiniz ya da kullanıcı bilginiz gönderilmez."
+
+msgid "Look up the plugin catalog on GitHub live"
+msgstr "Eklenti kataloğunu GitHub’dan canlı sorgula"
+
+msgid "When off, the catalog is shown only from the list bundled with the plugin, no network request is made, and the “Install” buttons are disabled."
+msgstr "Kapalıyken katalog yalnız eklentiyle gelen yerel listeden gösterilir, hiç ağ çağrısı yapılmaz ve “Kur” düğmeleri pasif olur."
+
+msgid "Adds small tools to the admin area, such as a back-to-top button, a sticky save bar and a color theme."
+msgstr "Yönetim paneline yukarı çık düğmesi, yapışkan kaydet çubuğu ve renk teması gibi küçük araçlar ekler."
+
+msgid "Finds gaps in posts, tags and images, and helps you fix problems such as missing alt text."
+msgstr "Yazılardaki, etiketlerdeki ve görsellerdeki eksikleri bulur; alt metin gibi sorunları düzeltmenize yardım eder."
+
+msgid "Adds a cookie banner and a preference panel that follow the Turkish data protection law (KVKK); works with Google Consent Mode v2."
+msgstr "KVKK uyumlu çerez bandı ve tercih paneli kurar; Google Consent Mode v2 ile çalışır."
+
+#. Plugin header
+msgid "AdminKit — Admin Area Tools"
+msgstr "AdminKit — Yönetim Paneli Araçları"
+
+#. Plugin header
+msgid "Adds features to the WordPress admin area, module by module: back-to-top button, sticky save bar, notice organizer, color theme and a sample customization. Each module can be turned on or off. Adds nothing to the front end; connects to GitHub only for the plugin catalog (can be turned off in the settings)."
+msgstr "WordPress yönetim paneline modül modül özellik ekler: yukarı çık düğmesi, yapışkan kaydet çubuğu, bildirim düzenleyici, renk teması ve örnek özelleştirme. Her modül açılıp kapatılır. Ön yüze çıktı vermez; yalnız eklenti kataloğu için GitHub'a bağlanır (ayardan kapatılabilir)."

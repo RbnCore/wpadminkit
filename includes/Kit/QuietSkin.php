@@ -1,7 +1,7 @@
 <?php
 /**
  * Sessiz yükseltici kabuğu: hiçbir şey yazdırmaz, hataları toplar. Dosya sistemi bilgisi (FTP vb.) gerekiyorsa
- * form göstermez; kurulum Türkçe bir hata iletisiyle durur.
+ * form göstermez; kurulum çevrilebilir bir hata iletisiyle durur.
  *
  * @package AdminKit
  */
@@ -49,7 +49,7 @@ final class QuietSkin extends \WP_Upgrader_Skin {
 		if ( 'direct' === $method ) {
 			return true;
 		}
-		$this->errors->add( 'adminkit_fs', __( 'Sunucu dosya yazma için ek bilgi (ör. FTP) istiyor; kurulum Eklentiler → Yeni ekle üzerinden yapılmalı.', 'adminkit' ) );
+		$this->errors->add( 'adminkit_fs', __( 'The server asks for extra information (such as FTP) to write files; install the plugin from Plugins → Add New instead.', 'adminkit' ) );
 		return false;
 	}
 }

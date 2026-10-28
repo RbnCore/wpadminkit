@@ -108,14 +108,14 @@ final class SettingsPage {
 			<li class="rbn-card" id="adminkit-katalog">
 				<div class="rbn-card__top">
 					<div>
-						<h2><?php esc_html_e( 'Eklenti kataloğu', 'adminkit' ); ?></h2>
-						<p class="rbn-muted"><?php esc_html_e( 'RBN Kit → Genel bakış sayfasındaki katalog, yeni sürümleri ve kurulum paketlerini GitHub’dan öğrenir. Yalnız o sayfa açıldığında düz bir GET isteği gider; site adresiniz ya da kullanıcı bilginiz gönderilmez.', 'adminkit' ); ?></p>
+						<h2><?php esc_html_e( 'Plugin catalog', 'adminkit' ); ?></h2>
+						<p class="rbn-muted"><?php esc_html_e( 'The catalog on the RBN Kit → Overview page learns about new versions and install packages from GitHub. A plain GET request is sent only when that page is opened; your site address and user details are not sent.', 'adminkit' ); ?></p>
 					</div>
 				</div>
 				<div class="rbn-card__body">
 					<div class="rbn-field">
-						<label class="rbn-check"><input type="checkbox" name="<?php echo esc_attr( Kit\Catalog::OPT_LIVE ); ?>" value="1" <?php checked( Kit\Catalog::live() ); ?> aria-describedby="adminkit-katalog-h" /> <?php esc_html_e( 'Eklenti kataloğunu GitHub’dan canlı sorgula', 'adminkit' ); ?></label>
-						<span class="rbn-muted rbn-help" id="adminkit-katalog-h"><?php esc_html_e( 'Kapalıyken katalog yalnız eklentiyle gelen yerel listeden gösterilir, hiç ağ çağrısı yapılmaz ve “Kur” düğmeleri pasif olur.', 'adminkit' ); ?></span>
+						<label class="rbn-check"><input type="checkbox" name="<?php echo esc_attr( Kit\Catalog::OPT_LIVE ); ?>" value="1" <?php checked( Kit\Catalog::live() ); ?> aria-describedby="adminkit-katalog-h" /> <?php esc_html_e( 'Look up the plugin catalog on GitHub live', 'adminkit' ); ?></label>
+						<span class="rbn-muted rbn-help" id="adminkit-katalog-h"><?php esc_html_e( 'When off, the catalog is shown only from the list bundled with the plugin, no network request is made, and the “Install” buttons are disabled.', 'adminkit' ); ?></span>
 					</div>
 				</div>
 			</li>

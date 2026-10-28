@@ -14,7 +14,7 @@ return array(
 	array(
 		'id'            => 'adminkit',
 		'name'          => 'AdminKit',
-		'tagline'       => 'Yönetim paneline yukarı çık düğmesi, yapışkan kaydet çubuğu ve renk teması gibi küçük araçlar ekler.',
+		'tagline'       => __( 'Adds small tools to the admin area, such as a back-to-top button, a sticky save bar and a color theme.', 'adminkit' ),
 		'dashicon'      => 'admin-generic',
 		'plugin_file'   => 'adminkit/adminkit.php',
 		'repo'          => 'RbnCore/adminkit',
@@ -24,7 +24,7 @@ return array(
 	array(
 		'id'            => 'contenthealth',
 		'name'          => 'ContentHealth',
-		'tagline'       => 'Yazılardaki, etiketlerdeki ve görsellerdeki eksikleri bulur; alt metin gibi sorunları düzeltmenize yardım eder.',
+		'tagline'       => __( 'Finds gaps in posts, tags and images, and helps you fix problems such as missing alt text.', 'adminkit' ),
 		'dashicon'      => 'heart',
 		'plugin_file'   => 'contenthealth/contenthealth.php',
 		'repo'          => 'RbnCore/contenthealth',
@@ -34,7 +34,7 @@ return array(
 	array(
 		'id'            => 'cookiekit',
 		'name'          => 'CookieKit',
-		'tagline'       => 'KVKK uyumlu çerez bandı ve tercih paneli kurar; Google Consent Mode v2 ile çalışır.',
+		'tagline'       => __( 'Adds a cookie banner and a preference panel that follow the Turkish data protection law (KVKK); works with Google Consent Mode v2.', 'adminkit' ),
 		'dashicon'      => 'shield',
 		'plugin_file'   => 'cookiekit/cookiekit.php',
 		'repo'          => 'RbnCore/cookiekit',

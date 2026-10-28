@@ -271,3 +271,173 @@ msgstr ""
 
 msgid "Write each color as #rrggbb to see the contrast."
 msgstr ""
+
+msgid "Could not verify the package signature: this server has no signature support (sodium). Nothing was installed."
+msgstr ""
+
+msgid "Could not verify the package signature: the plugin has no valid signature key. Nothing was installed."
+msgstr ""
+
+msgid "Could not verify the package signature. Nothing was installed."
+msgstr ""
+
+msgid "The package size is outside the expected range. Nothing was installed."
+msgstr ""
+
+msgid "Could not read the digest (SHA-256) file. Nothing was installed."
+msgstr ""
+
+msgid "The SHA-256 digest of the package does not match. Nothing was installed."
+msgstr ""
+
+msgid "The package root folder is not “%s” or the main file is missing. Nothing was installed."
+msgstr ""
+
+msgid "The version in the package does not match the released version. Nothing was installed."
+msgstr ""
+
+msgid "This plugin is not in the catalog."
+msgstr ""
+
+msgid "Plugin installation is turned off on this site (DISALLOW_FILE_MODS). Nothing was installed."
+msgstr ""
+
+msgid "The plugin catalog GitHub lookup is turned off in the settings. Nothing was installed."
+msgstr ""
+
+msgid "This plugin is not released yet."
+msgstr ""
+
+msgid "This plugin is already installed."
+msgstr ""
+
+msgid "Could not get the released version information. Nothing was installed."
+msgstr ""
+
+msgid "The installation could not be completed."
+msgstr ""
+
+msgid "The plugin file was not found after the installation. Nothing was installed."
+msgstr ""
+
+msgid "The package address is not in the expected format. Nothing was installed."
+msgstr ""
+
+msgid "Could not download the package. Nothing was installed."
+msgstr ""
+
+msgid "Could not download the digest or signature file. Nothing was installed."
+msgstr ""
+
+msgid "The package did not pass verification. Nothing was installed."
+msgstr ""
+
+msgid "The plugin was installed. Select “Activate” to use it."
+msgstr ""
+
+msgid "The plugin was activated."
+msgstr ""
+
+msgid "You are not allowed to do this."
+msgstr ""
+
+msgid "The plugin to activate was not found."
+msgstr ""
+
+msgid "You are not allowed to view this page."
+msgstr ""
+
+msgid "Installed"
+msgstr ""
+
+msgid "Plugin catalog"
+msgstr ""
+
+msgid "The action could not be completed."
+msgstr ""
+
+msgid "RBN Kit tabs"
+msgstr ""
+
+msgid "Active"
+msgstr ""
+
+msgid "Not active"
+msgstr ""
+
+msgid "Update available: %s"
+msgstr ""
+
+msgid "Go to settings"
+msgstr ""
+
+msgid "No RBN plugins are installed."
+msgstr ""
+
+msgid "WordPress plugins by RBN. Installation takes one click; a package is not installed if its SHA-256 digest and signature cannot be verified."
+msgstr ""
+
+msgid "The catalog is offline: the GitHub lookup is turned off in the AdminKit settings. This page makes no network request; the “Install” buttons are disabled."
+msgstr ""
+
+msgid "Open the setting"
+msgstr ""
+
+msgid "Plugin installation is turned off on this site (DISALLOW_FILE_MODS); the “Install” and “Activate” buttons are not shown."
+msgstr ""
+
+msgid "Installed ✓"
+msgstr ""
+
+msgid "Coming soon"
+msgstr ""
+
+msgid "Plugins cannot be installed on this site."
+msgstr ""
+
+msgid "Install (v%s)"
+msgstr ""
+
+msgid "Offline mode"
+msgstr ""
+
+msgid "No release found"
+msgstr ""
+
+msgid "Could not get version information"
+msgstr ""
+
+msgid "Install"
+msgstr ""
+
+msgid "Activate"
+msgstr ""
+
+msgid "The server asks for extra information (such as FTP) to write files; install the plugin from Plugins → Add New instead."
+msgstr ""
+
+msgid "The catalog on the RBN Kit → Overview page learns about new versions and install packages from GitHub. A plain GET request is sent only when that page is opened; your site address and user details are not sent."
+msgstr ""
+
+msgid "Look up the plugin catalog on GitHub live"
+msgstr ""
+
+msgid "When off, the catalog is shown only from the list bundled with the plugin, no network request is made, and the “Install” buttons are disabled."
+msgstr ""
+
+msgid "Adds small tools to the admin area, such as a back-to-top button, a sticky save bar and a color theme."
+msgstr ""
+
+msgid "Finds gaps in posts, tags and images, and helps you fix problems such as missing alt text."
+msgstr ""
+
+msgid "Adds a cookie banner and a preference panel that follow the Turkish data protection law (KVKK); works with Google Consent Mode v2."
+msgstr ""
+
+#. Plugin header
+msgid "AdminKit — Admin Area Tools"
+msgstr ""
+
+#. Plugin header
+msgid "Adds features to the WordPress admin area, module by module: back-to-top button, sticky save bar, notice organizer, color theme and a sample customization. Each module can be turned on or off. Adds nothing to the front end; connects to GitHub only for the plugin catalog (can be turned off in the settings)."
+msgstr ""

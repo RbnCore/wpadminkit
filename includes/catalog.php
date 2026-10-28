@@ -41,4 +41,14 @@ return array(
 		'status'        => 'soon',
 		'settings_slug' => 'cookiekit',
 	),
+	array(
+		'id'            => 'wpseokit',
+		'name'          => 'WPSeoKit',
+		'tagline'       => __( 'Optimizes how your site appears in search engines: titles, descriptions, social cards, sitemap, schema, redirects and a 404 log.', 'adminkit' ),
+		'dashicon'      => 'search',
+		'plugin_file'   => 'wpseokit/wpseokit.php',
+		'repo'          => 'RbnCore/wpseokit',
+		'status'        => 'soon',
+		'settings_slug' => 'wpseokit',
+	),
 );

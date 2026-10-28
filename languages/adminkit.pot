@@ -434,6 +434,9 @@ msgstr ""
 msgid "Adds a cookie banner and a preference panel that follow the Turkish data protection law (KVKK); works with Google Consent Mode v2."
 msgstr ""
 
+msgid "Optimizes how your site appears in search engines: titles, descriptions, social cards, sitemap, schema, redirects and a 404 log."
+msgstr ""
+
 #. Plugin header
 msgid "AdminKit — Admin Area Tools"
 msgstr ""

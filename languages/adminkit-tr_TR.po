@@ -434,6 +434,9 @@ msgstr "Yazılardaki, etiketlerdeki ve görsellerdeki eksikleri bulur; alt metin
 msgid "Adds a cookie banner and a preference panel that follow the Turkish data protection law (KVKK); works with Google Consent Mode v2."
 msgstr "KVKK uyumlu çerez bandı ve tercih paneli kurar; Google Consent Mode v2 ile çalışır."
 
+msgid "Optimizes how your site appears in search engines: titles, descriptions, social cards, sitemap, schema, redirects and a 404 log."
+msgstr "Sitenizin arama motorlarındaki görünümünü düzenler: başlık, açıklama, sosyal kartlar, site haritası, şema, yönlendirme ve 404 kaydı."
+
 #. Plugin header
 msgid "AdminKit — Admin Area Tools"
 msgstr "AdminKit — Yönetim Paneli Araçları"

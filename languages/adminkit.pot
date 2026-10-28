@@ -191,9 +191,6 @@ msgstr ""
 msgid "Admin colors"
 msgstr ""
 
-msgid "OK"
-msgstr ""
-
 msgid "Too low — applied as %s instead"
 msgstr ""
 
@@ -245,9 +242,6 @@ msgstr ""
 msgid "Theme"
 msgstr ""
 
-msgid "Custom colors (used when Custom is selected)"
-msgstr ""
-
 msgid "Dark (white text)"
 msgstr ""
 
@@ -255,4 +249,25 @@ msgid "Light (dark text)"
 msgstr ""
 
 msgid "Contrast (WCAG AA needs at least 4.5:1)"
+msgstr ""
+
+msgid "Use the color theme"
+msgstr ""
+
+msgid "To use it, turn the switch on and press Save."
+msgstr ""
+
+msgid "Your chosen theme is saved but not applied, because the color theme is off. Turn the switch on and press Save to apply it."
+msgstr ""
+
+msgid "Custom colors"
+msgstr ""
+
+msgid "Pass"
+msgstr ""
+
+msgid "Fail"
+msgstr ""
+
+msgid "Write each color as #rrggbb to see the contrast."
 msgstr ""

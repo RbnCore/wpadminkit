@@ -67,6 +67,23 @@ final class Color {
 		);
 	}
 
+	/**
+	 * WordPress'in kendi yönetici renk düzeni ("modern", WP 7.1'de ölçüldü). Yalnız gösterim içindir: palet kartı ve
+	 * karşıtlık tablosu; panele hiçbir CSS uygulanmaz (`normalize()` `wp` için null döner).
+	 *
+	 * @return array<string, string>
+	 */
+	public static function wp_default(): array {
+		return array(
+			'name'   => __( 'WordPress default', 'adminkit' ),
+			'top'    => '#1e1e1e',
+			'side'   => '#1e1e1e',
+			'accent' => '#3858e9',
+			'bg'     => '#f0f0f0',
+			'shell'  => 'koyu',
+		);
+	}
+
 	/** Kullanıcıya gösterilen kimlikler: `wp` (WordPress düzeni), hazır temalar, `custom`. */
 	public static function scheme_ids(): array {
 		return array_merge( array( 'wp' ), array_keys( self::themes() ), array( 'custom' ) );

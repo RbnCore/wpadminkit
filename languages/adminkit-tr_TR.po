@@ -191,9 +191,6 @@ msgstr "Varsayılan renkler"
 msgid "Admin colors"
 msgstr "Panel renkleri"
 
-msgid "OK"
-msgstr "Uygun"
-
 msgid "Too low — applied as %s instead"
 msgstr "Çok düşük — yerine %s uygulanır"
 
@@ -245,9 +242,6 @@ msgstr "Varsayılana dön"
 msgid "Theme"
 msgstr "Tema"
 
-msgid "Custom colors (used when Custom is selected)"
-msgstr "Özel renkler (Özel seçiliyken kullanılır)"
-
 msgid "Dark (white text)"
 msgstr "Koyu (beyaz yazı)"
 
@@ -256,3 +250,24 @@ msgstr "Açık (koyu yazı)"
 
 msgid "Contrast (WCAG AA needs at least 4.5:1)"
 msgstr "Karşıtlık (WCAG AA en az 4,5:1 ister)"
+
+msgid "Use the color theme"
+msgstr "Renk temasını kullan"
+
+msgid "To use it, turn the switch on and press Save."
+msgstr "Kullanmak için anahtarı açıp Kaydet'e basın."
+
+msgid "Your chosen theme is saved but not applied, because the color theme is off. Turn the switch on and press Save to apply it."
+msgstr "Seçtiğiniz tema kaydedildi ama renk teması kapalı olduğu için uygulanmıyor. Uygulamak için anahtarı açıp Kaydet'e basın."
+
+msgid "Custom colors"
+msgstr "Özel renkler"
+
+msgid "Pass"
+msgstr "Geçti"
+
+msgid "Fail"
+msgstr "Kaldı"
+
+msgid "Write each color as #rrggbb to see the contrast."
+msgstr "Karşıtlığı görmek için her rengi #rrggbb biçiminde yazın."

@@ -12,15 +12,16 @@
 .rbn-chip{display:inline-flex;align-items:center;gap:.4rem;min-height:1.75rem;padding:0 .7rem;border:1px solid var(--rbn-line);border-radius:999px;background:var(--rbn-surface);color:var(--rbn-muted);font-size:.8rem;font-weight:600;white-space:nowrap}
 .rbn-chip--ok{color:var(--rbn-ok);background:var(--rbn-ok-bg);border-color:transparent}
 .rbn-dot{width:.5rem;height:.5rem;border-radius:50%;background:currentColor}
-.rbn-cards{list-style:none;margin:1.25rem 0;padding:0;display:grid;gap:1rem}
+.rbn-cards{list-style:none;margin:1.25rem 0;padding:0;display:grid;grid-template-columns:minmax(0,1fr);gap:1rem}
 .rbn-card{margin:0;padding:1.25rem 1.5rem;background:var(--rbn-surface);border:1px solid var(--rbn-line);border-radius:var(--rbn-r-lg)}
 .rbn-card__top{display:flex;align-items:flex-start;justify-content:space-between;gap:1.5rem}
 .rbn-card h2{margin:0 0 .25rem;padding:0;font-size:1.15rem;font-weight:600}
 .rbn-card p{margin:0;font-size:1rem}
-.rbn-card__body{margin-top:1rem;padding-top:1rem;border-top:1px solid var(--rbn-line);display:grid;gap:1rem}
+.rbn-card__body{margin-top:1rem;padding-top:1rem;border-top:1px solid var(--rbn-line);display:grid;grid-template-columns:minmax(0,1fr);gap:1rem}
 .rbn-field label,.rbn-field legend{font-size:1rem;font-weight:600;color:var(--rbn-text)}
 .rbn-field .rbn-check{display:flex;align-items:center;gap:.5rem;font-weight:400;margin:.35rem 0}
 .rbn-field select,.rbn-field input[type=number]{min-height:2.5rem;font-size:1rem}
+.rbn-field select{max-width:100%}
 .rbn-field input[type=number]{width:6.5rem}
 .rbn-field>label:not(.rbn-check){display:block;margin-bottom:.35rem}
 .rbn-num{display:inline-flex;align-items:center;gap:.5rem}
@@ -35,6 +36,8 @@
 .rbn-switch input:checked+.rbn-switch__ui::after{transform:translateX(1.3rem)}
 .rbn-switch input:focus-visible+.rbn-switch__ui{outline:2px solid var(--rbn-ac);outline-offset:3px}
 .rbn-switch__txt{min-width:3.2rem}
+.adminkit-offhint{display:none;margin:.75rem 0 0}
+.rbn-card:has(.rbn-switch input:not(:checked)) .adminkit-offhint{display:block}
 .rbn-wrap .submit .button-primary{min-height:2.5rem;font-size:1rem}
 @media (prefers-reduced-motion:reduce){.rbn-switch__ui,.rbn-switch__ui::after{transition:none}}
 @media (max-width:782px){.rbn-wrap{padding-right:.75rem}.rbn-card__top{flex-direction:column;gap:.75rem}}

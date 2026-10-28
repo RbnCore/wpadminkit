@@ -46,6 +46,16 @@ final class ColorTheme implements Module {
 		return false;
 	}
 
+	/** Kart anahtarının görünen adı (tek kaynak: modül aç/kapa anahtarı; ikinci bir anahtar yoktur). */
+	public function switch_label(): string {
+		return __( 'Use the color theme', 'adminkit' );
+	}
+
+	/** Anahtar kapalıyken kartta duran tek satırlık yönlendirme. */
+	public function off_hint(): string {
+		return __( 'To use it, turn the switch on and press Save.', 'adminkit' );
+	}
+
 	public function settings_schema(): array {
 		$labels = array( 'wp' => __( 'WordPress default', 'adminkit' ) );
 		foreach ( Color::themes() as $id => $t ) {
@@ -158,12 +168,19 @@ final class ColorTheme implements Module {
 		self::$page_hook = (string) add_users_page( __( 'Admin colors', 'adminkit' ), __( 'Admin colors', 'adminkit' ), 'read', self::PAGE, array( self::class, 'render_page' ) );
 	}
 
+	/**
+	 * Arayüz varlıkları (stil, önizleme ve kontrast betiği). Kapı yalnız ekran kimliğidir: modül açık olsun olmasın
+	 * Ayarlar → AdminKit ekranı tam arayüzle gelir. Modül açıkken `boot()` de çağırır; ikinci çağrı bir şey eklemez.
+	 */
 	public static function enqueue( string $hook ): void {
 		if ( ( '' === SettingsPage::screen() || SettingsPage::screen() !== $hook ) && ( '' === self::$page_hook || self::$page_hook !== $hook ) ) {
 			return;
 		}
+		if ( wp_script_is( 'adminkit-colortheme', 'enqueued' ) ) {
+			return;
+		}
 		$themes = array();
-		foreach ( Color::themes() as $id => $t ) {
+		foreach ( array( 'wp' => Color::wp_default() ) + Color::themes() as $id => $t ) {
 			$themes[ $id ] = array(
 				'top'    => $t['top'],
 				'side'   => $t['side'],
@@ -180,7 +197,9 @@ final class ColorTheme implements Module {
 				'min'    => Color::MIN_RATIO,
 				'bg'     => Color::PAGE_BG,
 				'i18n'   => array(
-					'ok'      => __( 'OK', 'adminkit' ),
+					'pass'    => __( 'Pass', 'adminkit' ),
+					'fail'    => __( 'Fail', 'adminkit' ),
+					'invalid' => __( 'Write each color as #rrggbb to see the contrast.', 'adminkit' ),
 					'low'     => __( 'Too low — applied as %s instead', 'adminkit' ),
 					'fix'     => __( 'Fix', 'adminkit' ),
 					'menu'    => __( 'Side menu text on menu', 'adminkit' ),
@@ -245,30 +264,41 @@ final class ColorTheme implements Module {
 	 */
 	private static function widget( string $base, array $v, string $ctx ): void {
 		$scheme = (string) ( $v['scheme'] ?? 'wp' );
-		$all    = array_merge( array( 'wp' => array( 'name' => __( 'WordPress default', 'adminkit' ) ) ), Color::themes(), array( 'custom' => array( 'name' => __( 'Custom', 'adminkit' ) ) ) );
+		$all    = array( 'wp' => Color::wp_default() ) + Color::themes() + array( 'custom' => array( 'name' => __( 'Custom', 'adminkit' ) ) );
 		$fields = array(
 			'top'    => __( 'Top bar', 'adminkit' ),
 			'side'   => __( 'Side menu', 'adminkit' ),
 			'accent' => __( 'Accent', 'adminkit' ),
 		);
+		// Özel kartın şeridi seçili özel renkleri gösterir (JS alanlar değiştikçe günceller).
+		$all['custom'] += array(
+			'top'    => Color::hex( $v['top'] ?? '' ) ?: '#1d2327',
+			'side'   => Color::hex( $v['side'] ?? '' ) ?: '#23282d',
+			'accent' => Color::hex( $v['accent'] ?? '' ) ?: '#2145e6',
+			'bg'     => Color::PAGE_BG,
+		);
+		$stored = get_option( Settings::OPTION, array() );
+		$on     = is_array( $stored ) && ! empty( $stored['modules']['color_theme']['enabled'] );
 		?>
 		<div class="adminkit-ct" data-ck-ctx="<?php echo esc_attr( $ctx ); ?>">
-			<fieldset class="adminkit-ct__themes">
+			<?php if ( 'default' === $ctx && ! $on && 'wp' !== $scheme ) : ?>
+				<p class="adminkit-ct__warn" role="status"><?php esc_html_e( 'Your chosen theme is saved but not applied, because the color theme is off. Turn the switch on and press Save to apply it.', 'adminkit' ); ?></p>
+			<?php endif; ?>
+			<fieldset class="adminkit-ct__themes" role="radiogroup">
 				<legend><?php esc_html_e( 'Theme', 'adminkit' ); ?></legend>
 				<?php foreach ( $all as $id => $t ) : ?>
-					<label class="adminkit-ct__opt">
+					<label class="adminkit-ct__opt" data-ck-card="<?php echo esc_attr( (string) $id ); ?>">
 						<input type="radio" name="<?php echo esc_attr( $base . '[scheme]' ); ?>" value="<?php echo esc_attr( (string) $id ); ?>" data-ck="scheme" <?php checked( $scheme, $id ); ?> />
 						<span class="adminkit-ct__sw" aria-hidden="true">
-							<?php if ( isset( $t['top'] ) ) : ?>
-								<i style="background:<?php echo esc_attr( $t['top'] ); ?>"></i><i style="background:<?php echo esc_attr( $t['side'] ); ?>"></i><i style="background:<?php echo esc_attr( $t['accent'] ); ?>"></i><i style="background:<?php echo esc_attr( $t['bg'] ); ?>"></i>
-							<?php endif; ?>
+							<i style="background:<?php echo esc_attr( $t['top'] ); ?>"></i><i style="background:<?php echo esc_attr( $t['side'] ); ?>"></i><i style="background:<?php echo esc_attr( $t['accent'] ); ?>"></i><i style="background:<?php echo esc_attr( $t['bg'] ); ?>"></i>
 						</span>
 						<span class="adminkit-ct__nm"><?php echo esc_html( (string) $t['name'] ); ?></span>
+						<span class="adminkit-ct__tick" aria-hidden="true"></span>
 					</label>
 				<?php endforeach; ?>
 			</fieldset>
 			<fieldset class="adminkit-ct__custom">
-				<legend><?php esc_html_e( 'Custom colors (used when Custom is selected)', 'adminkit' ); ?></legend>
+				<legend><?php esc_html_e( 'Custom colors', 'adminkit' ); ?></legend>
 				<?php foreach ( $fields as $key => $label ) : ?>
 					<div class="adminkit-ct__row">
 						<label for="adminkit-<?php echo esc_attr( $ctx . '-' . $key ); ?>"><?php echo esc_html( $label ); ?></label>

@@ -104,18 +104,23 @@
 	};
 	Box.prototype.update = function () {
 		var v = this.read(), s = this.resolve(v), real = d.getElementById('adminkit-color'), pv = d.getElementById(ST),
-			same = JSON.stringify(v) === JSON.stringify(this.init), self = this, rows = '';
+			same = JSON.stringify(v) === JSON.stringify(this.init), rows = '',
+			// Tablo her seçim için dolu gelir: WordPress düzeni de kendi renkleriyle ölçülür (panele CSS uygulanmaz).
+			base = s || (v.scheme === 'wp' ? cfg.themes.wp : null);
 		if (pv) { pv.parentNode.removeChild(pv); }
-		if (s) {
-			report(s, cfg.min).forEach(function (r) {
+		if (base) {
+			report(base, cfg.min).forEach(function (r) {
 				var ok = r[2] >= cfg.min;
-				rows += '<li class="' + (ok ? 'ok' : 'bad') + '"><span>' + cfg.i18n[r[0]] + ': <b>' + r[2].toFixed(2) + ':1</b> — ' +
-					(ok ? cfg.i18n.ok : cfg.i18n.low.replace('%s', r[3])) + '</span>' +
-					(ok ? '' : ' <button type="button" class="button button-small" data-ck-fix="' + r[1] + '" data-to="' + r[3] + '">' + cfg.i18n.fix + '</button>') + '</li>';
+				rows += '<li class="' + (ok ? 'ok' : 'bad') + '"><span class="adminkit-ct__lbl">' + cfg.i18n[r[0]] + '</span> <b>' + r[2].toFixed(2) + ':1</b> ' +
+					'<span class="adminkit-ct__badge">' + (ok ? cfg.i18n.pass : cfg.i18n.fail) + '</span>' +
+					(ok ? '' : ' <span class="adminkit-ct__note">' + cfg.i18n.low.replace('%s', r[3]) + '</span> <button type="button" class="button button-small" data-ck-fix="' + r[1] + '" data-to="' + r[3] + '">' + cfg.i18n.fix + '</button>') + '</li>';
 			});
+		} else {
+			rows = '<li class="bad"><span class="adminkit-ct__lbl">' + cfg.i18n.invalid + '</span></li>';
 		}
 		// Aynı içerik yeniden çizilmez: metin kutusundan çıkışta (change) düğme DOM'dan koparsa "Düzelt" tıklaması kaybolur.
 		if (rows !== this.rows) { this.rep.innerHTML = rows; this.rows = rows; }
+		this.swatch(v);
 		if (real) { real.disabled = !same; }
 		if (!same) {
 			pv = d.createElement('style');
@@ -124,6 +129,12 @@
 			d.head.appendChild(pv);
 		}
 		if (this.st) { this.st.textContent = same ? cfg.i18n.saved : cfg.i18n.preview; }
+	};
+	// "Özel" kartının şeridi, yazılan özel renkleri gösterir (geçersiz hex'te önceki renk kalır).
+	Box.prototype.swatch = function (v) {
+		var card = this.root.querySelector('[data-ck-card="custom"] .adminkit-ct__sw');
+		if (!card) { return; }
+		['top', 'side', 'accent'].forEach(function (k, i) { if (hex(v[k])) { card.children[i].style.background = hex(v[k]); } });
 	};
 	Box.prototype.cancel = function () {
 		var o = this.init, self = this, r;

@@ -53,6 +53,8 @@ final class SettingsPage {
 			return;
 		}
 		wp_enqueue_style( 'adminkit-admin', ADMINKIT_URL . 'assets/admin.css', array(), Assets::ver( 'admin.css' ) );
+		// Renk kartının arayüzü (palet kartları, önizleme, kontrast) modül açık/kapalı olsa da bu ekranda hep gelir.
+		Modules\ColorTheme::enqueue( $hook );
 	}
 
 	/** Koyu ton: WP "Gece yarısı" şeması; süzgeçle ezilebilir. */
@@ -126,6 +128,9 @@ final class SettingsPage {
 		$settings = Settings::for_module( $module );
 		$base     = Settings::OPTION . '[modules][' . $id . ']';
 		$on       = (bool) $settings['enabled'];
+		// İsteğe bağlı: kartın anahtarına görünen ad ve kapalıyken tek satırlık yönlendirme (Module arayüzüne dahil değildir).
+		$label = method_exists( $module, 'switch_label' ) ? (string) $module->switch_label() : '';
+		$hint  = method_exists( $module, 'off_hint' ) ? (string) $module->off_hint() : '';
 		?>
 		<li class="rbn-card" id="adminkit-<?php echo esc_attr( $id ); ?>">
 			<input type="hidden" name="<?php echo esc_attr( $base . '[present]' ); ?>" value="1" />
@@ -138,11 +143,18 @@ final class SettingsPage {
 					<input type="checkbox" role="switch" name="<?php echo esc_attr( $base . '[enabled]' ); ?>" value="1" <?php checked( $on ); ?> />
 					<span class="rbn-switch__ui" aria-hidden="true"></span>
 					<span class="rbn-switch__txt">
-						<?php echo esc_html( $on ? __( 'On', 'adminkit' ) : __( 'Off', 'adminkit' ) ); ?>
-						<span class="rbn-sr"> — <?php echo esc_html( $module->title() ); ?></span>
+						<?php if ( $label ) : ?>
+							<?php echo esc_html( $label ); ?>
+						<?php else : ?>
+							<?php echo esc_html( $on ? __( 'On', 'adminkit' ) : __( 'Off', 'adminkit' ) ); ?>
+							<span class="rbn-sr"> — <?php echo esc_html( $module->title() ); ?></span>
+						<?php endif; ?>
 					</span>
 				</label>
 			</div>
+			<?php if ( $hint ) : ?>
+				<p class="rbn-muted adminkit-offhint"><?php echo esc_html( $hint ); ?></p>
+			<?php endif; ?>
 			<?php if ( $module->settings_schema() ) : ?>
 				<div class="rbn-card__body">
 					<?php foreach ( $module->settings_schema() as $field ) : ?>

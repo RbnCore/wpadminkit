@@ -4,11 +4,17 @@
  *
  * ORTAK DOSYA: aynı dosya birden çok RBN eklentisinde birebir bulunur; sınıf korumalıdır, ilk yüklenen kazanır.
  * Bağımlılığı yoktur; WordPress dışında hiçbir şey çağırmaz. Kopyalarken DEĞİŞTİRMEYİN.
+ * Kopyaları eşitlemek için: `php araclar/menu-senkron.php` (AdminKit deposu; `--kontrol` yalnız denetler, `--yaz` eşitler).
+ *
+ * MENÜ SIRASI SABİTTİR: Genel bakış → AdminKit → Çerez ve Onay → İçerik Sağlığı. Sıra yalnız aşağıdaki ORDER tablosundadır
+ * ve yalnız geliştirici koddan değiştirir; kurulum/yükleme sırası, `add()` çağrısı, başka eklentilerin `admin_menu`
+ * öncelikleri ve kullanıcı sırayı değiştiremez (ayar, süzgeç, kanca yoktur). Yeni RBN eklentisi eklenince bu tabloya satır
+ * eklenir ve kopyalar eşitlenir; tabloda olmayan slug'lar bu öğelerden SONRA, slug'a göre alfabetik gelir.
  *
  * Kullanım (eklentinin yüklenme anında, `admin_menu` öncesi):
- *   RbnKitMenu::add( array( 'slug' => 'adminkit', 'title' => 'AdminKit', 'menu_title' => 'AdminKit', 'cap' => 'manage_options', 'callback' => $callable, 'order' => 90 ) );
+ *   RbnKitMenu::add( array( 'slug' => 'adminkit', 'title' => 'AdminKit', 'menu_title' => 'AdminKit', 'cap' => 'manage_options', 'callback' => $callable ) );
  *   $hook = RbnKitMenu::hook( 'adminkit' ); // ekran kimliği (asset kapıları için): rbn-kit_page_adminkit
- * Süzgeçler: `rbn_kit_items` (kayıtlı öğeler dizisi), `rbn_kit_overview_callback` (Genel bakış sayfasının çizicisi).
+ * Süzgeçler: `rbn_kit_items` (yalnız Genel bakış listesi içindir, menü sırasını etkilemez), `rbn_kit_overview_callback` (Genel bakış çizicisi).
  *
  * @package RbnKit
  */
@@ -21,6 +27,14 @@ if ( ! class_exists( 'RbnKitMenu' ) ) {
 
 		public const SLUG = 'rbn-kit';
 
+		/** Kanonik menü sırası (slug => sıra). SABİT: tek yer burasıdır; yeni RBN eklentisi için satır ekleyin. */
+		private const ORDER = array(
+			'rbn-kit'       => 0,
+			'adminkit'      => 10,
+			'cookiekit'     => 20,
+			'contenthealth' => 30,
+		);
+
 		/** @var array<string, array<string, mixed>> slug => öğe */
 		private static array $items = array();
 
@@ -32,7 +46,7 @@ if ( ! class_exists( 'RbnKitMenu' ) ) {
 		/**
 		 * Alt öğe ekler. Eksik/geçersiz öğe yok sayılır; aynı slug ikinci kez eklenirse ilki kalır.
 		 *
-		 * @param array<string, mixed> $item slug, title, menu_title, cap, callback, order (10..99).
+		 * @param array<string, mixed> $item slug, title, menu_title, cap, callback. Sıra bildirilemez (`order` yok sayılır).
 		 */
 		public static function add( array $item ): void {
 			$slug = isset( $item['slug'] ) && is_string( $item['slug'] ) ? $item['slug'] : '';
@@ -48,7 +62,9 @@ if ( ! class_exists( 'RbnKitMenu' ) ) {
 			}
 			$menu_title = isset( $item['menu_title'] ) && '' !== trim( (string) $item['menu_title'] ) ? (string) $item['menu_title'] : $title;
 			$cap        = isset( $item['cap'] ) && '' !== (string) $item['cap'] ? (string) $item['cap'] : 'manage_options';
-			$order      = isset( $item['order'] ) ? max( 10, min( 99, (int) $item['order'] ) ) : 50;
+			if ( isset( $item['order'] ) && defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				_doing_it_wrong( __METHOD__, 'RBN Kit menü sırası sabittir; `order` yok sayılır (sıra RbnKitMenu::ORDER tablosundadır).', '0.1.0' );
+			}
 
 			self::$items[ $slug ] = array(
 				'slug'       => $slug,
@@ -56,13 +72,12 @@ if ( ! class_exists( 'RbnKitMenu' ) ) {
 				'menu_title' => $menu_title,
 				'cap'        => $cap,
 				'callback'   => $item['callback'],
-				'order'      => $order,
-				'seq'        => count( self::$items ),
 				'version'    => isset( $item['version'] ) ? (string) $item['version'] : '',
 			);
 			if ( ! self::$hooked ) {
 				self::$hooked = true;
 				add_action( 'admin_menu', array( self::class, 'register' ), 9 );
+				add_action( 'admin_menu', array( self::class, 'enforce_order' ), PHP_INT_MAX );
 			}
 		}
 
@@ -72,7 +87,7 @@ if ( ! class_exists( 'RbnKitMenu' ) ) {
 		}
 
 		/**
-		 * Kayıtlı öğeler, sıraya göre (eşit sırada ekleme sırası).
+		 * Kayıtlı öğeler, kanonik sıraya göre (tabloda olmayanlar sonda, slug'a göre).
 		 *
 		 * @return array<int, array<string, mixed>>
 		 */
@@ -81,11 +96,38 @@ if ( ! class_exists( 'RbnKitMenu' ) ) {
 			usort(
 				$list,
 				static function ( array $a, array $b ): int {
-					return array( $a['order'], $a['seq'] ) <=> array( $b['order'], $b['seq'] );
+					return array( self::rank( (string) $a['slug'] ), (string) $a['slug'] ) <=> array( self::rank( (string) $b['slug'] ), (string) $b['slug'] );
 				}
 			);
 			$list = apply_filters( 'rbn_kit_items', $list );
 			return is_array( $list ) ? $list : array();
+		}
+
+		/** Slug'ın kanonik sırası; tabloda yoksa tüm bilinenlerden sonra. */
+		private static function rank( string $slug ): int {
+			return self::ORDER[ $slug ] ?? PHP_INT_MAX;
+		}
+
+		/** `admin_menu` (en son öncelik): RBN Kit alt menüsünü kanonik sıraya yeniden kurar; başka eklentinin yaptığı sıralama geçersizdir. */
+		public static function enforce_order(): void {
+			global $submenu;
+			if ( ! isset( $submenu[ self::SLUG ] ) || ! is_array( $submenu[ self::SLUG ] ) ) {
+				return;
+			}
+			$rows = array();
+			foreach ( $submenu[ self::SLUG ] as $row ) {
+				if ( ! is_array( $row ) || ! isset( $row[2] ) || ! is_string( $row[2] ) || isset( $rows[ $row[2] ] ) ) {
+					continue;
+				}
+				$rows[ $row[2] ] = $row;
+			}
+			uksort(
+				$rows,
+				static function ( string $a, string $b ): int {
+					return array( self::rank( $a ), $a ) <=> array( self::rank( $b ), $b );
+				}
+			);
+			$submenu[ self::SLUG ] = array_values( $rows );
 		}
 
 		/** `admin_menu` (öncelik 9): üst menü bir kez, ardından Genel bakış ve eklenti alt öğeleri. */

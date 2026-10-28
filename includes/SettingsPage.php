@@ -23,7 +23,6 @@ final class SettingsPage {
 				'menu_title' => __( 'AdminKit', 'adminkit' ),
 				'cap'        => 'manage_options',
 				'callback'   => array( self::class, 'render' ),
-				'order'      => 90,
 				'version'    => ADMINKIT_VERSION,
 			)
 		);

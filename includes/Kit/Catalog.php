@@ -12,13 +12,15 @@ declare(strict_types=1);
 
 namespace AdminKit\Kit;
 
+use AdminKit\Core\Cache;
+
 defined( 'ABSPATH' ) || exit;
 
 final class Catalog {
 
 	/** Ayar: "Eklenti kataloğunu GitHub'dan canlı sorgula" ('1' = açık, varsayılan; '0' = kapalı). */
 	public const OPT_LIVE = 'adminkit_catalog_live';
-	public const CACHE    = 'adminkit_kit_rel_';
+	public const GROUP    = 'adminkit.catalog';
 	public const MAX_BODY = 262144;
 	public const PKG_BASE = 'https://github.com/RbnCore/';
 	private const TTL_OK  = 43200; // 12 saat.
@@ -185,9 +187,8 @@ final class Catalog {
 		if ( 'released' !== $item['status'] || ! self::live() ) {
 			return null;
 		}
-		$key = self::CACHE . $item['id'];
 		if ( ! $force ) {
-			$cached = get_transient( $key );
+			$cached = Cache::get( self::GROUP, $item['id'] );
 			if ( is_array( $cached ) && isset( $cached['status'] ) ) {
 				return $cached;
 			}
@@ -223,7 +224,7 @@ final class Catalog {
 			'release' => $rel,
 			'time'    => time(),
 		);
-		set_transient( $key, $record, $ttl );
+		Cache::set( self::GROUP, $item['id'], $record, $ttl );
 		return $record;
 	}
 

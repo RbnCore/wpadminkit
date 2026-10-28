@@ -66,7 +66,7 @@ All RBN plugins appear under one **RBN Kit** top-level menu just below Dashboard
 
 - This repository is the plugin folder itself. The release package is a git archive of the repository root with the `adminkit/` prefix, so only files that belong in the package are committed here.
 - Every module implements the `AdminKit\Module` interface (id, title, description, default state, settings schema, boot). Add your own with the `adminkit_modules` filter; the settings card, saving, sanitizing and defaults are generated from the schema.
-- The plugin boots only when `is_admin()` is true; activation hooks are registered everywhere, including WP-CLI.
+- The core (cache, log) boots in every context on `plugins_loaded` priority 1 and only registers hooks; the admin screens boot only when `is_admin()` is true; activation hooks are registered everywhere, including WP-CLI.
 - Settings live in one option (`adminkit_settings`) written through the WordPress Settings API; locked fields are not stored.
 - Tests, screenshots, documentation and publisher tools live in the project tree outside this repository, so they never reach the package.
 

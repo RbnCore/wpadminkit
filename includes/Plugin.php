@@ -1,6 +1,6 @@
 <?php
 /**
- * Çekirdek: dil dosyası, modül önyükleme, ayar sayfası.
+ * Yönetim önyüklemesi: dil dosyası, modül önyükleme, ayar sayfası (merkezi Cache + Log çekirdeği: Core\Core).
  *
  * @package AdminKit
  */
@@ -23,6 +23,7 @@ final class Plugin {
 	public static function init(): void {
 		load_plugin_textdomain( 'adminkit', false, dirname( plugin_basename( ADMINKIT_FILE ) ) . '/languages' );
 		SettingsPage::hooks(); // Menü başlıkları çevrilir; çeviri yüklendikten sonra kaydedilir.
+		Core\Page::hooks();
 		foreach ( Registry::all() as $module ) {
 			$settings = Settings::for_module( $module );
 			if ( $settings['enabled'] ) {
@@ -35,5 +36,6 @@ final class Plugin {
 		// Ayar satırı autoload 'no' ile açılır: yalnız yönetim panelinde okunur.
 		add_option( Settings::OPTION, array(), '', false );
 		add_option( Kit\Catalog::OPT_LIVE, '1', '', false );
+		Core\Core::activate();
 	}
 }

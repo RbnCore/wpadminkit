@@ -66,11 +66,13 @@ final class StickySave implements Module {
 				if ( $screen && method_exists( $screen, 'is_block_editor' ) && $screen->is_block_editor() ) {
 					return;
 				}
+				wp_enqueue_style( Assets::UI );
 				Assets::load(
 					'stickysave',
 					array(
 						'scope'     => (string) $settings['scope'],
 						'minHeight' => (int) $settings['min_height'],
+						'tone'      => false === strpos( Assets::tone_attr(), 'koyu' ) ? '' : 'koyu',
 						'i18n'      => array(
 							'save'  => __( 'Save changes', 'adminkit' ),
 							'dirty' => __( 'You have unsaved changes', 'adminkit' ),

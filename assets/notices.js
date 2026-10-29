@@ -15,10 +15,10 @@
 	function isError( el ) {
 		return el.classList.contains( 'notice-error' ) || el.classList.contains( 'error' );
 	}
-	// Kullanıcının kendi eyleminin geri bildirimi (ayar kaydedildi) ve satır içi bildirimler yerinde kalır.
+	// Kullanıcının kendi eyleminin geri bildirimi (ayar kaydedildi) ve satır içi bildirimler yerinde kalır. Kit kendi bildirimini `.rbn-note` ile yazar (SEL'e girmez); kit sayfalarında WordPress'in `.rbn-wrap` içine taşıdığı `.notice` da toplanır.
 	function collectable( el ) {
 		return ! isError( el ) && ! el.hidden && ! el.classList.contains( 'inline' ) && ! el.classList.contains( 'settings-error' ) &&
-			! el.closest( '.adminkit-nt, .rbn-wrap, .rbn-dlg, form, .postbox, #screen-meta' );
+			! el.closest( '.adminkit-nt, .rbn-dlg, form, .postbox, #screen-meta' );
 	}
 	function save() {
 		var body = new URLSearchParams( { action: 'adminkit_notices', nonce: cfg.nonce, open: open ? '1' : '0' } );

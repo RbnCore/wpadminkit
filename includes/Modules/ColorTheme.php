@@ -253,11 +253,11 @@ final class ColorTheme implements Module {
 					<input type="hidden" name="action" value="adminkit_color_save" />
 					<?php wp_nonce_field( self::NONCE, 'adminkit_ct_nonce' ); ?>
 					<?php self::widget( 'adminkit_ct', $values, 'user' ); ?>
-					<p class="ak-ct__actions">
+					<div class="rbn-form-actions">
 						<button type="submit" class="rbn-btn rbn-btn--pri"><?php esc_html_e( 'Save', 'adminkit' ); ?></button>
 						<button type="button" class="rbn-btn" data-ck-cancel><?php esc_html_e( 'Cancel preview', 'adminkit' ); ?></button>
 						<button type="submit" class="rbn-btn" name="action" value="adminkit_color_reset" formnovalidate><?php esc_html_e( 'Back to default', 'adminkit' ); ?></button>
-					</p>
+					</div>
 				</form>
 			<?php endif; ?>
 		</div>

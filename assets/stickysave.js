@@ -11,8 +11,25 @@
 	var origin = null;
 	var i;
 
+	/* Ana kaydet düğmesi: kit formu `.rbn-form-actions` bloğuyla bitirir (ana düğme `.rbn-btn--pri`); WordPress çekirdek formları `.button-primary` / `p.submit` kullanır. Öncelik sırasıyla aranır: ikincil düğmeler (örn. "Back to default") seçilmez. */
+	var PRIMARY = [
+		'.rbn-form-actions input[type=submit].rbn-btn--pri',
+		'.rbn-form-actions button[type=submit].rbn-btn--pri',
+		'p.submit input[type=submit]',
+		'p.submit button[type=submit]',
+		'#submit',
+		'input[type=submit].button-primary',
+		'button[type=submit].button-primary'
+	];
 	function primary( f ) {
-		return f.querySelector( 'p.submit input[type=submit], p.submit button[type=submit], #submit, input[type=submit].button-primary, button[type=submit].button-primary' );
+		var n;
+		for ( n = 0; n < PRIMARY.length; n++ ) {
+			var el = f.querySelector( PRIMARY[ n ] );
+			if ( el ) {
+				return el;
+			}
+		}
+		return null;
 	}
 	function usable( f ) {
 		if ( 'post' !== ( f.getAttribute( 'method' ) || 'get' ).toLowerCase() || f.id === 'post' || f.closest( '.rbn-dlg' ) ) {
@@ -60,7 +77,7 @@
 		bar.hidden = ! show;
 		document.body.classList.toggle( 'adminkit-has-bar', show );
 		root.style.setProperty( '--adminkit-bar-h', show ? bar.offsetHeight + 'px' : '0px' );
-		status.textContent = dirty ? cfg.i18n.dirty : '';
+		status.textContent = dirty ? cfg.i18n.dirty : ( show ? cfg.i18n.clean : '' );
 		bar.classList.toggle( 'is-dirty', dirty );
 	}
 	function check() {
@@ -68,14 +85,17 @@
 		render();
 	}
 
-	bar.className = 'adminkit-sb';
+	bar.className = 'adminkit-sb rbn-sticky';
+	if ( cfg.tone ) {
+		bar.setAttribute( 'data-tone', cfg.tone );
+	}
 	bar.setAttribute( 'role', 'region' );
 	bar.setAttribute( 'aria-label', cfg.i18n.bar );
 	bar.hidden = true;
 	status.className = 'adminkit-sb__st';
 	status.setAttribute( 'role', 'status' );
 	btn.type = 'button';
-	btn.className = 'button button-primary';
+	btn.className = 'rbn-btn rbn-btn--pri';
 	btn.textContent = cfg.i18n.save;
 	bar.appendChild( status );
 	bar.appendChild( btn );

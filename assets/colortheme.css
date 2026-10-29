@@ -26,6 +26,5 @@
 .ak-ct__rep li{display:flex;flex-wrap:wrap;align-items:center;gap:var(--rbn-s1) var(--rbn-s3);margin:0;padding:var(--rbn-s2) var(--rbn-s3);border:var(--rbn-bw) solid var(--rbn-line);border-radius:var(--rbn-r)}
 .ak-ct__lbl{flex:1 1 14rem;min-width:0}
 .ak-ct__note{flex:1 1 100%;margin:0}
-.ak-ct__actions{display:flex;flex-wrap:wrap;gap:var(--rbn-s3)}
 @media (max-width:1100px){.ak-ct__themes{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (max-width:782px){.ak-ct__themes{grid-template-columns:repeat(2,minmax(0,1fr))}.ak-ct__row label{min-width:100%}}

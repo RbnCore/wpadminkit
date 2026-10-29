@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace AdminKit\Core;
 
 use AdminKit\Kit\Catalog;
+use AdminKit\Kit\Download;
 use AdminKit\Kit\Installer;
 
 defined( 'ABSPATH' ) || exit;
@@ -58,6 +59,9 @@ final class Updater {
 	/**
 	 * Registers a plugin for central updates. Call it on `rbnkit_core_ready` (or directly when that already fired).
 	 *
+	 * The FIRST registration of a slug wins: a second plugin that claims the same slug is refused (the first owner
+	 * stays), so an update can never be applied to another plugin's file.
+	 *
 	 * @param string $slug    Plugin folder = catalog id.
 	 * @param string $file    Main plugin file (`__FILE__` of the main file).
 	 * @param string $version Installed version (the plugin's version constant).
@@ -65,6 +69,19 @@ final class Updater {
 	public static function register( string $slug, string $file, string $version ): bool {
 		// The catalog is NOT read here: its rows carry translated text and registration happens before `init`.
 		if ( 1 !== preg_match( '/^[a-z0-9\-]{2,40}$/', $slug ) ) {
+			return false;
+		}
+		if ( isset( self::$plugins[ $slug ] ) ) {
+			Log::log(
+				self::CHANNEL,
+				'warning',
+				'register_conflict',
+				'Another plugin tried to register a slug that is already registered; the first owner was kept.',
+				array(
+					'plugin' => $slug,
+					'owner'  => basename( (string) self::$plugins[ $slug ]['file'] ),
+				)
+			);
 			return false;
 		}
 		self::$plugins[ $slug ] = array(
@@ -122,7 +139,7 @@ final class Updater {
 				return $cached;
 			}
 		}
-		$res    = wp_remote_get(
+		$res    = wp_safe_remote_get(
 			'https://api.github.com/repos/' . $item['repo'] . '/releases/latest',
 			array(
 				'timeout'             => 5,
@@ -289,13 +306,40 @@ final class Updater {
 				'slug'         => $slug,
 				'version'      => $rel ? $rel['version'] : self::$plugins[ $slug ]['version'],
 				'url'          => $rel ? $rel['url'] : 'https://github.com/' . $item['repo'],
-				'package'      => $rel ? $rel['package'] : '',
+				'package'      => self::safe_package( $slug, $rel ),
 				'icons'        => array(),
 				'requires'     => $meta['requires'],
 				'requires_php' => $meta['requires_php'],
 			),
 			'' !== $meta['tested'] ? array( 'tested' => $meta['tested'] ) : array()
 		);
+	}
+
+	/**
+	 * The package address of an offer. A poisoned cache must not hand a foreign address to WordPress: the address has
+	 * to be the one release address of THIS plugin's own repository.
+	 *
+	 * @param array<string,string>|null $rel Release record (may come from the cache).
+	 * @return string Package address, or an empty string when it is not ours.
+	 */
+	private static function safe_package( string $slug, ?array $rel ): string {
+		if ( null === $rel || '' === (string) ( $rel['package'] ?? '' ) ) {
+			return '';
+		}
+		$item = Catalog::find( $slug );
+		if ( null === $item ) {
+			return '';
+		}
+		$package = (string) $rel['package'];
+		$prefix  = Catalog::PKG_BASE . Catalog::repo_name( $item ) . '/releases/download/';
+		if ( 0 !== strpos( $package, $prefix ) ) {
+			return '';
+		}
+		$version = (string) ( $rel['version'] ?? '' );
+		if ( 1 !== preg_match( '/^\d{1,4}\.\d{1,4}\.\d{1,4}$/', $version ) ) {
+			return '';
+		}
+		return $package === $prefix . $version . '/' . $slug . '-' . $version . '.zip' ? $package : '';
 	}
 
 	/** @return array{requires:string,requires_php:string,tested:string} */
@@ -352,6 +396,14 @@ final class Updater {
 	 * Downloads and verifies the package; returns the temp file path when valid (WordPress unpacks it).
 	 * Only addresses of a REGISTERED plugin's own repository are handled; everything else passes untouched.
 	 *
+	 * The gates, in this order, BEFORE any request leaves the site:
+	 *
+	 * 1. the central network setting (`Network::github_allowed( 'updates:SLUG' )`) — when it is off, NOT ONE request
+	 *    is sent, not even the digest or the signature file;
+	 * 2. WordPress' own file-modification switch (`DISALLOW_FILE_MODS`) — when file changes are closed, nothing is
+	 *    downloaded;
+	 * 3. the downgrade guard — a package that is not NEWER than the installed version is refused.
+	 *
 	 * @param mixed  $reply   Previous reply.
 	 * @param string $package Package URL.
 	 * @return mixed
@@ -368,17 +420,56 @@ final class Updater {
 		if ( null === $item || Catalog::repo_name( $item ) !== $m[1] ) {
 			return $reply; // Not one of ours (or the catalog installer handles it).
 		}
+		// Gate 1 — the central network setting. Off means off: no request at all, and the reason goes to the log.
+		if ( ! self::enabled( $slug ) ) {
+			Log::log(
+				self::CHANNEL,
+				'warning',
+				'update_offline',
+				__( 'Update stopped: the GitHub connection is turned off in the settings. The old version was kept.', 'adminkit' ),
+				array(
+					'plugin' => $slug,
+				)
+			);
+			return new \WP_Error( 'adminkit_update_offline', __( 'Update stopped: the GitHub connection is turned off in the settings. The old version was kept.', 'adminkit' ) );
+		}
+		// Gate 2 — WordPress' own file-modification switch (the same check the catalog installer uses).
+		if ( ! Installer::file_mods_allowed( 'adminkit_update' ) ) {
+			Log::log(
+				self::CHANNEL,
+				'warning',
+				'update_file_mods',
+				__( 'Update stopped: WordPress file changes are turned off on this site (DISALLOW_FILE_MODS). The old version was kept.', 'adminkit' ),
+				array(
+					'plugin' => $slug,
+				)
+			);
+			return new \WP_Error( 'adminkit_update_file_mods', __( 'Update stopped: WordPress file changes are turned off on this site (DISALLOW_FILE_MODS). The old version was kept.', 'adminkit' ) );
+		}
 		self::$verified = null;
 		$version        = $m[2];
-		$sha            = self::fetch_text( $package . '.sha256' );
-		$sig            = is_wp_error( $sha ) ? $sha : self::fetch_text( $package . '.sig' );
+		// Gate 3 — the downgrade guard: only a NEWER version may be installed.
+		if ( Installer::is_downgrade( self::$plugins[ $slug ]['version'], $version ) ) {
+			Log::log(
+				self::CHANNEL,
+				'warning',
+				'update_not_newer',
+				__( 'Update stopped: the released version is not newer than the installed one. The old version was kept.', 'adminkit' ),
+				array(
+					'plugin'  => $slug,
+					'version' => $version,
+				)
+			);
+			return new \WP_Error( 'adminkit_update_not_newer', __( 'Update stopped: the released version is not newer than the installed one. The old version was kept.', 'adminkit' ) );
+		}
+		$sha = self::fetch_text( $package . '.sha256' );
+		$sig = is_wp_error( $sha ) ? $sha : self::fetch_text( $package . '.sig' );
 		if ( is_wp_error( $sig ) ) {
 			return $sig;
 		}
-		if ( ! function_exists( 'download_url' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/file.php';
-		}
-		$tmp = download_url( $package, 300 );
+		// The package download carries the size cap of the installer (`Download::package`); the digest and the
+		// signature are small text files with their own cap.
+		$tmp = Download::package( $package, 300 );
 		if ( is_wp_error( $tmp ) ) {
 			return $tmp;
 		}

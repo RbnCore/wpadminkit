@@ -723,6 +723,18 @@ msgstr "Bu sürüm için sürüm notu yok."
 msgid "Update stopped: the digest or signature file could not be downloaded. The old version was kept."
 msgstr "Güncelleme durdu: özet ya da imza dosyası indirilemedi. Eski sürüm korundu."
 
+msgid "Update stopped: the GitHub connection is turned off in the settings. The old version was kept."
+msgstr "Güncelleme durdu: ayarlarda GitHub bağlantısı kapalı. Eski sürüm korundu."
+
+msgid "Update stopped: WordPress file changes are turned off on this site (DISALLOW_FILE_MODS). The old version was kept."
+msgstr "Güncelleme durdu: bu sitede WordPress dosya değişiklikleri kapalı (DISALLOW_FILE_MODS). Eski sürüm korundu."
+
+msgid "Update stopped: the released version is not newer than the installed one. The old version was kept."
+msgstr "Güncelleme durdu: yayımlanan sürüm kurulu sürümden yeni değil. Eski sürüm korundu."
+
+msgid "The released version is not newer than the installed one. Nothing was installed."
+msgstr "Yayımlanan sürüm kurulu sürümden yeni değil. Kurulmadı."
+
 msgid "Update rejected: the package did not pass the signature verification. The old version was kept."
 msgstr "Güncelleme reddedildi: paket imza doğrulamasından geçmedi. Eski sürüm korundu."
 

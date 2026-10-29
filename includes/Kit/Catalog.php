@@ -188,7 +188,7 @@ final class Catalog {
 				return $cached;
 			}
 		}
-		$res    = wp_remote_get(
+		$res    = wp_safe_remote_get(
 			'https://api.github.com/repos/' . $item['repo'] . '/releases/latest',
 			array(
 				'timeout'             => 5,

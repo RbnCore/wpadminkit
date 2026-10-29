@@ -860,6 +860,22 @@ msgid "Update stopped: the digest or signature file could not be downloaded. The
 msgstr ""
 
 #: includes/Core/Updater.php
+msgid "Update stopped: the GitHub connection is turned off in the settings. The old version was kept."
+msgstr ""
+
+#: includes/Core/Updater.php
+msgid "Update stopped: WordPress file changes are turned off on this site (DISALLOW_FILE_MODS). The old version was kept."
+msgstr ""
+
+#: includes/Core/Updater.php
+msgid "Update stopped: the released version is not newer than the installed one. The old version was kept."
+msgstr ""
+
+#: includes/Kit/Installer.php
+msgid "The released version is not newer than the installed one. Nothing was installed."
+msgstr ""
+
+#: includes/Core/Updater.php
 msgid "Update rejected: the package did not pass the signature verification. The old version was kept."
 msgstr ""
 

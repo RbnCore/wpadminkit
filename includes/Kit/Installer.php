@@ -43,9 +43,14 @@ final class Installer {
 		return '' !== self::$expect;
 	}
 
-	/** Bu sitede eklenti kurmaya WordPress izin veriyor mu (DISALLOW_FILE_MODS ve `file_mod_allowed` süzgeci). */
-	public static function file_mods_allowed(): bool {
-		return function_exists( 'wp_is_file_mod_allowed' ) ? wp_is_file_mod_allowed( 'adminkit_catalog_install' ) : ! ( defined( 'DISALLOW_FILE_MODS' ) && DISALLOW_FILE_MODS );
+	/**
+	 * Bu sitede dosya değişikliğine WordPress izin veriyor mu (DISALLOW_FILE_MODS ve `file_mod_allowed` süzgeci).
+	 * Tek uygulama: katalog kurulumu ve merkezi güncelleyici aynı kapıyı kullanır (kopya YAZMA).
+	 *
+	 * @param string $context Bağlam (`file_mod_allowed` süzgecine gider).
+	 */
+	public static function file_mods_allowed( string $context = 'adminkit_catalog_install' ): bool {
+		return function_exists( 'wp_is_file_mod_allowed' ) ? wp_is_file_mod_allowed( $context ) : ! ( defined( 'DISALLOW_FILE_MODS' ) && DISALLOW_FILE_MODS );
 	}
 
 	// ───────────────────────── Doğrulama (saf) ─────────────────────────
@@ -80,6 +85,17 @@ final class Installer {
 			return new \WP_Error( 'adminkit_bad_sig', __( 'Could not verify the package signature. Nothing was installed.', 'adminkit' ) );
 		}
 		return true;
+	}
+
+	/**
+	 * Sürüm düşürme koruması: sunulan sürüm kurulu sürümden ESKİ ya da AYNI ise kurulmaz.
+	 * Tek uygulama: katalog kurulumu ve merkezi güncelleyici aynı kuralı kullanır (kopya YAZMA).
+	 *
+	 * @param string $installed Kurulu sürüm (boş ise koruma yok).
+	 * @param string $offered   Sunulan sürüm.
+	 */
+	public static function is_downgrade( string $installed, string $offered ): bool {
+		return '' !== $installed && ! version_compare( $offered, $installed, '>' );
 	}
 
 	/**
@@ -247,6 +263,11 @@ final class Installer {
 		if ( null === $item || Catalog::repo_name( $item ) !== $m[1] ) {
 			return new \WP_Error( 'adminkit_unknown', __( 'This plugin is not in the catalog.', 'adminkit' ) );
 		}
+		// Sürüm düşürme koruması: kurulu sürümden eski ya da aynı sürüm kurulmaz.
+		$state = Catalog::state( $item );
+		if ( self::is_downgrade( $state['version'], $version ) ) {
+			return new \WP_Error( 'adminkit_not_newer', __( 'The released version is not newer than the installed one. Nothing was installed.', 'adminkit' ) );
+		}
 		$sha = self::fetch_text( $package . '.sha256' );
 		$sig = is_wp_error( $sha ) ? $sha : self::fetch_text( $package . '.sig' );
 		if ( is_wp_error( $sig ) ) {
@@ -255,9 +276,9 @@ final class Installer {
 		if ( ! function_exists( 'download_url' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/file.php';
 		}
-		$tmp = download_url( $package, 300 );
+		$tmp = Download::package( $package, 300 );
 		if ( is_wp_error( $tmp ) ) {
-			return new \WP_Error( 'adminkit_download_fail', __( 'Could not download the package. Nothing was installed.', 'adminkit' ) );
+			return $tmp;
 		}
 		$ok = self::check_package( $id, $tmp, $version, $sha, $sig );
 		if ( is_wp_error( $ok ) ) {

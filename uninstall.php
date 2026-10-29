@@ -1,6 +1,6 @@
 <?php
 /**
- * Kaldırma: yalnız AdminKit'in kendi verisi silinir: ayarlar, çekirdek (Cache + Log) tablosu/seçenekleri/zamanlı görevi, `rbnkit_*` önbellek girdileri, kullanıcı metası `adminkit_*`.
+ * Kaldırma: yalnız AdminKit'in kendi verisi silinir: ayarlar, çekirdek (Cache + Log) tablosu/seçenekleri/zamanlı görevi, yalnız `rbnkit_adminkit.*` önbellek girdileri (başka eklentinin önbelleğine dokunulmaz), kullanıcı metası `adminkit_*`.
  *
  * @package AdminKit
  */
@@ -17,6 +17,7 @@ delete_option( 'rbnkit_core_cache_stats' );
 wp_clear_scheduled_hook( 'rbnkit_core_prune' );
 
 global $wpdb;
-$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\_transient\_rbnkit\_%' OR option_name LIKE '\_transient\_timeout\_rbnkit\_%'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.NotPrepared
+$own = $wpdb->esc_like( 'rbnkit_adminkit.' ) . '%'; // Cache key shape rbnkit_<plugin>.<group>...: only AdminKit's own prefix; every other plugin purges itself (Cache::purge_plugin).
+$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s", '\_transient\_' . $own, '\_transient\_timeout\_' . $own ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}rbnkit_log" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.SchemaChange
 $wpdb->query( "DELETE FROM {$wpdb->usermeta} WHERE meta_key LIKE 'adminkit\\_%'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.NotPrepared

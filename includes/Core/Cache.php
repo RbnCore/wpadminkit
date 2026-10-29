@@ -276,7 +276,7 @@ final class Cache {
 		if ( isset( self::$groups[ $group ] ) ) {
 			return self::$groups[ $group ];
 		}
-		_doing_it_wrong( __METHOD__, esc_html( 'Cache group "' . $group . '" is not registered.' ), '0.1.0' );
+		_doing_it_wrong( __METHOD__, 'Cache group [' . substr( (string) preg_replace( '/[^a-z0-9_.\-]/i', '', $group ), 0, 60 ) . '] is not registered.', '0.1.0' );
 		return null;
 	}
 

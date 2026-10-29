@@ -70,7 +70,7 @@ final class Log {
 	 */
 	public static function log( string $channel, string $level, string $event, string $message = '', array $context = array() ): bool {
 		if ( ! isset( self::$channels[ $channel ] ) ) {
-			_doing_it_wrong( __METHOD__, esc_html( 'Log channel "' . $channel . '" is not registered.' ), '0.1.0' );
+			_doing_it_wrong( __METHOD__, 'Log channel [' . substr( (string) preg_replace( '/[^a-z0-9_.\-]/i', '', $channel ), 0, 60 ) . '] is not registered.', '0.1.0' );
 			return false;
 		}
 		$event = substr( (string) preg_replace( '/[^a-z0-9_.:\-]/', '', strtolower( $event ) ), 0, 60 );

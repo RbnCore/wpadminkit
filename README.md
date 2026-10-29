@@ -24,7 +24,7 @@ The core (cache, logs, network) loads on every request — front end, REST and c
 
 - **Cache with named groups.** A plugin registers its own groups (`plugin.name`) with a lifetime. A group is cleared by raising its version, so the old entries expire on their own instead of being deleted one row at a time. The driver is WordPress's object cache when the site has a persistent one, transients otherwise.
 - **Logs with named channels.** A channel declares its retention (1–365 days), a row limit (100–100,000) and the levels it accepts; a daily task prunes it. Before a line is stored, e-mail addresses become `[email]`, IPv4 and IPv6 addresses `[ip]`, and known token prefixes (GitHub, Stripe, OpenAI-style keys, AWS keys, JWTs, Slack tokens) `[redacted]`; a context value whose key looks like a secret or an identifier is redacted too. The Cache and Logs screens are tabs of **RBN Kit → Overview** and have no menu entry of their own.
-- **One network switch.** "Allow RBN plugins to check GitHub for updates and the plugin catalog" (AdminKit settings, Network section) is the only place this is decided. While it is off, no RBN plugin makes a request to GitHub.
+- **One network switch.** "Allow RBN plugins to check GitHub for updates and the plugin catalog" (AdminKit settings → General → Network) is the only place this is decided. While it is off, no RBN plugin makes a request to GitHub.
 - **Plugin catalog.** **RBN Kit → Overview** has an *Installed* and a *Plugin catalog* tab. A package is installed from GitHub only after its SHA-256 digest and Ed25519 signature check out; installation does not activate the plugin.
 - **Shared admin kit** (`rbn-admin-ui`): tabs, cards, tables, buttons, form fields, notices, empty states and one SVG icon sprite, with a dark tone — every RBN Kit screen turns dark when the user's WordPress admin colour scheme is "Midnight" (filter `adminkit_tone`). Each plugin loads the kit from here and ships no copy of it.
 
@@ -78,7 +78,7 @@ Version 0.1.0 has no automatic update channel of its own.
 
 - Nothing is added to the front end: no script, style, query or output.
 - The plugin contacts GitHub in one place only: opening **RBN Kit → Overview** asks `api.github.com/repos/<repo>/releases/latest` for each catalog entry that is marked as released (plain GET, 5-second timeout, 12-hour cache for a successful answer, 1-hour cache for an error, user agent `AdminKit/<version>`). No site address, user detail, cookie or token is sent.
-- Turning off **"Allow RBN plugins to check GitHub for updates and the plugin catalog"** (Network section of the AdminKit settings page, one setting for all RBN plugins) means no network request is made at all, and the Install buttons are disabled.
+- Turning off **"Allow RBN plugins to check GitHub for updates and the plugin catalog"** (General → Network section of the AdminKit settings page, one setting for all RBN plugins) means no network request is made at all, and the Install buttons are disabled.
 - Installing from the catalog only accepts packages from `https://github.com/RbnCore/<repo>/releases/download/<version>/`, requires the `.sha256` and `.sig` assets, and does not activate the plugin by itself. When `DISALLOW_FILE_MODS` is on, Install and Activate are hidden.
 - On uninstall only the plugin's own data is removed: the `adminkit_settings` option and `adminkit_*` user meta.
 

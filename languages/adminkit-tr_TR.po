@@ -788,3 +788,11 @@ msgstr "İptal"
 #, php-format
 msgid "Type %s to confirm"
 msgstr "Onaylamak için %s yazın"
+
+#: includes/SettingsPage.php:39
+msgid "Settings saved."
+msgstr "Ayarlar kaydedildi."
+
+#: includes/Core/Updater.php
+msgid "Update rejected: the package was not installed. The old version was kept."
+msgstr "Güncelleme reddedildi: paket kurulmadı. Eski sürüm korundu."

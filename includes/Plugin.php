@@ -24,6 +24,7 @@ final class Plugin {
 		load_plugin_textdomain( 'adminkit', false, dirname( plugin_basename( ADMINKIT_FILE ) ) . '/languages' );
 		SettingsPage::hooks(); // Menü başlıkları çevrilir; çeviri yüklendikten sonra kaydedilir.
 		Assets::hooks();
+		Helpers\Toast::hooks();
 		Core\Admin::hooks();
 		foreach ( Registry::all() as $module ) {
 			$settings = Settings::for_module( $module );

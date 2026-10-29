@@ -798,6 +798,30 @@ msgstr ""
 msgid "You are not allowed to view this page."
 msgstr ""
 
+#: includes/Assets.php:33
+msgid "Close"
+msgstr ""
+
+#: includes/Assets.php:34
+msgid "Confirm"
+msgstr ""
+
+#: includes/Assets.php:35
+msgid "Are you sure?"
+msgstr ""
+
+#: includes/Assets.php:36
+msgid "Delete"
+msgstr ""
+
+#: includes/Assets.php:37
+msgid "OK"
+msgstr ""
+
+#: includes/Assets.php:38
+msgid "Cancel"
+msgstr ""
+
 #: includes/RbnKitMenu.php:176
 msgid "You do not have permission to access this page."
 msgstr ""

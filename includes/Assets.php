@@ -27,6 +27,18 @@ final class Assets {
 	public static function register_ui(): void {
 		wp_register_style( self::UI, ADMINKIT_URL . 'assets/ui/rbn-admin-ui.css', array(), self::ver( 'ui/rbn-admin-ui.css' ) );
 		wp_register_script( self::UI, ADMINKIT_URL . 'assets/ui/rbn-admin-ui.js', array(), self::ver( 'ui/rbn-admin-ui.js' ), array( 'strategy' => 'defer', 'in_footer' => true ) );
+		wp_localize_script(
+			self::UI,
+			'RbnUiI18n',
+			array(
+				'close'         => __( 'Close', 'adminkit' ),
+				'confirm'       => __( 'Confirm', 'adminkit' ),
+				'confirmDelete' => __( 'Are you sure?', 'adminkit' ),
+				'delete'        => __( 'Delete', 'adminkit' ),
+				'ok'            => __( 'OK', 'adminkit' ),
+				'cancel'        => __( 'Cancel', 'adminkit' ),
+			)
+		);
 	}
 
 	/** SVG ikon sprite'ı: kit yüklendiyse sayfaya bir kez basılır (`<use href="#i-...">`). */

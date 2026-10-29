@@ -759,3 +759,27 @@ msgstr "Güncelleme denetimi tamamlandı."
 #: includes/SettingsPage.php
 msgid "The update check is off; nothing was checked."
 msgstr "Güncelleme denetimi kapalı; hiçbir şey denetlenmedi."
+
+#: includes/Assets.php:33
+msgid "Close"
+msgstr "Kapat"
+
+#: includes/Assets.php:34
+msgid "Confirm"
+msgstr "Onayla"
+
+#: includes/Assets.php:35
+msgid "Are you sure?"
+msgstr "Emin misiniz?"
+
+#: includes/Assets.php:36
+msgid "Delete"
+msgstr "Sil"
+
+#: includes/Assets.php:37
+msgid "OK"
+msgstr "Tamam"
+
+#: includes/Assets.php:38
+msgid "Cancel"
+msgstr "İptal"

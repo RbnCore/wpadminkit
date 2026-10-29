@@ -27,11 +27,11 @@ final class Settings {
 		);
 		register_setting(
 			self::GROUP,
-			Kit\Catalog::OPT_LIVE,
+			Core\Network::OPT_GITHUB,
 			array(
 				'type'              => 'string',
 				'default'           => '1',
-				'sanitize_callback' => array( Kit\Catalog::class, 'sanitize_live' ),
+				'sanitize_callback' => array( Core\Network::class, 'sanitize' ),
 			)
 		);
 	}

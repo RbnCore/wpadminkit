@@ -10,7 +10,7 @@ declare(strict_types=1);
 defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
 
 delete_option( 'adminkit_settings' );
-delete_option( 'adminkit_catalog_live' );
+delete_option( 'adminkit_network_github' );
 delete_option( 'rbnkit_core_db_version' );
 delete_option( 'rbnkit_core_group_versions' );
 delete_option( 'rbnkit_core_cache_stats' );

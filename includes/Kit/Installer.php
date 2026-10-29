@@ -7,7 +7,7 @@
  * - İmzalanan ileti: `<ad>|<sürüm>|<sha256>`. Genel anahtar `includes/update-pubkey.php` (CookieKit'tekiyle aynı).
  * - Yalnız `https://github.com/RbnCore/<depo>/releases/download/...` adresleri; kancalar yalnız kurulum sürerken takılıdır.
  * - Kurulumdan sonra eklenti etkinleşmez; "Etkinleştir" ayrı bir tıklamadır.
- * - `DISALLOW_FILE_MODS` ya da canlı sorgu kapalıyken kurulum yapılmaz.
+ * - `DISALLOW_FILE_MODS` ya da merkezi ağ ayarı (GitHub) kapalıyken kurulum yapılmaz.
  *
  * @package AdminKit
  */
@@ -15,6 +15,8 @@
 declare(strict_types=1);
 
 namespace AdminKit\Kit;
+
+use AdminKit\Core\Network;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -129,7 +131,7 @@ final class Installer {
 		if ( ! self::file_mods_allowed() ) {
 			return new \WP_Error( 'adminkit_file_mods', __( 'Plugin installation is turned off on this site (DISALLOW_FILE_MODS). Nothing was installed.', 'adminkit' ) );
 		}
-		if ( ! Catalog::live() ) {
+		if ( ! Network::github_allowed( 'catalog' ) ) {
 			return new \WP_Error( 'adminkit_offline', __( 'The plugin catalog GitHub lookup is turned off in the settings. Nothing was installed.', 'adminkit' ) );
 		}
 		if ( 'released' !== $item['status'] ) {

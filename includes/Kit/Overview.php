@@ -15,6 +15,7 @@ namespace AdminKit\Kit;
 
 use AdminKit\Assets;
 use AdminKit\Core\Admin;
+use AdminKit\Core\Network;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -170,10 +171,10 @@ final class Overview {
 
 	/** @param array<int, array<string, mixed>> $rows Katalog satırları. */
 	private static function catalog_panel( array $rows ): void {
-		$live = Catalog::live();
+		$live = Network::github_allowed( 'catalog' );
 		echo '<p class="rbn-lead">' . esc_html__( 'WordPress plugins by RBN. Installation takes one click; a package is not installed if its SHA-256 digest and signature cannot be verified.', 'adminkit' ) . '</p>';
 		if ( ! $live ) {
-			echo Assets::note( 'info', __( 'The catalog is offline: the GitHub lookup is turned off in the AdminKit settings. This page makes no network request; the “Install” buttons are disabled.', 'adminkit' ), '<a class="rbn-btn rbn-btn--sm" href="' . esc_url( \AdminKit\SettingsPage::url() . '#adminkit-katalog' ) . '">' . esc_html__( 'Open the setting', 'adminkit' ) . '</a>' ); // phpcs:ignore WordPress.Security.EscapeOutput -- Assets::note() kaçışlar.
+			echo Assets::note( 'info', __( 'The catalog is offline: the GitHub lookup is turned off in the AdminKit settings. This page makes no network request; the “Install” buttons are disabled.', 'adminkit' ), '<a class="rbn-btn rbn-btn--sm" href="' . esc_url( \AdminKit\SettingsPage::url() . '#adminkit-network' ) . '">' . esc_html__( 'Open the setting', 'adminkit' ) . '</a>' ); // phpcs:ignore WordPress.Security.EscapeOutput -- Assets::note() kaçışlar.
 		}
 		if ( ! Installer::file_mods_allowed() ) {
 			echo Assets::note( 'info', __( 'Plugin installation is turned off on this site (DISALLOW_FILE_MODS); the “Install” and “Activate” buttons are not shown.', 'adminkit' ) ); // phpcs:ignore WordPress.Security.EscapeOutput -- Assets::note() kaçışlar.
@@ -210,7 +211,7 @@ final class Overview {
 		} else {
 			$ready = is_array( $rel ) && 'ok' === $rel['status'] && is_array( $rel['release'] );
 			if ( ! $ready ) {
-				$why = ! Catalog::live() ? __( 'Offline mode', 'adminkit' ) : ( is_array( $rel ) && 'none' === $rel['status'] ? __( 'No release found', 'adminkit' ) : __( 'Could not get version information', 'adminkit' ) );
+				$why = ! Network::github_allowed( 'catalog' ) ? __( 'Offline mode', 'adminkit' ) : ( is_array( $rel ) && 'none' === $rel['status'] ? __( 'No release found', 'adminkit' ) : __( 'Could not get version information', 'adminkit' ) );
 				echo '<span class="rbn-help">' . esc_html( $why ) . '</span>';
 			}
 			echo '</div><div class="rbn-card__ops">';

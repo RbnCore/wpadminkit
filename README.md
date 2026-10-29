@@ -44,7 +44,7 @@ Version 0.1.0 has no automatic update channel of its own.
 
 - Nothing is added to the front end: no script, style, query or output.
 - The plugin contacts GitHub in one place only: opening **RBN Kit → Overview** asks `api.github.com/repos/<repo>/releases/latest` for each catalog entry that is marked as released (plain GET, 5-second timeout, 12-hour cache for a successful answer, 1-hour cache for an error, user agent `AdminKit/<version>`). No site address, user detail, cookie or token is sent.
-- Turning off **"Look up the plugin catalog on GitHub live"** on the AdminKit settings page means no network request is made at all, and the Install buttons are disabled.
+- Turning off **"Allow RBN plugins to check GitHub for updates and the plugin catalog"** (Network section of the AdminKit settings page, one setting for all RBN plugins) means no network request is made at all, and the Install buttons are disabled.
 - Installing from the catalog only accepts packages from `https://github.com/RbnCore/<repo>/releases/download/<version>/`, requires the `.sha256` and `.sig` assets, and does not activate the plugin by itself. When `DISALLOW_FILE_MODS` is on, Install and Activate are hidden.
 - On uninstall only the plugin's own data is removed: the `adminkit_settings` option and `adminkit_*` user meta.
 

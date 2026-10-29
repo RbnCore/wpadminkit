@@ -108,35 +108,30 @@ final class SettingsPage {
 							<?php foreach ( 'modules' === $key ? $small : array_filter( $big, static fn( Module $m ): bool => $m->id() === $key ) as $module ) : ?>
 								<?php self::card( $module ); ?>
 							<?php endforeach; ?>
-							<?php
-							if ( 'modules' === $key ) {
-								self::catalog_card();
-							}
-							?>
 						</ul>
+						<?php
+						if ( 'modules' === $key ) {
+							self::network_section();
+						}
+						?>
 					</div>
 				<?php endforeach; ?>
-				<p><button type="submit" class="rbn-btn rbn-btn--pri"><?php esc_html_e( 'Save changes', 'adminkit' ); ?></button></p>
+				<div class="rbn-form-actions"><button type="submit" class="rbn-btn rbn-btn--pri"><?php esc_html_e( 'Save changes', 'adminkit' ); ?></button></div>
 			</form>
 		</div>
 		<?php
 	}
 
-	/** RBN Kit → Genel bakış kataloğunun GitHub sorgusu (modül değil; kendi ayar satırı). */
-	private static function catalog_card(): void {
+	/** Central network setting (not a module): one line, shared by every RBN plugin. */
+	private static function network_section(): void {
 		?>
-		<li class="rbn-card" id="adminkit-katalog">
-			<div class="rbn-card__h">
-				<h2><?php esc_html_e( 'Plugin catalog', 'adminkit' ); ?></h2>
-				<p><?php esc_html_e( 'The catalog on the RBN Kit → Overview page learns about new versions and install packages from GitHub. A plain GET request is sent only when that page is opened; your site address and user details are not sent.', 'adminkit' ); ?></p>
+		<section class="ak-network" id="adminkit-network" aria-labelledby="adminkit-network-t">
+			<h2 id="adminkit-network-t"><?php esc_html_e( 'Network', 'adminkit' ); ?></h2>
+			<div class="rbn-field">
+				<label class="rbn-check"><input type="checkbox" name="<?php echo esc_attr( Core\Network::OPT_GITHUB ); ?>" value="1" <?php checked( Core\Network::github_allowed() ); ?> aria-describedby="adminkit-network-h" /> <?php esc_html_e( 'Allow RBN plugins to check GitHub for updates and the plugin catalog', 'adminkit' ); ?></label>
+				<span class="rbn-help" id="adminkit-network-h"><?php esc_html_e( 'Off: no network request is sent; update checks and catalog installs are disabled for all RBN plugins.', 'adminkit' ); ?></span>
 			</div>
-			<div class="rbn-card__b">
-				<div class="rbn-field">
-					<label class="rbn-check"><input type="checkbox" name="<?php echo esc_attr( Kit\Catalog::OPT_LIVE ); ?>" value="1" <?php checked( Kit\Catalog::live() ); ?> aria-describedby="adminkit-katalog-h" /> <?php esc_html_e( 'Look up the plugin catalog on GitHub live', 'adminkit' ); ?></label>
-					<span class="rbn-help" id="adminkit-katalog-h"><?php esc_html_e( 'When off, the catalog is shown only from the list bundled with the plugin, no network request is made, and the “Install” buttons are disabled.', 'adminkit' ); ?></span>
-				</div>
-			</div>
-		</li>
+		</section>
 		<?php
 	}
 

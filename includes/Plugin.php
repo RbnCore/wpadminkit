@@ -36,7 +36,7 @@ final class Plugin {
 	public static function activate(): void {
 		// Ayar satırı autoload 'no' ile açılır: yalnız yönetim panelinde okunur.
 		add_option( Settings::OPTION, array(), '', false );
-		add_option( Kit\Catalog::OPT_LIVE, '1', '', false );
+		add_option( Core\Network::OPT_GITHUB, '1', '', false );
 		Core\Core::activate();
 	}
 }

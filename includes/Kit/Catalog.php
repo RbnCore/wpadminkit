@@ -1,9 +1,9 @@
 <?php
 /**
- * Eklenti kataloğu: statik liste + kurulu/etkin durumu + GitHub "son yayın" sorgusu (önbellekli, ayardan kapatılabilir).
+ * Eklenti kataloğu: statik liste + kurulu/etkin durumu + GitHub "son yayın" sorgusu (önbellekli, merkezi ağ ayarından kapatılabilir).
  *
  * Gizlilik: GitHub'a yalnız katalog sayfası açıldığında, yalnız `released` öğeler için, belirteçsiz düz GET gider
- * (site adresi/kullanıcı bilgisi yok). Anahtar kapalıysa HİÇ ağ çağrısı yapılmaz.
+ * (site adresi/kullanıcı bilgisi yok). Ağ ayarı kapalıysa HİÇ ağ çağrısı yapılmaz.
  *
  * @package AdminKit
  */
@@ -13,13 +13,12 @@ declare(strict_types=1);
 namespace AdminKit\Kit;
 
 use AdminKit\Core\Cache;
+use AdminKit\Core\Network;
 
 defined( 'ABSPATH' ) || exit;
 
 final class Catalog {
 
-	/** Ayar: "Eklenti kataloğunu GitHub'dan canlı sorgula" ('1' = açık, varsayılan; '0' = kapalı). */
-	public const OPT_LIVE = 'adminkit_catalog_live';
 	public const GROUP    = 'adminkit.catalog';
 	public const MAX_BODY = 262144;
 	public const PKG_BASE = 'https://github.com/RbnCore/';
@@ -28,10 +27,6 @@ final class Catalog {
 
 	/** @var array<int, array<string, string>>|null */
 	private static ?array $items = null;
-
-	public static function live(): bool {
-		return '0' !== (string) get_option( self::OPT_LIVE, '1' );
-	}
 
 	/**
 	 * Geçerli katalog öğeleri. Bozuk satır (eksik alan, kimlikle uyuşmayan depo/dosya) atlanır.
@@ -184,7 +179,7 @@ final class Catalog {
 	 * @return array{status:string,release:?array<string,string>,time:int}|null status: ok | none | error
 	 */
 	public static function release( array $item, bool $force = false ): ?array {
-		if ( 'released' !== $item['status'] || ! self::live() ) {
+		if ( 'released' !== $item['status'] || ! Network::github_allowed( 'catalog' ) ) {
 			return null;
 		}
 		if ( ! $force ) {
@@ -226,14 +221,5 @@ final class Catalog {
 		);
 		Cache::set( self::GROUP, $item['id'], $record, $ttl );
 		return $record;
-	}
-
-	/**
-	 * Ayar sayfasındaki anahtarın temizleyicisi: yalnız '1' açık; gönderilmeyen (işaretsiz) kapalıdır.
-	 *
-	 * @param mixed $value Ham değer.
-	 */
-	public static function sanitize_live( $value ): string {
-		return '1' === (string) $value ? '1' : '0';
 	}
 }

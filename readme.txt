@@ -19,7 +19,7 @@ Adds features to the WordPress admin area, module by module. You turn each modul
 * Notice organizer: collects informational notices in one box. Error notices are never hidden.
 * Hide side menu items (example module, off by default): only changes the view, does not block access.
 * Color theme (off by default): 5 ready themes or your own colors; per user, with a live preview; the contrast is checked against WCAG AA (4.5:1).
-* Adds nothing to the front end. An outside connection is made only when the RBN Kit → Overview page is opened, and only to GitHub (plugin catalog); if you turn off "Look up the plugin catalog on GitHub live" in the AdminKit settings, no network request is made at all.
+* Adds nothing to the front end. An outside connection is made only when the RBN Kit → Overview page is opened, and only to GitHub (plugin catalog); if you turn off "Allow RBN plugins to check GitHub for updates and the plugin catalog" in the AdminKit settings, no network request is made at all.
 * RBN Kit → Overview: **Installed** and **Plugin catalog** tabs. One-click install from the catalog: a signed GitHub release, with SHA-256 + Ed25519 verification required; after the install you still select "Activate" yourself.
 
 == Installation ==

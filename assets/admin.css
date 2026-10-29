@@ -10,3 +10,5 @@
 .ak-num{display:inline-flex;align-items:center;gap:var(--rbn-s2)}
 .rbn-wrap .rbn-field fieldset{margin:0;padding:0;border:0;min-width:0}
 .rbn-wrap .rbn-field fieldset .rbn-check{display:inline-flex;margin-inline-end:var(--rbn-s5)}
+.ak-network{margin:var(--rbn-s5) 0 0}                        /* merkezi ağ ayarı: kart değil, tek satırlık genel tercih */
+.ak-network h2{font-size:var(--rbn-fs-h3);line-height:var(--rbn-lh-h3);margin:0 0 var(--rbn-s2)}

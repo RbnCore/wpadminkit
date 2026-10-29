@@ -25,7 +25,7 @@ define( 'ADMINKIT_FILE', __FILE__ );
 define( 'ADMINKIT_DIR', plugin_dir_path( __FILE__ ) );
 define( 'ADMINKIT_URL', plugin_dir_url( __FILE__ ) );
 // Core API level for dependent RBN plugins: they run only when `ADMINKIT_CORE_API >= N` (docs/cekirdek.md §6).
-define( 'ADMINKIT_CORE_API', 1 );
+define( 'ADMINKIT_CORE_API', 2 );
 
 spl_autoload_register(
 	static function ( string $class_name ): void {

@@ -444,3 +444,9 @@ msgstr ""
 #. Plugin header
 msgid "Adds features to the WordPress admin area, module by module: back-to-top button, sticky save bar, notice organizer, color theme and a sample customization. Each module can be turned on or off. Adds nothing to the front end; connects to GitHub only for the plugin catalog (can be turned off in the settings)."
 msgstr ""
+
+msgid "Modules"
+msgstr ""
+
+msgid "AdminKit settings tabs"
+msgstr ""

@@ -57,6 +57,7 @@ final class SettingsPage {
 		wp_enqueue_style( 'adminkit-admin', ADMINKIT_URL . 'assets/admin.css', array( Assets::UI ), Assets::ver( 'admin.css' ) );
 		// Renk kartının arayüzü (palet kartları, önizleme, kontrast) modül açık/kapalı olsa da bu ekranda hep gelir.
 		Modules\ColorTheme::enqueue( $hook );
+		Assets::load( 'settings', array(), false );
 	}
 
 	public static function render(): void {
@@ -65,30 +66,56 @@ final class SettingsPage {
 		}
 		$modules = Registry::all();
 		$open    = 0;
+		$small   = array();
+		$big     = array();
+		// Büyük ayar arayüzü olan modül (tab_label() tanımlı) kendi sekmesini alır; küçükler "Modules" sekmesinde kalır.
+		$tabs = array( 'modules' => __( 'Modules', 'adminkit' ) );
 		foreach ( $modules as $module ) {
 			$open += Settings::for_module( $module )['enabled'] ? 1 : 0;
+			if ( method_exists( $module, 'tab_label' ) ) {
+				$big[]                 = $module;
+				$tabs[ $module->id() ] = (string) $module->tab_label();
+			} else {
+				$small[] = $module;
+			}
 		}
+		$tab = isset( $_GET['tab'] ) && isset( $tabs[ (string) $_GET['tab'] ] ) ? (string) $_GET['tab'] : 'modules'; // phpcs:ignore WordPress.Security.NonceVerification,WordPress.Security.ValidatedSanitizedInput -- yalnız sekme seçimi, anahtar listeyle eşlenir.
 		?>
 		<div class="wrap rbn-wrap"<?php echo Assets::tone_attr(); // phpcs:ignore WordPress.Security.EscapeOutput ?>>
 			<div class="rbn-head">
-				<h1><?php echo esc_html__( 'AdminKit', 'adminkit' ); ?></h1>
-				<span class="rbn-chip"><?php echo esc_html( 'v' . ADMINKIT_VERSION ); ?></span>
-				<span class="rbn-chip rbn-chip--ok"><span class="rbn-dot"></span>
-					<?php
-					/* translators: 1: open module count, 2: total module count */
-					echo esc_html( sprintf( __( '%1$d of %2$d modules on', 'adminkit' ), $open, count( $modules ) ) );
-					?>
-				</span>
+				<div class="rbn-head__id">
+					<h1><?php echo esc_html__( 'AdminKit', 'adminkit' ); ?></h1>
+					<span class="rbn-chip"><?php echo esc_html( 'v' . ADMINKIT_VERSION ); ?></span>
+					<span class="rbn-chip rbn-chip--ok"><span class="rbn-dot"></span>
+						<?php
+						/* translators: 1: open module count, 2: total module count */
+						echo esc_html( sprintf( __( '%1$d of %2$d modules on', 'adminkit' ), $open, count( $modules ) ) );
+						?>
+					</span>
+				</div>
 			</div>
 			<p class="rbn-lead"><?php esc_html_e( 'Each module adds one feature to the admin area. Turn on only what you need. Nothing here changes the public site.', 'adminkit' ); ?></p>
 			<form method="post" action="options.php">
 				<?php settings_fields( Settings::GROUP ); ?>
-				<ul class="rbn-cards">
-					<?php foreach ( $modules as $module ) : ?>
-						<?php self::card( $module ); ?>
+				<div class="rbn-tabs" role="tablist" aria-label="<?php esc_attr_e( 'AdminKit settings tabs', 'adminkit' ); ?>" data-rbn-tabs>
+					<?php foreach ( $tabs as $key => $label ) : ?>
+						<a role="tab" id="adminkit-tab-<?php echo esc_attr( $key ); ?>" class="rbn-tabs__tab" href="<?php echo esc_url( add_query_arg( 'tab', $key, self::url() ) ); ?>" data-key="<?php echo esc_attr( $key ); ?>" aria-controls="adminkit-panel-<?php echo esc_attr( $key ); ?>" aria-selected="<?php echo $tab === $key ? 'true' : 'false'; ?>" tabindex="<?php echo $tab === $key ? '0' : '-1'; ?>"><?php echo esc_html( $label ); ?></a>
 					<?php endforeach; ?>
-				</ul>
-				<?php self::catalog_card(); ?>
+				</div>
+				<?php foreach ( $tabs as $key => $label ) : ?>
+					<div role="tabpanel" id="adminkit-panel-<?php echo esc_attr( $key ); ?>" class="rbn-tabpanel" aria-labelledby="adminkit-tab-<?php echo esc_attr( $key ); ?>" tabindex="0"<?php echo $tab === $key ? '' : ' hidden'; ?>>
+						<ul class="rbn-cards ak-cards<?php echo 'modules' === $key ? '' : ' ak-cards--one'; ?>">
+							<?php foreach ( 'modules' === $key ? $small : array_filter( $big, static fn( Module $m ): bool => $m->id() === $key ) as $module ) : ?>
+								<?php self::card( $module ); ?>
+							<?php endforeach; ?>
+							<?php
+							if ( 'modules' === $key ) {
+								self::catalog_card();
+							}
+							?>
+						</ul>
+					</div>
+				<?php endforeach; ?>
 				<p><button type="submit" class="rbn-btn rbn-btn--pri"><?php esc_html_e( 'Save changes', 'adminkit' ); ?></button></p>
 			</form>
 		</div>
@@ -98,20 +125,18 @@ final class SettingsPage {
 	/** RBN Kit → Genel bakış kataloğunun GitHub sorgusu (modül değil; kendi ayar satırı). */
 	private static function catalog_card(): void {
 		?>
-		<ul class="rbn-cards">
-			<li class="rbn-card" id="adminkit-katalog">
-				<div class="rbn-card__h">
-					<h2><?php esc_html_e( 'Plugin catalog', 'adminkit' ); ?></h2>
-					<p><?php esc_html_e( 'The catalog on the RBN Kit → Overview page learns about new versions and install packages from GitHub. A plain GET request is sent only when that page is opened; your site address and user details are not sent.', 'adminkit' ); ?></p>
+		<li class="rbn-card" id="adminkit-katalog">
+			<div class="rbn-card__h">
+				<h2><?php esc_html_e( 'Plugin catalog', 'adminkit' ); ?></h2>
+				<p><?php esc_html_e( 'The catalog on the RBN Kit → Overview page learns about new versions and install packages from GitHub. A plain GET request is sent only when that page is opened; your site address and user details are not sent.', 'adminkit' ); ?></p>
+			</div>
+			<div class="rbn-card__b">
+				<div class="rbn-field">
+					<label class="rbn-check"><input type="checkbox" name="<?php echo esc_attr( Kit\Catalog::OPT_LIVE ); ?>" value="1" <?php checked( Kit\Catalog::live() ); ?> aria-describedby="adminkit-katalog-h" /> <?php esc_html_e( 'Look up the plugin catalog on GitHub live', 'adminkit' ); ?></label>
+					<span class="rbn-help" id="adminkit-katalog-h"><?php esc_html_e( 'When off, the catalog is shown only from the list bundled with the plugin, no network request is made, and the “Install” buttons are disabled.', 'adminkit' ); ?></span>
 				</div>
-				<div class="rbn-card__b">
-					<div class="rbn-field">
-						<label class="rbn-check"><input type="checkbox" name="<?php echo esc_attr( Kit\Catalog::OPT_LIVE ); ?>" value="1" <?php checked( Kit\Catalog::live() ); ?> aria-describedby="adminkit-katalog-h" /> <?php esc_html_e( 'Look up the plugin catalog on GitHub live', 'adminkit' ); ?></label>
-						<span class="rbn-help" id="adminkit-katalog-h"><?php esc_html_e( 'When off, the catalog is shown only from the list bundled with the plugin, no network request is made, and the “Install” buttons are disabled.', 'adminkit' ); ?></span>
-					</div>
-				</div>
-			</li>
-		</ul>
+			</div>
+		</li>
 		<?php
 	}
 

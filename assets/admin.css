@@ -1,9 +1,12 @@
 /*! AdminKit — yalnız AdminKit ayar sayfasına özgü düzen (önek ak-). Bileşenler ortak kitten gelir: ui/rbn-admin-ui.css. */
-.ak-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--rbn-s5)}
-.ak-switch-txt{min-width:3.2rem}
+.ak-cards{display:block;column-width:18.5rem;column-gap:var(--rbn-s4)}   /* sütunlu akış: kart kendi içerik yüksekliğinde kalır, komşusunu germez ve alt satırda boş alan bırakmaz */
+.ak-cards>.rbn-card{display:block;break-inside:avoid;margin:0 0 var(--rbn-s4)}
+.ak-cards--one{columns:auto}                  /* tek kartlık sekme: tam genişlik */
+.ak-card-top{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:var(--rbn-s3) var(--rbn-s5)}
+.ak-card-top>div{flex:1 1 12rem;min-width:0}
+.ak-switch-txt{min-width:3.2rem;white-space:nowrap}   /* anahtar etiketi bölünmez; yer yoksa anahtar bloğu alta iner */
 .ak-offhint{display:none;margin:0;padding:var(--rbn-s3) var(--rbn-s5)}
 .rbn-card:has(.rbn-switch input:not(:checked)) .ak-offhint{display:block}
 .ak-num{display:inline-flex;align-items:center;gap:var(--rbn-s2)}
 .rbn-wrap .rbn-field fieldset{margin:0;padding:0;border:0;min-width:0}
 .rbn-wrap .rbn-field fieldset .rbn-check{display:inline-flex;margin-inline-end:var(--rbn-s5)}
-@media (max-width:782px){.ak-card-top{flex-direction:column;gap:var(--rbn-s3)}}

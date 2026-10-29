@@ -51,6 +51,11 @@ final class ColorTheme implements Module {
 		return __( 'Use the color theme', 'adminkit' );
 	}
 
+	/** Ayarları büyük olduğu için Ayarlar → AdminKit'te kendi sekmesini alır ("Modules" sekmesinde kalmaz). */
+	public function tab_label(): string {
+		return __( 'Color theme', 'adminkit' );
+	}
+
 	/** Anahtar kapalıyken kartta duran tek satırlık yönlendirme. */
 	public function off_hint(): string {
 		return __( 'To use it, turn the switch on and press Save.', 'adminkit' );
@@ -233,7 +238,7 @@ final class ColorTheme implements Module {
 		$values['scheme'] = in_array( $values['scheme'] ?? '', Color::scheme_ids(), true ) ? $values['scheme'] : 'wp';
 		?>
 		<div class="wrap rbn-wrap"<?php echo Assets::tone_attr(); // phpcs:ignore WordPress.Security.EscapeOutput ?>>
-			<div class="rbn-head"><h1><?php esc_html_e( 'Admin colors', 'adminkit' ); ?></h1></div>
+			<div class="rbn-head"><div class="rbn-head__id"><h1><?php esc_html_e( 'Admin colors', 'adminkit' ); ?></h1></div></div>
 			<?php // phpcs:ignore WordPress.Security.NonceVerification ?>
 			<?php if ( isset( $_GET['saved'] ) ) : ?>
 				<?php echo Assets::note( 'ok', __( 'Your colors were saved.', 'adminkit' ) ); // phpcs:ignore WordPress.Security.EscapeOutput ?>

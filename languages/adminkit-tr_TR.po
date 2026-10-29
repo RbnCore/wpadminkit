@@ -444,3 +444,9 @@ msgstr "AdminKit — Yönetim Paneli Araçları"
 #. Plugin header
 msgid "Adds features to the WordPress admin area, module by module: back-to-top button, sticky save bar, notice organizer, color theme and a sample customization. Each module can be turned on or off. Adds nothing to the front end; connects to GitHub only for the plugin catalog (can be turned off in the settings)."
 msgstr "WordPress yönetim paneline modül modül özellik ekler: yukarı çık düğmesi, yapışkan kaydet çubuğu, bildirim düzenleyici, renk teması ve örnek özelleştirme. Her modül açılıp kapatılır. Ön yüze çıktı vermez; yalnız eklenti kataloğu için GitHub'a bağlanır (ayardan kapatılabilir)."
+
+msgid "Modules"
+msgstr "Modüller"
+
+msgid "AdminKit settings tabs"
+msgstr "AdminKit ayar sekmeleri"

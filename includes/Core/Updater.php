@@ -651,13 +651,15 @@ final class Updater {
 		$return = isset( $_POST['return'] ) ? esc_url_raw( wp_unslash( (string) $_POST['return'] ) ) : '';
 		$to     = '' !== $return ? $return : admin_url( 'plugins.php' );
 		if ( ! isset( self::$plugins[ $slug ] ) || ! self::enabled( $slug ) ) {
-			wp_safe_redirect( add_query_arg( self::NOTE_PARAM, 'off', $to ) );
+			\AdminKit\Helpers\Toast::flash( 'info', __( 'The update check is off; nothing was checked.', 'adminkit' ) );
+			wp_safe_redirect( $to );
 			exit;
 		}
 		Cache::delete( self::GROUP, $slug );
 		delete_site_transient( 'update_plugins' );
 		wp_update_plugins();
-		wp_safe_redirect( add_query_arg( self::NOTE_PARAM, 'checked', $to ) );
+		\AdminKit\Helpers\Toast::flash( 'success', __( 'Update check finished.', 'adminkit' ) );
+		wp_safe_redirect( $to );
 		exit;
 	}
 }

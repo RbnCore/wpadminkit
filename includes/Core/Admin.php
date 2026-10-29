@@ -85,19 +85,17 @@ final class Admin {
 		check_admin_referer( self::ACTION );
 		$group = isset( $_POST['group'] ) ? sanitize_text_field( wp_unslash( (string) $_POST['group'] ) ) : '';
 		$done  = '' === $group ? Cache::flush_all() : ( Cache::flush_group( $group ) ? 1 : 0 );
-		wp_safe_redirect( \AdminKit\Kit\Overview::url( 'cache', array( 'cleared' => $done ) ) );
+		if ( $done > 0 ) {
+			\AdminKit\Helpers\Toast::flash( 'success', sprintf( _n( '%d cache group cleared.', '%d cache groups cleared.', $done, 'adminkit' ), $done ) );
+		} else {
+			\AdminKit\Helpers\Toast::flash( 'warning', __( 'No cache group was cleared.', 'adminkit' ) );
+		}
+		wp_safe_redirect( \AdminKit\Kit\Overview::url( 'cache' ) );
 		exit;
 	}
 
-	/** Result line after a clear (`?cleared=N`). */
+	/** Result line after a clear (kept for backwards compatibility; toasts are used). */
 	public static function cleared_note(): void {
-		if ( ! isset( $_GET['cleared'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification -- display only.
-			return;
-		}
-		$n = absint( $_GET['cleared'] ); // phpcs:ignore WordPress.Security.NonceVerification
-		/* translators: %d: number of cleared cache groups */
-		$text = $n > 0 ? sprintf( _n( '%d cache group cleared.', '%d cache groups cleared.', $n, 'adminkit' ), $n ) : __( 'No cache group was cleared.', 'adminkit' );
-		echo \AdminKit\Assets::note( $n > 0 ? 'ok' : 'warn', $text ); // phpcs:ignore WordPress.Security.EscapeOutput -- Assets::note() kaçışlar.
 	}
 
 	public static function cache_panel(): void {

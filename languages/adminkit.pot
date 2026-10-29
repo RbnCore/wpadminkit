@@ -822,6 +822,11 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
+#: includes/Assets.php:40
+#, php-format
+msgid "Type %s to confirm"
+msgstr ""
+
 #: includes/RbnKitMenu.php:176
 msgid "You do not have permission to access this page."
 msgstr ""

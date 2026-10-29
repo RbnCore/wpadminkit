@@ -26,7 +26,30 @@ final class SettingsPage {
 				'version'    => ADMINKIT_VERSION,
 			)
 		);
+		add_action( 'admin_init', array( self::class, 'handle_redirect_notices' ) );
 		add_action( 'admin_enqueue_scripts', array( self::class, 'assets' ) );
+	}
+
+	/** Post-Redirect-Get bildirimleri: URL'den parametreleri temizler, Toast::flash'a taşır. */
+	public static function handle_redirect_notices(): void {
+		if ( ! isset( $_GET['page'] ) || self::SLUG !== $_GET['page'] ) {
+			return;
+		}
+		if ( ! empty( $_GET['settings-updated'] ) ) {
+			Helpers\Toast::flash( 'success', __( 'Settings saved.', 'adminkit' ) );
+			wp_safe_redirect( remove_query_arg( 'settings-updated' ) );
+			exit;
+		}
+		if ( isset( $_GET['rbnkit_update'] ) ) {
+			$v = sanitize_key( wp_unslash( (string) $_GET['rbnkit_update'] ) );
+			if ( 'checked' === $v ) {
+				Helpers\Toast::flash( 'success', __( 'Update check finished.', 'adminkit' ) );
+			} elseif ( 'off' === $v ) {
+				Helpers\Toast::flash( 'info', __( 'The update check is off; nothing was checked.', 'adminkit' ) );
+			}
+			wp_safe_redirect( remove_query_arg( 'rbnkit_update' ) );
+			exit;
+		}
 	}
 
 	/** Ayar sayfasının adresi (RBN Kit → AdminKit). */
@@ -97,14 +120,6 @@ final class SettingsPage {
 				</div>
 			</div>
 			<p class="rbn-lead"><?php esc_html_e( 'Each module adds one feature to the admin area. Turn on only what you need. Nothing here changes the public site.', 'adminkit' ); ?></p>
-			<?php
-			$update_note = Core\Updater::note();
-			if ( 'checked' === $update_note ) {
-				echo Assets::note( 'ok', __( 'Update check finished.', 'adminkit' ) ); // phpcs:ignore WordPress.Security.EscapeOutput -- Assets::note() escapes.
-			} elseif ( 'off' === $update_note ) {
-				echo Assets::note( 'info', __( 'The update check is off; nothing was checked.', 'adminkit' ) ); // phpcs:ignore WordPress.Security.EscapeOutput -- Assets::note() escapes.
-			}
-			?>
 			<div class="rbn-tabs" role="tablist" aria-label="<?php esc_attr_e( 'AdminKit settings tabs', 'adminkit' ); ?>" data-rbn-tabs>
 				<?php foreach ( $tabs as $key => $label ) : ?>
 					<a role="tab" id="adminkit-tab-<?php echo esc_attr( $key ); ?>" class="rbn-tabs__tab" href="<?php echo esc_url( add_query_arg( 'tab', $key, self::url() ) ); ?>" data-key="<?php echo esc_attr( $key ); ?>" aria-controls="adminkit-panel-<?php echo esc_attr( $key ); ?>" aria-selected="<?php echo $tab === $key ? 'true' : 'false'; ?>" tabindex="<?php echo $tab === $key ? '0' : '-1'; ?>"><?php echo esc_html( $label ); ?></a>

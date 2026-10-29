@@ -445,6 +445,24 @@
 				var det = el('div', 'rbn-dlg__details', opts.details);
 				body.appendChild(det);
 			}
+
+			// Çift kontrol metin kutusu (requireText: 'DELETE')
+			var requireText = opts.requireText ? String(opts.requireText) : null;
+			var requireInput = null;
+			if (requireText) {
+				var reqWrap = el('div', 'rbn-confirm-require');
+				reqWrap.style.marginTop = 'var(--rbn-s4, 1rem)';
+				var reqLabelText = opts.requireTextLabel || (i18n('typeToConfirm', 'Type %s to confirm').replace('%s', requireText));
+				var reqLabel = el('label', 'rbn-label', reqLabelText);
+				requireInput = el('input', 'rbn-input');
+				requireInput.type = 'text';
+				requireInput.autocomplete = 'off';
+				requireInput.setAttribute('aria-label', reqLabelText);
+				reqWrap.appendChild(reqLabel);
+				reqWrap.appendChild(requireInput);
+				body.appendChild(reqWrap);
+			}
+
 			dlg.appendChild(body);
 
 			// Altlık
@@ -454,6 +472,24 @@
 
 			var confirmBtn = el('button', 'rbn-btn ' + (isDanger ? 'rbn-btn--danger' : 'rbn-btn--pri'), confirmLabel);
 			confirmBtn.type = 'button';
+
+			if (requireText && requireInput) {
+				confirmBtn.disabled = true;
+				requireInput.addEventListener('input', function () {
+					var val = (requireInput.value || '').trim();
+					var match = val.toUpperCase() === requireText.trim().toUpperCase() ||
+						val.toLocaleUpperCase('tr') === requireText.trim().toLocaleUpperCase('tr');
+					confirmBtn.disabled = !match;
+				});
+				requireInput.addEventListener('keydown', function (e) {
+					if (e.key === 'Enter') {
+						e.preventDefault();
+						if (!confirmBtn.disabled) {
+							cleanup(true);
+						}
+					}
+				});
+			}
 
 			foot.appendChild(cancelBtn);
 			foot.appendChild(confirmBtn);
@@ -499,7 +535,7 @@
 			// Odak tuzağı (Focus trap) & Esc tuşu
 			dlg.addEventListener('keydown', function (e) {
 				if (e.key === 'Tab') {
-					var focusables = dlg.querySelectorAll('button:not([disabled]), [tabindex]:not([tabindex="-1"])');
+					var focusables = dlg.querySelectorAll('button:not([disabled]), input:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])');
 					var list = Array.prototype.slice.call(focusables);
 					if (!list.length) { return; }
 					var first = list[0];
@@ -531,8 +567,10 @@
 				dlg.setAttribute('open', '');
 			}
 
-			// İlk odak: danger varyantında güvenli düğmede (İptal), diğerinde onayda
-			if (isDanger) {
+			// İlk odak: requireInput varsa önce giriş kutusuna, danger'da İptal'e, diğerinde onay düğmesine
+			if (requireInput) {
+				requireInput.focus();
+			} else if (isDanger) {
 				cancelBtn.focus();
 			} else {
 				confirmBtn.focus();

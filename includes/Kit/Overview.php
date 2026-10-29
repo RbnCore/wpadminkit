@@ -25,8 +25,39 @@ final class Overview {
 
 	public static function hooks(): void {
 		add_filter( 'rbn_kit_overview_callback', array( self::class, 'callback' ) );
+		add_action( 'admin_init', array( self::class, 'handle_redirect_notices' ) );
 		add_action( 'admin_enqueue_scripts', array( self::class, 'assets' ) );
 		Installer::init();
+	}
+
+	/** Post-Redirect-Get bildirimleri: URL'den parametreleri temizler, Toast::flash'a taşır. */
+	public static function handle_redirect_notices(): void {
+		if ( ! isset( $_GET['page'] ) || self::PAGE !== $_GET['page'] ) {
+			return;
+		}
+		$redirect = false;
+		if ( isset( $_GET['cleared'] ) ) {
+			$n = absint( $_GET['cleared'] );
+			if ( $n > 0 ) {
+				\AdminKit\Helpers\Toast::flash( 'success', sprintf( _n( '%d cache group cleared.', '%d cache groups cleared.', $n, 'adminkit' ), $n ) );
+			} else {
+				\AdminKit\Helpers\Toast::flash( 'warning', __( 'No cache group was cleared.', 'adminkit' ) );
+			}
+			$redirect = true;
+		}
+		if ( isset( $_GET['rbnkit_update'] ) ) {
+			$v = sanitize_key( wp_unslash( (string) $_GET['rbnkit_update'] ) );
+			if ( 'checked' === $v ) {
+				\AdminKit\Helpers\Toast::flash( 'success', __( 'Update check finished.', 'adminkit' ) );
+			} elseif ( 'off' === $v ) {
+				\AdminKit\Helpers\Toast::flash( 'info', __( 'The update check is off; nothing was checked.', 'adminkit' ) );
+			}
+			$redirect = true;
+		}
+		if ( $redirect ) {
+			wp_safe_redirect( remove_query_arg( array( 'cleared', 'rbnkit_update' ) ) );
+			exit;
+		}
 	}
 
 	/** @param mixed $current Önceki çizici. */
@@ -110,19 +141,12 @@ final class Overview {
 				$text = $ok ? Installer::note_text( $note['code'] ) : $note['message'];
 				echo Assets::note( $ok ? 'ok' : 'err', '' !== $text ? $text : __( 'The action could not be completed.', 'adminkit' ) ); // phpcs:ignore WordPress.Security.EscapeOutput -- Assets::note() kaçışlar.
 			}
-				$update_note = \AdminKit\Core\Updater::note();
-				if ( 'checked' === $update_note ) {
-					echo Assets::note( 'ok', __( 'Update check finished.', 'adminkit' ) ); // phpcs:ignore WordPress.Security.EscapeOutput -- Assets::note() kaçışlar.
-				} elseif ( 'off' === $update_note ) {
-					echo Assets::note( 'info', __( 'The update check is off; nothing was checked.', 'adminkit' ) ); // phpcs:ignore WordPress.Security.EscapeOutput -- Assets::note() kaçışlar.
-				}
 			?>
 			<div class="rbn-tabs" role="tablist" aria-label="<?php esc_attr_e( 'RBN Kit tabs', 'adminkit' ); ?>" data-rbn-tabs>
 				<?php foreach ( $tabs as $key => $label ) : ?>
 					<a role="tab" id="rbn-kit-tab-<?php echo esc_attr( $key ); ?>" class="rbn-tabs__tab" href="<?php echo esc_url( self::url( $key ) ); ?>" data-key="<?php echo esc_attr( $key ); ?>" aria-controls="rbn-kit-panel-<?php echo esc_attr( $key ); ?>" aria-selected="<?php echo $tab === $key ? 'true' : 'false'; ?>" tabindex="<?php echo $tab === $key ? '0' : '-1'; ?>"><?php echo Assets::icon( $icons[ $key ] ); // phpcs:ignore WordPress.Security.EscapeOutput -- Assets::icon() kaçışlar. ?><?php echo esc_html( $label ); ?></a>
 				<?php endforeach; ?>
 			</div>
-			<?php Admin::cleared_note(); ?>
 			<?php foreach ( $tabs as $key => $label ) : ?>
 				<div role="tabpanel" id="rbn-kit-panel-<?php echo esc_attr( $key ); ?>" class="rbn-tabpanel" aria-labelledby="rbn-kit-tab-<?php echo esc_attr( $key ); ?>" tabindex="0"<?php echo $tab === $key ? '' : ' hidden'; ?>>
 					<?php

@@ -1,10 +1,7 @@
-/* AdminKit — RBN Kit Genel bakış, Cache sekmesi. Sekmeler ortak kit betiğindedir (rbn-admin-ui.js). Bağımlılıksız. */
-/* Onay penceresi (form[data-rbn-confirm]) ve eklentiye göre satır süzgeci (select[data-rbn-row-filter=<tbody id>]). */
+/* AdminKit — RBN Kit Genel bakış, Cache sekmesi. Sekmeler ve onay delegasyonu ortak kit betiğindedir (rbn-admin-ui.js). Bağımlılıksız. */
+/* Eklentiye göre satır süzgeci (select[data-rbn-row-filter=<tbody id>]). */
 (function () {
 	'use strict';
-	Array.prototype.forEach.call(document.querySelectorAll('form[data-rbn-confirm]'), function (f) {
-		f.addEventListener('submit', function (e) { if (!window.confirm(f.getAttribute('data-rbn-confirm'))) { e.preventDefault(); } });
-	});
 	Array.prototype.forEach.call(document.querySelectorAll('select[data-rbn-row-filter]'), function (s) {
 		var body = document.getElementById(s.getAttribute('data-rbn-row-filter'));
 		var none = document.getElementById('rbn-kit-cache-none');

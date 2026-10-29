@@ -783,3 +783,8 @@ msgstr "Tamam"
 #: includes/Assets.php:38
 msgid "Cancel"
 msgstr "İptal"
+
+#: includes/Assets.php:40
+#, php-format
+msgid "Type %s to confirm"
+msgstr "Onaylamak için %s yazın"

@@ -37,6 +37,7 @@ final class Assets {
 				'delete'        => __( 'Delete', 'adminkit' ),
 				'ok'            => __( 'OK', 'adminkit' ),
 				'cancel'        => __( 'Cancel', 'adminkit' ),
+				'typeToConfirm' => __( 'Type %s to confirm', 'adminkit' ),
 			)
 		);
 	}

@@ -23,7 +23,7 @@ final class Plugin {
 	public static function init(): void {
 		load_plugin_textdomain( 'adminkit', false, dirname( plugin_basename( ADMINKIT_FILE ) ) . '/languages' );
 		SettingsPage::hooks(); // Menü başlıkları çevrilir; çeviri yüklendikten sonra kaydedilir.
-		Core\Page::hooks();
+		Core\Admin::hooks();
 		foreach ( Registry::all() as $module ) {
 			$settings = Settings::for_module( $module );
 			if ( $settings['enabled'] ) {

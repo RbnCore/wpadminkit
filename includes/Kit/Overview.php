@@ -1,9 +1,9 @@
 <?php
 /**
- * RBN Kit → Genel bakış: "Kurulu" ve "Eklenti kataloğu" sekmeleri.
+ * RBN Kit → Genel bakış: "Kurulu", "Eklenti kataloğu", "Cache" ve "Logs" sekmeleri.
  *
  * `rbn_kit_overview_callback` süzgeciyle ortak menü yardımcısına bağlanır; AdminKit yoksa yardımcının en küçük listesi kalır.
- * Sekmeler gerçek bağlantıdır (`?page=rbn-kit&tab=kurulu|katalog`); betik yalnız ok tuşlarını ve anlık geçişi ekler.
+ * Sekmeler gerçek bağlantıdır (`?page=rbn-kit&tab=kurulu|katalog|cache|logs`); betik yalnız ok tuşlarını ve anlık geçişi ekler.
  *
  * @package AdminKit
  */
@@ -30,12 +30,15 @@ final class Overview {
 		return array( self::class, 'render' );
 	}
 
-	public static function url( string $tab = 'kurulu' ): string {
+	/** Sekme anahtarları (sıra = görünüm sırası). */
+	public const TABS = array( 'kurulu', 'katalog', 'cache', 'logs' );
+
+	public static function url( string $tab = 'kurulu', array $args = array() ): string {
 		return add_query_arg(
 			array(
 				'page' => self::PAGE,
-				'tab'  => 'katalog' === $tab ? 'katalog' : 'kurulu',
-			),
+				'tab'  => in_array( $tab, self::TABS, true ) ? $tab : 'kurulu',
+			) + $args,
 			admin_url( 'admin.php' )
 		);
 	}
@@ -51,6 +54,8 @@ final class Overview {
 		}
 		wp_enqueue_style( 'adminkit-admin', ADMINKIT_URL . 'assets/admin.css', array(), \AdminKit\Assets::ver( 'admin.css' ) );
 		wp_enqueue_style( 'adminkit-kit', ADMINKIT_URL . 'assets/kit.css', array( 'adminkit-admin', 'dashicons' ), \AdminKit\Assets::ver( 'kit.css' ) );
+		wp_enqueue_style( \AdminKit\Core\Admin::HANDLE );
+		wp_enqueue_script( \AdminKit\Core\Admin::HANDLE );
 		wp_enqueue_script( 'adminkit-kit', ADMINKIT_URL . 'assets/kit.js', array(), \AdminKit\Assets::ver( 'kit.js' ), array( 'strategy' => 'defer', 'in_footer' => true ) );
 	}
 
@@ -79,7 +84,7 @@ final class Overview {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'You are not allowed to view this page.', 'adminkit' ), '', array( 'response' => 403 ) );
 		}
-		$tab   = isset( $_GET['tab'] ) && 'katalog' === $_GET['tab'] ? 'katalog' : 'kurulu'; // phpcs:ignore WordPress.Security.NonceVerification -- yalnız sekme seçimi.
+		$tab   = isset( $_GET['tab'] ) && in_array( $_GET['tab'], self::TABS, true ) ? (string) $_GET['tab'] : 'kurulu'; // phpcs:ignore WordPress.Security.NonceVerification -- yalnız sekme seçimi.
 		$note  = Installer::take_note();
 		$items = Catalog::items();
 		$rows  = array();
@@ -93,6 +98,8 @@ final class Overview {
 		$tabs = array(
 			'kurulu'  => __( 'Installed', 'adminkit' ),
 			'katalog' => __( 'Plugin catalog', 'adminkit' ),
+			'cache'   => __( 'Cache', 'adminkit' ),
+			'logs'    => __( 'Logs', 'adminkit' ),
 		);
 		?>
 		<div class="wrap rbn-wrap adminkit-kit"<?php echo self::tone(); // phpcs:ignore WordPress.Security.EscapeOutput ?>>
@@ -109,12 +116,22 @@ final class Overview {
 					<a role="tab" id="rbn-kit-tab-<?php echo esc_attr( $key ); ?>" class="rbn-kit__tab" href="<?php echo esc_url( self::url( $key ) ); ?>" aria-controls="rbn-kit-panel-<?php echo esc_attr( $key ); ?>" aria-selected="<?php echo $tab === $key ? 'true' : 'false'; ?>" tabindex="<?php echo $tab === $key ? '0' : '-1'; ?>"><?php echo esc_html( $label ); ?></a>
 				<?php endforeach; ?>
 			</div>
-			<div role="tabpanel" id="rbn-kit-panel-kurulu" class="rbn-kit__panel" aria-labelledby="rbn-kit-tab-kurulu"<?php echo 'kurulu' === $tab ? '' : ' hidden'; ?>>
-				<?php self::installed_panel( $rows ); ?>
-			</div>
-			<div role="tabpanel" id="rbn-kit-panel-katalog" class="rbn-kit__panel" aria-labelledby="rbn-kit-tab-katalog"<?php echo 'katalog' === $tab ? '' : ' hidden'; ?>>
-				<?php self::catalog_panel( $rows ); ?>
-			</div>
+			<?php \AdminKit\Core\Admin::cleared_note(); ?>
+			<?php foreach ( $tabs as $key => $label ) : ?>
+				<div role="tabpanel" id="rbn-kit-panel-<?php echo esc_attr( $key ); ?>" class="rbn-kit__panel" aria-labelledby="rbn-kit-tab-<?php echo esc_attr( $key ); ?>"<?php echo $tab === $key ? '' : ' hidden'; ?>>
+					<?php
+					if ( 'kurulu' === $key ) {
+						self::installed_panel( $rows );
+					} elseif ( 'katalog' === $key ) {
+						self::catalog_panel( $rows );
+					} elseif ( 'cache' === $key ) {
+						\AdminKit\Core\Admin::cache_panel();
+					} else {
+						\AdminKit\Core\Admin::logs_panel();
+					}
+					?>
+				</div>
+			<?php endforeach; ?>
 		</div>
 		<?php
 	}

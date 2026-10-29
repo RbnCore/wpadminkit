@@ -1,4 +1,3 @@
-# AdminKit tr_TR
 msgid ""
 msgstr ""
 "Project-Id-Version: AdminKit 0.1.0\n"
@@ -386,9 +385,6 @@ msgstr "Ayarı aç"
 msgid "Plugin installation is turned off on this site (DISALLOW_FILE_MODS); the “Install” and “Activate” buttons are not shown."
 msgstr "Bu sitede eklenti kurma kapalı (DISALLOW_FILE_MODS); “Kur” ve “Etkinleştir” düğmeleri gösterilmez."
 
-msgid "Installed ✓"
-msgstr "Kurulu ✓"
-
 msgid "Coming soon"
 msgstr "Yakında"
 
@@ -416,15 +412,6 @@ msgstr "Etkinleştir"
 msgid "The server asks for extra information (such as FTP) to write files; install the plugin from Plugins → Add New instead."
 msgstr "Sunucu dosya yazma için ek bilgi (ör. FTP) istiyor; kurulum Eklentiler → Yeni ekle üzerinden yapılmalı."
 
-msgid "The catalog on the RBN Kit → Overview page learns about new versions and install packages from GitHub. A plain GET request is sent only when that page is opened; your site address and user details are not sent."
-msgstr "RBN Kit → Genel bakış sayfasındaki katalog, yeni sürümleri ve kurulum paketlerini GitHub’dan öğrenir. Yalnız o sayfa açıldığında düz bir GET isteği gider; site adresiniz ya da kullanıcı bilginiz gönderilmez."
-
-msgid "Look up the plugin catalog on GitHub live"
-msgstr "Eklenti kataloğunu GitHub’dan canlı sorgula"
-
-msgid "When off, the catalog is shown only from the list bundled with the plugin, no network request is made, and the “Install” buttons are disabled."
-msgstr "Kapalıyken katalog yalnız eklentiyle gelen yerel listeden gösterilir, hiç ağ çağrısı yapılmaz ve “Kur” düğmeleri pasif olur."
-
 msgid "Adds small tools to the admin area, such as a back-to-top button, a sticky save bar and a color theme."
 msgstr "Yönetim paneline yukarı çık düğmesi, yapışkan kaydet çubuğu ve renk teması gibi küçük araçlar ekler."
 
@@ -440,10 +427,6 @@ msgstr "Sitenizin arama motorlarındaki görünümünü düzenler: başlık, aç
 #. Plugin header
 msgid "AdminKit — Admin Area Tools"
 msgstr "AdminKit — Yönetim Paneli Araçları"
-
-#. Plugin header
-msgid "Adds features to the WordPress admin area, module by module: back-to-top button, sticky save bar, notice organizer, color theme and a sample customization. Each module can be turned on or off. Adds nothing to the front end; connects to GitHub only for the plugin catalog and for update checks of RBN plugins (can be turned off in the settings)."
-msgstr "WordPress yönetim paneline modül modül özellik ekler: yukarı çık düğmesi, yapışkan kaydet çubuğu, bildirim düzenleyici, renk teması ve örnek özelleştirme. Her modül açılıp kapatılır. Ön yüze çıktı vermez; yalnız eklenti kataloğu ve RBN eklentilerinin güncelleme denetimi için GitHub'a bağlanır (ayardan kapatılabilir)."
 
 msgid "Modules"
 msgstr "Modüller"

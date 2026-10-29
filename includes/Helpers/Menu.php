@@ -47,24 +47,6 @@ final class Menu {
 	}
 
 	/**
-	 * 301 redirects legacy menu bookmarks (e.g. tools.php?page=... or options-general.php?page=...)
-	 * to the consolidated RBN Kit page while preserving query arguments.
-	 *
-	 * @param string $slug         Page slug to match.
-	 * @param string $from_pagenow Originating WordPress screen filename.
-	 */
-	public static function legacy_redirect( string $slug, string $from_pagenow = 'tools.php' ): void {
-		global $pagenow;
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- redirect only.
-		if ( $from_pagenow === $pagenow && isset( $_GET['page'] ) && $slug === sanitize_key( wp_unslash( $_GET['page'] ) ) ) {
-			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			$args = array_diff_key( map_deep( wp_unslash( $_GET ), 'sanitize_text_field' ), array( 'page' => 1 ) );
-			wp_safe_redirect( self::page_url( $slug, $args ), 301 );
-			exit;
-		}
-	}
-
-	/**
 	 * Prepends an action link to the plugin action links array.
 	 *
 	 * @param array<int, string> $links Current action links.

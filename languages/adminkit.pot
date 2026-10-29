@@ -1,6 +1,6 @@
-# AdminKit
 msgid ""
 msgstr ""
+"POT-Creation-Date: 2026-10-29 07:58+0300\n"
 "Project-Id-Version: AdminKit 0.1.0\n"
 "Language: tr_TR\n"
 "MIME-Version: 1.0\n"
@@ -8,445 +8,816 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-msgid "Hide side menu items"
-msgstr ""
-
-msgid "Example module: hides the menu items you pick. They are only hidden from view; access stays."
-msgstr ""
-
-msgid "Menu items to hide"
-msgstr ""
-
-msgid "RBN Kit, Settings and Plugins can not be hidden, so you can always find this page."
-msgstr ""
-
-msgid "Notice organizer"
-msgstr ""
-
-msgid "Collects admin notices into one box. Errors always stay visible where they are."
-msgstr ""
-
-msgid "Keep the box closed until opened"
-msgstr ""
-
-msgid "Your own open/closed choice is remembered per user and overrides this."
-msgstr ""
-
-msgid "Always show error notices"
-msgstr ""
-
-msgid "Locked on: errors are never hidden or removed."
-msgstr ""
-
-msgid "Notices"
-msgstr ""
-
-msgid "errors stay visible below"
-msgstr ""
-
-msgid "Show or hide the collected notices"
-msgstr ""
-
-msgid "Back to top"
-msgstr ""
-
-msgid "Shows a button on every admin page that scrolls back to the top."
-msgstr ""
-
-msgid "Position"
-msgstr ""
-
-msgid "Bottom right"
-msgstr ""
-
-msgid "Bottom left"
-msgstr ""
-
-msgid "Show after scrolling"
-msgstr ""
-
-msgid "Distance from the edge"
-msgstr ""
-
-msgid "Also show in the block editor"
-msgstr ""
-
-msgid "The block editor scrolls on its own, so the button is hidden there by default."
-msgstr ""
-
-msgid "Sticky save bar"
-msgstr ""
-
-msgid "Keeps a save button at the bottom of long settings pages and warns about unsaved changes."
-msgstr ""
-
-msgid "Where to show it"
-msgstr ""
-
-msgid "Settings screens only (options.php forms)"
-msgstr ""
-
-msgid "Every admin form with a main save button"
-msgstr ""
-
-msgid "Only on pages taller than"
-msgstr ""
-
-msgid "Short pages already show the save button; the bar appears when the page is at least this tall."
-msgstr ""
-
-msgid "Save changes"
-msgstr ""
-
-msgid "You have unsaved changes"
-msgstr ""
-
-msgid "All changes saved"
-msgstr ""
-
-msgid "Save bar"
-msgstr ""
-
-msgid "AdminKit"
-msgstr ""
-
-msgid "Settings"
-msgstr ""
-
-msgid "You are not allowed to manage these settings."
-msgstr ""
-
+#: includes/SettingsPage.php:94
+#, php-format
 msgid "%1$d of %2$d modules on"
 msgstr ""
 
-msgid "Each module adds one feature to the admin area. Turn on only what you need. Nothing here changes the public site."
-msgstr ""
+#: includes/Core/Admin.php:99
+#, php-format
+msgid "%d cache group cleared."
+msgid_plural "%d cache groups cleared."
+msgstr[0] ""
+msgstr[1] ""
 
-msgid "On"
-msgstr ""
-
-msgid "Off"
-msgstr ""
-
-msgid "Nothing to choose from."
-msgstr ""
-
-msgid "Night"
-msgstr ""
-
-msgid "Ocean"
-msgstr ""
-
-msgid "Forest"
-msgstr ""
-
-msgid "Sunset"
-msgstr ""
-
-msgid "Graphite"
-msgstr ""
-
-msgid "Color theme"
-msgstr ""
-
-msgid "Changes the colors of the admin bar, side menu and links. Pick a ready theme or your own colors, per user, with a live preview."
-msgstr ""
-
-msgid "WordPress default"
-msgstr ""
-
-msgid "Custom"
-msgstr ""
-
-msgid "Let users choose their own colors"
-msgstr ""
-
-msgid "Users pick their colors under Users → Admin colors. The choice below is the default for everyone who has not picked one."
-msgstr ""
-
-msgid "Default theme"
-msgstr ""
-
-msgid "Top bar"
-msgstr ""
-
-msgid "Side menu"
-msgstr ""
-
+#: includes/Modules/ColorTheme.php:278
 msgid "Accent"
 msgstr ""
 
-msgid "Shell tone"
-msgstr ""
-
-msgid "Dark"
-msgstr ""
-
-msgid "Light"
-msgstr ""
-
-msgid "Default colors"
-msgstr ""
-
-msgid "Admin colors"
-msgstr ""
-
-msgid "Too low — applied as %s instead"
-msgstr ""
-
-msgid "Fix"
-msgstr ""
-
-msgid "Side menu text on menu"
-msgstr ""
-
-msgid "Top bar text on bar"
-msgstr ""
-
+#: includes/Modules/ColorTheme.php:214
 msgid "Accent (links, buttons) on white"
 msgstr ""
 
+#: includes/Modules/ColorTheme.php:215
 msgid "Accent on page background"
 msgstr ""
 
-msgid "Preview — not saved yet"
+#: includes/Core/Admin.php:148
+msgid "Action"
 msgstr ""
 
-msgid "Showing the saved colors"
-msgstr ""
-
-msgid "You are not allowed to change these colors."
-msgstr ""
-
-msgid "Your colors were saved."
-msgstr ""
-
-msgid "Your colors were reset."
-msgstr ""
-
-msgid "The site administrator chose the admin colors. You cannot change them."
-msgstr ""
-
-msgid "Only you see these colors. The preview changes this page right away; nothing is saved until you press Save."
-msgstr ""
-
-msgid "Save"
-msgstr ""
-
-msgid "Cancel preview"
-msgstr ""
-
-msgid "Back to default"
-msgstr ""
-
-msgid "Theme"
-msgstr ""
-
-msgid "Dark (white text)"
-msgstr ""
-
-msgid "Light (dark text)"
-msgstr ""
-
-msgid "Contrast (WCAG AA needs at least 4.5:1)"
-msgstr ""
-
-msgid "Use the color theme"
-msgstr ""
-
-msgid "To use it, turn the switch on and press Save."
-msgstr ""
-
-msgid "Your chosen theme is saved but not applied, because the color theme is off. Turn the switch on and press Save to apply it."
-msgstr ""
-
-msgid "Custom colors"
-msgstr ""
-
-msgid "Pass"
-msgstr ""
-
-msgid "Fail"
-msgstr ""
-
-msgid "Write each color as #rrggbb to see the contrast."
-msgstr ""
-
-msgid "Could not verify the package signature: this server has no signature support (sodium). Nothing was installed."
-msgstr ""
-
-msgid "Could not verify the package signature: the plugin has no valid signature key. Nothing was installed."
-msgstr ""
-
-msgid "Could not verify the package signature. Nothing was installed."
-msgstr ""
-
-msgid "The package size is outside the expected range. Nothing was installed."
-msgstr ""
-
-msgid "Could not read the digest (SHA-256) file. Nothing was installed."
-msgstr ""
-
-msgid "The SHA-256 digest of the package does not match. Nothing was installed."
-msgstr ""
-
-msgid "The package root folder is not “%s” or the main file is missing. Nothing was installed."
-msgstr ""
-
-msgid "The version in the package does not match the released version. Nothing was installed."
-msgstr ""
-
-msgid "This plugin is not in the catalog."
-msgstr ""
-
-msgid "Plugin installation is turned off on this site (DISALLOW_FILE_MODS). Nothing was installed."
-msgstr ""
-
-msgid "The plugin catalog GitHub lookup is turned off in the settings. Nothing was installed."
-msgstr ""
-
-msgid "This plugin is not released yet."
-msgstr ""
-
-msgid "This plugin is already installed."
-msgstr ""
-
-msgid "Could not get the released version information. Nothing was installed."
-msgstr ""
-
-msgid "The installation could not be completed."
-msgstr ""
-
-msgid "The plugin file was not found after the installation. Nothing was installed."
-msgstr ""
-
-msgid "The package address is not in the expected format. Nothing was installed."
-msgstr ""
-
-msgid "Could not download the package. Nothing was installed."
-msgstr ""
-
-msgid "Could not download the digest or signature file. Nothing was installed."
-msgstr ""
-
-msgid "The package did not pass verification. Nothing was installed."
-msgstr ""
-
-msgid "The plugin was installed. Select “Activate” to use it."
-msgstr ""
-
-msgid "The plugin was activated."
-msgstr ""
-
-msgid "You are not allowed to do this."
-msgstr ""
-
-msgid "The plugin to activate was not found."
-msgstr ""
-
-msgid "You are not allowed to view this page."
-msgstr ""
-
-msgid "Installed"
-msgstr ""
-
-msgid "Plugin catalog"
-msgstr ""
-
-msgid "The action could not be completed."
-msgstr ""
-
-msgid "RBN Kit tabs"
-msgstr ""
-
-msgid "Active"
-msgstr ""
-
-msgid "Not active"
-msgstr ""
-
-msgid "Update available: %s"
-msgstr ""
-
-msgid "Go to settings"
-msgstr ""
-
-msgid "No RBN plugins are installed."
-msgstr ""
-
-msgid "WordPress plugins by RBN. Installation takes one click; a package is not installed if its SHA-256 digest and signature cannot be verified."
-msgstr ""
-
-msgid "The catalog is offline: the GitHub lookup is turned off in the AdminKit settings. This page makes no network request; the “Install” buttons are disabled."
-msgstr ""
-
-msgid "Open the setting"
-msgstr ""
-
-msgid "Plugin installation is turned off on this site (DISALLOW_FILE_MODS); the “Install” and “Activate” buttons are not shown."
-msgstr ""
-
-msgid "Installed ✓"
-msgstr ""
-
-msgid "Coming soon"
-msgstr ""
-
-msgid "Plugins cannot be installed on this site."
-msgstr ""
-
-msgid "Install (v%s)"
-msgstr ""
-
-msgid "Offline mode"
-msgstr ""
-
-msgid "No release found"
-msgstr ""
-
-msgid "Could not get version information"
-msgstr ""
-
-msgid "Install"
-msgstr ""
-
+#: includes/Kit/Overview.php:233
 msgid "Activate"
 msgstr ""
 
-msgid "The server asks for extra information (such as FTP) to write files; install the plugin from Plugins → Add New instead."
+#: includes/Kit/Overview.php:153
+msgid "Active"
 msgstr ""
 
-msgid "The catalog on the RBN Kit → Overview page learns about new versions and install packages from GitHub. A plain GET request is sent only when that page is opened; your site address and user details are not sent."
-msgstr ""
-
-msgid "Look up the plugin catalog on GitHub live"
-msgstr ""
-
-msgid "When off, the catalog is shown only from the list bundled with the plugin, no network request is made, and the “Install” buttons are disabled."
-msgstr ""
-
-msgid "Adds small tools to the admin area, such as a back-to-top button, a sticky save bar and a color theme."
-msgstr ""
-
-msgid "Finds gaps in posts, tags and images, and helps you fix problems such as missing alt text."
-msgstr ""
-
+#: includes/catalog.php:37
 msgid "Adds a cookie banner and a preference panel that follow the Turkish data protection law (KVKK); works with Google Consent Mode v2."
 msgstr ""
 
-msgid "Optimizes how your site appears in search engines: titles, descriptions, social cards, sitemap, schema, redirects and a 404 log."
+#: includes/catalog.php:17
+msgid "Adds small tools to the admin area, such as a back-to-top button, a sticky save bar and a color theme."
 msgstr ""
 
-#. Plugin header
-msgid "AdminKit — Admin Area Tools"
+#: includes/Modules/ColorTheme.php:241
+msgid "Admin colors"
 msgstr ""
 
-#. Plugin header
-msgid "Adds features to the WordPress admin area, module by module: back-to-top button, sticky save bar, notice organizer, color theme and a sample customization. Each module can be turned on or off. Adds nothing to the front end; connects to GitHub only for the plugin catalog (can be turned off in the settings)."
+#: includes/SettingsPage.php:89
+msgid "AdminKit"
 msgstr ""
 
+#: includes/SettingsPage.php:102
+msgid "AdminKit settings tabs"
+msgstr ""
+
+#: includes/Modules/StickySave.php:79
+msgid "All changes saved"
+msgstr ""
+
+#: includes/Core/Admin.php:54
+msgid "All levels"
+msgstr ""
+
+#: includes/Core/Admin.php:118
+msgid "All plugins"
+msgstr ""
+
+#: includes/SettingsPage.php:132
+msgid "Allow RBN plugins to check GitHub for updates and the plugin catalog"
+msgstr ""
+
+#: includes/Modules/ScrollTop.php:69
+msgid "Also show in the block editor"
+msgstr ""
+
+#: includes/Modules/NoticeTidy.php:49
+msgid "Always show error notices"
+msgstr ""
+
+#: includes/Modules/ColorTheme.php:334
+msgid "Back to default"
+msgstr ""
+
+#: includes/Modules/ScrollTop.php:90
+msgid "Back to top"
+msgstr ""
+
+#: includes/Modules/ScrollTop.php:44
+msgid "Bottom left"
+msgstr ""
+
+#: includes/Modules/ScrollTop.php:43
+msgid "Bottom right"
+msgstr ""
+
+#: includes/Kit/Overview.php:100
+msgid "Cache"
+msgstr ""
+
+#: includes/Core/Admin.php:129
+msgid "Cache groups"
+msgstr ""
+
+#: includes/Core/Admin.php:111
+msgid "Cache groups registered by RBN plugins. Clearing a group makes its next request rebuild the data."
+msgstr ""
+
+#: includes/Modules/ColorTheme.php:331
+msgid "Cancel preview"
+msgstr ""
+
+#: includes/Modules/ColorTheme.php:42
+msgid "Changes the colors of the admin bar, side menu and links. Pick a ready theme or your own colors, per user, with a live preview."
+msgstr ""
+
+#: includes/Core/Admin.php:151
+msgid "Clear"
+msgstr ""
+
+#: includes/Core/Admin.php:124
+msgid "Clear all caches"
+msgstr ""
+
+#: includes/Core/Admin.php:124
+msgid "Clear every cache group?"
+msgstr ""
+
+#: includes/Core/Admin.php:151
+#, php-format
+msgid "Clear the cache group %s?"
+msgstr ""
+
+#: includes/Modules/NoticeTidy.php:30
+msgid "Collects admin notices into one box. Errors always stay visible where they are."
+msgstr ""
+
+#: includes/Modules/ColorTheme.php:56
+msgid "Color theme"
+msgstr ""
+
+#: includes/Kit/Overview.php:208
+msgid "Coming soon"
+msgstr ""
+
+#: includes/Core/Admin.php:52
+msgid "Context"
+msgstr ""
+
+#: includes/Modules/ColorTheme.php:325
+msgid "Contrast (WCAG AA needs at least 4.5:1)"
+msgstr ""
+
+#: includes/Kit/Installer.php:278
+msgid "Could not download the digest or signature file. Nothing was installed."
+msgstr ""
+
+#: includes/Kit/Installer.php:255
+msgid "Could not download the package. Nothing was installed."
+msgstr ""
+
+#: includes/Kit/Installer.php:145
+msgid "Could not get the released version information. Nothing was installed."
+msgstr ""
+
+#: includes/Kit/Overview.php:214
+msgid "Could not get version information"
+msgstr ""
+
+#: includes/Kit/Installer.php:91
+msgid "Could not read the digest (SHA-256) file. Nothing was installed."
+msgstr ""
+
+#: includes/Kit/Installer.php:75
+msgid "Could not verify the package signature. Nothing was installed."
+msgstr ""
+
+#: includes/Kit/Installer.php:72
+msgid "Could not verify the package signature: the plugin has no valid signature key. Nothing was installed."
+msgstr ""
+
+#: includes/Kit/Installer.php:67
+msgid "Could not verify the package signature: this server has no signature support (sodium). Nothing was installed."
+msgstr ""
+
+#: includes/Modules/ColorTheme.php:274
+msgid "Custom"
+msgstr ""
+
+#: includes/Modules/ColorTheme.php:308
+msgid "Custom colors"
+msgstr ""
+
+#: includes/Modules/ColorTheme.php:113
+msgid "Dark"
+msgstr ""
+
+#: includes/Modules/ColorTheme.php:319
+msgid "Dark (white text)"
+msgstr ""
+
+#: includes/Core/Admin.php:69
+msgid "Debug"
+msgstr ""
+
+#: includes/Modules/ColorTheme.php:121
+msgid "Default colors"
+msgstr ""
+
+#: includes/Modules/ColorTheme.php:81
+msgid "Default theme"
+msgstr ""
+
+#: includes/Modules/ScrollTop.php:60
+msgid "Distance from the edge"
+msgstr ""
+
+#: includes/SettingsPage.php:99
+msgid "Each module adds one feature to the admin area. Turn on only what you need. Nothing here changes the public site."
+msgstr ""
+
+#: includes/Core/Admin.php:72
+msgid "Error"
+msgstr ""
+
+#: includes/Modules/NoticeTidy.php:70
+msgid "errors stay visible below"
+msgstr ""
+
+#: includes/Core/Admin.php:50
+msgid "Event"
+msgstr ""
+
+#: includes/Core/Admin.php:55
+msgid "Event type"
+msgstr ""
+
+#: includes/Modules/StickySave.php:44
+msgid "Every admin form with a main save button"
+msgstr ""
+
+#: includes/Modules/MenuTrim.php:30
+msgid "Example module: hides the menu items you pick. They are only hidden from view; access stays."
+msgstr ""
+
+#: includes/Modules/ColorTheme.php:208
+msgid "Fail"
+msgstr ""
+
+#: includes/catalog.php:27
+msgid "Finds gaps in posts, tags and images, and helps you fix problems such as missing alt text."
+msgstr ""
+
+#: includes/Modules/ColorTheme.php:211
+msgid "Fix"
+msgstr ""
+
+#: includes/Color.php:44
+msgid "Forest"
+msgstr ""
+
+#: includes/Core/Admin.php:56
+msgid "From"
+msgstr ""
+
+#: includes/SettingsPage.php:83
+msgid "General"
+msgstr ""
+
+#: includes/Kit/Overview.php:204
+msgid "Go to settings"
+msgstr ""
+
+#: includes/Color.php:60
+msgid "Graphite"
+msgstr ""
+
+#: includes/Core/Admin.php:143
+msgid "Group"
+msgstr ""
+
+#: includes/Core/Admin.php:67
+msgid "Hide details"
+msgstr ""
+
+#: includes/Modules/MenuTrim.php:26
+msgid "Hide side menu items"
+msgstr ""
+
+#: includes/Core/Admin.php:70
+msgid "Info"
+msgstr ""
+
+#: includes/Kit/Overview.php:222
+msgid "Install"
+msgstr ""
+
+#: includes/Kit/Overview.php:219
+#, php-format
+msgid "Install (v%s)"
+msgstr ""
+
+#: includes/Kit/Overview.php:196
+msgid "Installed"
+msgstr ""
+
+#: includes/RbnKitMenu.php:178
+msgid "Installed RBN plugins:"
+msgstr ""
+
+#: includes/Modules/NoticeTidy.php:42
+msgid "Keep the box closed until opened"
+msgstr ""
+
+#: includes/Modules/StickySave.php:28
+msgid "Keeps a save button at the bottom of long settings pages and warns about unsaved changes."
+msgstr ""
+
+#: includes/Core/Admin.php:146
+msgid "Last cleared"
+msgstr ""
+
+#: includes/Modules/ColorTheme.php:74
+msgid "Let users choose their own colors"
+msgstr ""
+
+#: includes/Core/Admin.php:49
+msgid "Level"
+msgstr ""
+
+#: includes/Core/Admin.php:144
+msgid "Lifetime"
+msgstr ""
+
+#: includes/Modules/ColorTheme.php:114
+msgid "Light"
+msgstr ""
+
+#: includes/Modules/ColorTheme.php:320
+msgid "Light (dark text)"
+msgstr ""
+
+#: includes/Core/Admin.php:59
+msgid "Loading log entries…"
+msgstr ""
+
+#: includes/Modules/NoticeTidy.php:52
+msgid "Locked on: errors are never hidden or removed."
+msgstr ""
+
+#: includes/Core/Admin.php:53
+msgid "Log channel"
+msgstr ""
+
+#: includes/Kit/Overview.php:101
+msgid "Logs"
+msgstr ""
+
+#: includes/Modules/MenuTrim.php:42
+msgid "Menu items to hide"
+msgstr ""
+
+#: includes/Core/Admin.php:51
+msgid "Message"
+msgstr ""
+
+#: includes/SettingsPage.php:72
 msgid "Modules"
 msgstr ""
 
-msgid "AdminKit settings tabs"
+#: includes/SettingsPage.php:130
+msgid "Network"
+msgstr ""
+
+#: includes/Core/Admin.php:146
+msgid "Never"
+msgstr ""
+
+#: includes/Core/Admin.php:65
+msgid "Next page"
+msgstr ""
+
+#: includes/Color.php:28
+msgid "Night"
+msgstr ""
+
+#: includes/Core/Admin.php:159
+msgid "No cache group for this plugin."
+msgstr ""
+
+#: includes/Core/Admin.php:113
+msgid "No cache group is registered."
+msgstr ""
+
+#: includes/Core/Admin.php:99
+msgid "No cache group was cleared."
+msgstr ""
+
+#: includes/Core/Admin.php:68
+msgid "No details"
+msgstr ""
+
+#: includes/Core/Admin.php:61
+msgid "No entries match these filters."
+msgstr ""
+
+#: includes/Core/Admin.php:167
+msgid "No log channel is registered."
+msgstr ""
+
+#: includes/Kit/Overview.php:168
+msgid "No RBN plugins are installed."
+msgstr ""
+
+#: includes/Kit/Overview.php:214
+msgid "No release found"
+msgstr ""
+
+#: includes/Kit/Overview.php:153
+msgid "Not active"
+msgstr ""
+
+#: includes/SettingsPage.php:225
+msgid "Nothing to choose from."
+msgstr ""
+
+#: includes/Modules/NoticeTidy.php:26
+msgid "Notice organizer"
+msgstr ""
+
+#: includes/Modules/NoticeTidy.php:69
+msgid "Notices"
+msgstr ""
+
+#: includes/Color.php:36
+msgid "Ocean"
+msgstr ""
+
+#: includes/SettingsPage.php:162
+msgid "Off"
+msgstr ""
+
+#: includes/SettingsPage.php:133
+msgid "Off: no network request is sent; update checks and catalog installs are disabled for all RBN plugins."
+msgstr ""
+
+#: includes/Kit/Overview.php:214
+msgid "Offline mode"
+msgstr ""
+
+#: includes/SettingsPage.php:162
+msgid "On"
+msgstr ""
+
+#: includes/Modules/StickySave.php:50
+msgid "Only on pages taller than"
+msgstr ""
+
+#: includes/Modules/ColorTheme.php:251
+msgid "Only you see these colors. The preview changes this page right away; nothing is saved until you press Save."
+msgstr ""
+
+#: includes/Kit/Overview.php:177
+msgid "Open the setting"
+msgstr ""
+
+#: includes/catalog.php:47
+msgid "Optimizes how your site appears in search engines: titles, descriptions, social cards, sitemap, schema, redirects and a 404 log."
+msgstr ""
+
+#: includes/RbnKitMenu.php:163
+msgid "Overview"
+msgstr ""
+
+#: includes/Core/Admin.php:74
+#, php-format
+msgid "Page %1$s of %2$s · Total: %3$s"
+msgstr ""
+
+#: includes/Modules/ColorTheme.php:207
+msgid "Pass"
+msgstr ""
+
+#: includes/Core/Admin.php:142
+msgid "Plugin"
+msgstr ""
+
+#: includes/Kit/Overview.php:99
+msgid "Plugin catalog"
+msgstr ""
+
+#: includes/Kit/Installer.php:132
+msgid "Plugin installation is turned off on this site (DISALLOW_FILE_MODS). Nothing was installed."
+msgstr ""
+
+#: includes/Kit/Overview.php:180
+msgid "Plugin installation is turned off on this site (DISALLOW_FILE_MODS); the “Install” and “Activate” buttons are not shown."
+msgstr ""
+
+#: includes/Kit/Overview.php:210
+msgid "Plugins cannot be installed on this site."
+msgstr ""
+
+#: includes/Modules/ScrollTop.php:40
+msgid "Position"
+msgstr ""
+
+#: includes/Modules/ColorTheme.php:216
+msgid "Preview — not saved yet"
+msgstr ""
+
+#: includes/Core/Admin.php:64
+msgid "Previous page"
+msgstr ""
+
+#: includes/Kit/Overview.php:114
+msgid "RBN Kit tabs"
+msgstr ""
+
+#: includes/Modules/MenuTrim.php:45
+msgid "RBN Kit, Settings and Plugins can not be hidden, so you can always find this page."
+msgstr ""
+
+#: includes/Core/Admin.php:165
+msgid "Recent events written by RBN plugins. Personal data is removed before an entry is stored."
+msgstr ""
+
+#: includes/Core/Admin.php:58
+msgid "Reset filters"
+msgstr ""
+
+#: includes/Modules/ColorTheme.php:257
+msgid "Save"
+msgstr ""
+
+#: includes/Modules/StickySave.php:80
+msgid "Save bar"
+msgstr ""
+
+#: includes/SettingsPage.php:120
+msgid "Save changes"
+msgstr ""
+
+#: includes/SettingsPage.php:47
+msgid "Settings"
+msgstr ""
+
+#: includes/Modules/StickySave.php:43
+msgid "Settings screens only (options.php forms)"
+msgstr ""
+
+#: includes/Modules/ColorTheme.php:317
+msgid "Shell tone"
+msgstr ""
+
+#: includes/Modules/StickySave.php:56
+msgid "Short pages already show the save button; the bar appears when the page is at least this tall."
+msgstr ""
+
+#: includes/Modules/ScrollTop.php:50
+msgid "Show after scrolling"
+msgstr ""
+
+#: includes/Core/Admin.php:66
+msgid "Show details"
+msgstr ""
+
+#: includes/Modules/NoticeTidy.php:71
+msgid "Show or hide the collected notices"
+msgstr ""
+
+#: includes/Modules/ColorTheme.php:217
+msgid "Showing the saved colors"
+msgstr ""
+
+#: includes/Modules/ScrollTop.php:28
+msgid "Shows a button on every admin page that scrolls back to the top."
+msgstr ""
+
+#: includes/Modules/ColorTheme.php:277
+msgid "Side menu"
+msgstr ""
+
+#: includes/Modules/ColorTheme.php:212
+msgid "Side menu text on menu"
+msgstr ""
+
+#: includes/Modules/StickySave.php:24
+msgid "Sticky save bar"
+msgstr ""
+
+#: includes/Color.php:52
+msgid "Sunset"
+msgstr ""
+
+#: includes/Kit/Overview.php:111
+msgid "The action could not be completed."
+msgstr ""
+
+#: includes/Modules/ScrollTop.php:71
+msgid "The block editor scrolls on its own, so the button is hidden there by default."
+msgstr ""
+
+#: includes/Kit/Overview.php:177
+msgid "The catalog is offline: the GitHub lookup is turned off in the AdminKit settings. This page makes no network request; the “Install” buttons are disabled."
+msgstr ""
+
+#: includes/Kit/Installer.php:179
+msgid "The installation could not be completed."
+msgstr ""
+
+#: includes/Core/Admin.php:62
+msgid "The log could not be loaded."
+msgstr ""
+
+#: includes/Kit/Installer.php:237
+msgid "The package address is not in the expected format. Nothing was installed."
+msgstr ""
+
+#: includes/Kit/Installer.php:299
+msgid "The package did not pass verification. Nothing was installed."
+msgstr ""
+
+#: includes/Kit/Installer.php:110
+#, php-format
+msgid "The package root folder is not “%s” or the main file is missing. Nothing was installed."
+msgstr ""
+
+#: includes/Kit/Installer.php:88
+msgid "The package size is outside the expected range. Nothing was installed."
+msgstr ""
+
+#: includes/Kit/Installer.php:135
+msgid "The plugin catalog GitHub lookup is turned off in the settings. Nothing was installed."
+msgstr ""
+
+#: includes/Kit/Installer.php:196
+msgid "The plugin file was not found after the installation. Nothing was installed."
+msgstr ""
+
+#: includes/Kit/Installer.php:346
+msgid "The plugin to activate was not found."
+msgstr ""
+
+#: includes/Kit/Installer.php:311
+msgid "The plugin was activated."
+msgstr ""
+
+#: includes/Kit/Installer.php:310
+msgid "The plugin was installed. Select “Activate” to use it."
+msgstr ""
+
+#: includes/Kit/QuietSkin.php:52
+msgid "The server asks for extra information (such as FTP) to write files; install the plugin from Plugins → Add New instead."
+msgstr ""
+
+#: includes/Kit/Installer.php:95
+msgid "The SHA-256 digest of the package does not match. Nothing was installed."
+msgstr ""
+
+#: includes/Modules/ColorTheme.php:360
+msgid "The site administrator chose the admin colors. You cannot change them."
+msgstr ""
+
+#: includes/Kit/Installer.php:114
+msgid "The version in the package does not match the released version. Nothing was installed."
+msgstr ""
+
+#: includes/Modules/ColorTheme.php:295
+msgid "Theme"
+msgstr ""
+
+#: includes/Core/Admin.php:60
+msgid "There are no log entries yet."
+msgstr ""
+
+#: includes/Kit/Installer.php:141
+msgid "This plugin is already installed."
+msgstr ""
+
+#: includes/Kit/Installer.php:243
+msgid "This plugin is not in the catalog."
+msgstr ""
+
+#: includes/Kit/Installer.php:138
+msgid "This plugin is not released yet."
+msgstr ""
+
+#: includes/Core/Admin.php:48
+msgid "Time"
+msgstr ""
+
+#: includes/Core/Admin.php:57
+msgid "To"
+msgstr ""
+
+#: includes/Modules/ColorTheme.php:61
+msgid "To use it, turn the switch on and press Save."
+msgstr ""
+
+#: includes/Modules/ColorTheme.php:210
+#, php-format
+msgid "Too low — applied as %s instead"
+msgstr ""
+
+#: includes/Modules/ColorTheme.php:276
+msgid "Top bar"
+msgstr ""
+
+#: includes/Modules/ColorTheme.php:213
+msgid "Top bar text on bar"
+msgstr ""
+
+#: includes/Core/Admin.php:63
+msgid "Try again"
+msgstr ""
+
+#: includes/Core/LogRest.php:77
+msgid "Unknown log channel."
+msgstr ""
+
+#: includes/Kit/Overview.php:156
+#, php-format
+msgid "Update available: %s"
+msgstr ""
+
+#: includes/Modules/ColorTheme.php:51
+msgid "Use the color theme"
+msgstr ""
+
+#: includes/Modules/ColorTheme.php:76
+msgid "Users pick their colors under Users → Admin colors. The choice below is the default for everyone who has not picked one."
+msgstr ""
+
+#: includes/Core/Admin.php:147
+msgid "Version"
+msgstr ""
+
+#: includes/Core/Admin.php:71
+msgid "Warning"
+msgstr ""
+
+#: includes/Modules/StickySave.php:40
+msgid "Where to show it"
+msgstr ""
+
+#: includes/Modules/ColorTheme.php:65
+msgid "WordPress default"
+msgstr ""
+
+#: includes/Kit/Overview.php:175
+msgid "WordPress plugins by RBN. Installation takes one click; a package is not installed if its SHA-256 digest and signature cannot be verified."
+msgstr ""
+
+#: includes/Modules/ColorTheme.php:209
+msgid "Write each color as #rrggbb to see the contrast."
+msgstr ""
+
+#: includes/Core/Admin.php:145
+msgid "Writes"
+msgstr ""
+
+#: includes/Modules/ColorTheme.php:370
+msgid "You are not allowed to change these colors."
+msgstr ""
+
+#: includes/Core/Admin.php:83
+msgid "You are not allowed to clear the cache."
+msgstr ""
+
+#: includes/Kit/Installer.php:317
+msgid "You are not allowed to do this."
+msgstr ""
+
+#: includes/Core/Admin.php:105
+msgid "You are not allowed to manage the cache."
+msgstr ""
+
+#: includes/SettingsPage.php:65
+msgid "You are not allowed to manage these settings."
+msgstr ""
+
+#: includes/Core/LogRest.php:70
+msgid "You are not allowed to read this log."
+msgstr ""
+
+#: includes/Kit/Overview.php:84
+msgid "You are not allowed to view this page."
+msgstr ""
+
+#: includes/RbnKitMenu.php:176
+msgid "You do not have permission to access this page."
+msgstr ""
+
+#: includes/Modules/StickySave.php:78
+msgid "You have unsaved changes"
+msgstr ""
+
+#: includes/Modules/ColorTheme.php:292
+msgid "Your chosen theme is saved but not applied, because the color theme is off. Turn the switch on and press Save to apply it."
+msgstr ""
+
+#: includes/Modules/ColorTheme.php:246
+msgid "Your colors were reset."
+msgstr ""
+
+#: includes/Modules/ColorTheme.php:244
+msgid "Your colors were saved."
+msgstr ""
+
+#: includes/Modules/NoticeTidy.php:44
+msgid "Your own open/closed choice is remembered per user and overrides this."
 msgstr ""

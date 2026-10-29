@@ -450,3 +450,248 @@ msgstr "Modüller"
 
 msgid "AdminKit settings tabs"
 msgstr "AdminKit ayar sekmeleri"
+
+#: includes/Core/Admin.php:99
+#, php-format
+msgid "%d cache group cleared."
+msgid_plural "%d cache groups cleared."
+msgstr[0] "%d önbellek grubu temizlendi."
+msgstr[1] "%d önbellek grubu temizlendi."
+
+#: includes/Core/Admin.php:148
+msgid "Action"
+msgstr "İşlem"
+
+#: includes/Core/Admin.php:54
+msgid "All levels"
+msgstr "Tüm düzeyler"
+
+#: includes/Core/Admin.php:118
+msgid "All plugins"
+msgstr "Tüm eklentiler"
+
+#: includes/SettingsPage.php:132
+msgid "Allow RBN plugins to check GitHub for updates and the plugin catalog"
+msgstr "RBN eklentileri güncellemeleri ve eklenti kataloğunu GitHub'dan denetleyebilsin"
+
+#: includes/Kit/Overview.php:100
+msgid "Cache"
+msgstr "Önbellek"
+
+#: includes/Core/Admin.php:129
+msgid "Cache groups"
+msgstr "Önbellek grupları"
+
+#: includes/Core/Admin.php:111
+msgid "Cache groups registered by RBN plugins. Clearing a group makes its next request rebuild the data."
+msgstr "RBN eklentilerinin kaydettiği önbellek grupları. Bir grubu temizlediğinizde veri, sonraki istekte yeniden oluşturulur."
+
+#: includes/Core/Admin.php:151
+msgid "Clear"
+msgstr "Temizle"
+
+#: includes/Core/Admin.php:124
+msgid "Clear all caches"
+msgstr "Tüm önbellekleri temizle"
+
+#: includes/Core/Admin.php:124
+msgid "Clear every cache group?"
+msgstr "Tüm önbellek grupları temizlensin mi?"
+
+#: includes/Core/Admin.php:151
+#, php-format
+msgid "Clear the cache group %s?"
+msgstr "%s önbellek grubu temizlensin mi?"
+
+#: includes/Core/Admin.php:52
+msgid "Context"
+msgstr "Bağlam"
+
+#: includes/Core/Admin.php:69
+msgid "Debug"
+msgstr "Hata ayıklama"
+
+#: includes/Core/Admin.php:72
+msgid "Error"
+msgstr "Hata"
+
+#: includes/Core/Admin.php:50
+msgid "Event"
+msgstr "Olay"
+
+#: includes/Core/Admin.php:55
+msgid "Event type"
+msgstr "Olay türü"
+
+#: includes/Core/Admin.php:56
+msgid "From"
+msgstr "Başlangıç"
+
+#: includes/SettingsPage.php:83
+msgid "General"
+msgstr "Genel"
+
+#: includes/Core/Admin.php:143
+msgid "Group"
+msgstr "Grup"
+
+#: includes/Core/Admin.php:67
+msgid "Hide details"
+msgstr "Ayrıntıları gizle"
+
+#: includes/Core/Admin.php:70
+msgid "Info"
+msgstr "Bilgi"
+
+#: includes/RbnKitMenu.php:178
+msgid "Installed RBN plugins:"
+msgstr "Kurulu RBN eklentileri:"
+
+#: includes/Core/Admin.php:146
+msgid "Last cleared"
+msgstr "Son temizleme"
+
+#: includes/Core/Admin.php:49
+msgid "Level"
+msgstr "Düzey"
+
+#: includes/Core/Admin.php:144
+msgid "Lifetime"
+msgstr "Saklama süresi"
+
+#: includes/Core/Admin.php:59
+msgid "Loading log entries…"
+msgstr "Günlük kayıtları yükleniyor…"
+
+#: includes/Core/Admin.php:53
+msgid "Log channel"
+msgstr "Günlük kanalı"
+
+#: includes/Kit/Overview.php:101
+msgid "Logs"
+msgstr "Günlükler"
+
+#: includes/Core/Admin.php:51
+msgid "Message"
+msgstr "İleti"
+
+#: includes/SettingsPage.php:130
+msgid "Network"
+msgstr "Ağ"
+
+#: includes/Core/Admin.php:146
+msgid "Never"
+msgstr "Hiç temizlenmedi"
+
+#: includes/Core/Admin.php:65
+msgid "Next page"
+msgstr "Sonraki sayfa"
+
+#: includes/Core/Admin.php:159
+msgid "No cache group for this plugin."
+msgstr "Bu eklentinin önbellek grubu yok."
+
+#: includes/Core/Admin.php:113
+msgid "No cache group is registered."
+msgstr "Kayıtlı önbellek grubu yok."
+
+#: includes/Core/Admin.php:99
+msgid "No cache group was cleared."
+msgstr "Hiçbir önbellek grubu temizlenmedi."
+
+#: includes/Core/Admin.php:68
+msgid "No details"
+msgstr "Ayrıntı yok"
+
+#: includes/Core/Admin.php:61
+msgid "No entries match these filters."
+msgstr "Bu süzgeçlerle eşleşen kayıt yok."
+
+#: includes/Core/Admin.php:167
+msgid "No log channel is registered."
+msgstr "Kayıtlı günlük kanalı yok."
+
+#: includes/SettingsPage.php:133
+msgid "Off: no network request is sent; update checks and catalog installs are disabled for all RBN plugins."
+msgstr "Kapalı: hiçbir ağ isteği gönderilmez; tüm RBN eklentilerinde güncelleme denetimi ve katalog kurulumu kapalıdır."
+
+#: includes/RbnKitMenu.php:163
+msgid "Overview"
+msgstr "Genel bakış"
+
+#: includes/Core/Admin.php:74
+#, php-format
+msgid "Page %1$s of %2$s · Total: %3$s"
+msgstr "Sayfa %1$s / %2$s · Toplam: %3$s"
+
+#: includes/Core/Admin.php:142
+msgid "Plugin"
+msgstr "Eklenti"
+
+#: includes/Core/Admin.php:64
+msgid "Previous page"
+msgstr "Önceki sayfa"
+
+#: includes/Core/Admin.php:165
+msgid "Recent events written by RBN plugins. Personal data is removed before an entry is stored."
+msgstr "RBN eklentilerinin yazdığı son olaylar. Kişisel veriler kayıt yazılmadan önce ayıklanır."
+
+#: includes/Core/Admin.php:58
+msgid "Reset filters"
+msgstr "Süzgeçleri sıfırla"
+
+#: includes/Core/Admin.php:66
+msgid "Show details"
+msgstr "Ayrıntıları göster"
+
+#: includes/Core/Admin.php:62
+msgid "The log could not be loaded."
+msgstr "Günlük yüklenemedi."
+
+#: includes/Core/Admin.php:60
+msgid "There are no log entries yet."
+msgstr "Henüz günlük kaydı yok."
+
+#: includes/Core/Admin.php:48
+msgid "Time"
+msgstr "Zaman"
+
+#: includes/Core/Admin.php:57
+msgid "To"
+msgstr "Bitiş"
+
+#: includes/Core/Admin.php:63
+msgid "Try again"
+msgstr "Yeniden dene"
+
+#: includes/Core/LogRest.php:77
+msgid "Unknown log channel."
+msgstr "Bilinmeyen günlük kanalı."
+
+#: includes/Core/Admin.php:147
+msgid "Version"
+msgstr "Sürüm"
+
+#: includes/Core/Admin.php:71
+msgid "Warning"
+msgstr "Uyarı"
+
+#: includes/Core/Admin.php:145
+msgid "Writes"
+msgstr "Yazma"
+
+#: includes/Core/Admin.php:83
+msgid "You are not allowed to clear the cache."
+msgstr "Önbelleği temizleme izniniz yok."
+
+#: includes/Core/Admin.php:105
+msgid "You are not allowed to manage the cache."
+msgstr "Önbelleği yönetme izniniz yok."
+
+#: includes/Core/LogRest.php:70
+msgid "You are not allowed to read this log."
+msgstr "Bu günlüğü okuma izniniz yok."
+
+#: includes/RbnKitMenu.php:176
+msgid "You do not have permission to access this page."
+msgstr "Bu sayfaya erişim izniniz yok."

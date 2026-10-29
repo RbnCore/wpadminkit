@@ -2,11 +2,33 @@
 
 AdminKit adds small, independent tools to the WordPress admin area. Every tool is a module that can be switched on or off, and the plugin adds nothing to the public side of the site.
 
+## The other RBN plugins need AdminKit
+
+AdminKit is the base of the RBN plugin family: **WPSeoKit, ContentHealth and CookieKit do not work without it.**
+
+- Each of them declares `Requires Plugins: adminkit` in its plugin header. On WordPress 6.5 and later that is a real check: while AdminKit is missing or inactive WordPress refuses to activate them, and while one of them is active WordPress does not offer the Deactivate link for AdminKit.
+- The header only looks at the moment of activation. A second check runs on every request: a plugin starts only when AdminKit is loaded and its `ADMINKIT_CORE_API` level is high enough. If AdminKit is deleted over FTP or is too old, the plugin adds no hook, prints nothing and shows one admin notice with a link to activate AdminKit (when it is installed) or to its release page.
+- Install order: **AdminKit first**, then WPSeoKit, ContentHealth and CookieKit.
+
+What they get from AdminKit: one admin design language (the RBN Kit menu and the `rbn-admin-ui` component kit), one cache, one log and one switch for GitHub requests. The [Used by](#used-by) table lists the exact pieces each plugin takes.
+
 ## Who it is for
 
 WordPress site owners and editors who work in `wp-admin` every day: long settings pages, notices piling up, and no quick way back to the top of a page.
 
 ## Features
+
+### Core: cache, logs, network and the admin kit
+
+The core (cache, logs, network) loads on every request — front end, REST and cron — and only registers hooks; it prints nothing. The admin kit is registered on admin screens only.
+
+- **Cache with named groups.** A plugin registers its own groups (`plugin.name`) with a lifetime. A group is cleared by raising its version, so the old entries expire on their own instead of being deleted one row at a time. The driver is WordPress's object cache when the site has a persistent one, transients otherwise.
+- **Logs with named channels.** A channel declares its retention (1–365 days), a row limit (100–100,000) and the levels it accepts; a daily task prunes it. Before a line is stored, e-mail addresses become `[email]`, IPv4 and IPv6 addresses `[ip]`, and known token prefixes (GitHub, Stripe, OpenAI-style keys, AWS keys, JWTs, Slack tokens) `[redacted]`; a context value whose key looks like a secret or an identifier is redacted too. The Cache and Logs screens are tabs of **RBN Kit → Overview** and have no menu entry of their own.
+- **One network switch.** "Allow RBN plugins to check GitHub for updates and the plugin catalog" (AdminKit settings, Network section) is the only place this is decided. While it is off, no RBN plugin makes a request to GitHub.
+- **Plugin catalog.** **RBN Kit → Overview** has an *Installed* and a *Plugin catalog* tab. A package is installed from GitHub only after its SHA-256 digest and Ed25519 signature check out; installation does not activate the plugin.
+- **Shared admin kit** (`rbn-admin-ui`): tabs, cards, tables, buttons, form fields, notices, empty states and one SVG icon sprite, with a dark tone — every RBN Kit screen turns dark when the user's WordPress admin colour scheme is "Midnight" (filter `adminkit_tone`). Each plugin loads the kit from here and ships no copy of it.
+
+### Modules
 
 Each module can be turned on or off on its own. A module that is off loads no file and prints nothing.
 
@@ -18,17 +40,29 @@ Each module can be turned on or off on its own. A module that is off loads no fi
 
 Defaults after activation: back to top, sticky save bar and notice organizer are on; color theme and the sample module are off.
 
+## Used by
+
+| Plugin | What it takes from AdminKit |
+|---|---|
+| WPSeoKit | RBN Kit menu, admin kit, the shared log list, six cache groups (`wpseokit.probe`, `wpseokit.sitemap`, `wpseokit.llms`, `wpseokit.score`, `wpseokit.updates`, `wpseokit.maintenance`), four log channels (`wpseokit.activity`, `wpseokit.errors`, `wpseokit.updates`, `wpseokit.yoast`) and the network switch for its update check |
+| ContentHealth | RBN Kit menu, admin kit, cache group `contenthealth.scores`, log channel `contenthealth.errors` |
+| CookieKit | RBN Kit menu, admin kit, cache groups `cookiekit.rate` and `cookiekit.updates`, and the network switch for its update check |
+
 ## Requirements
 
 - WordPress 6.4 or later
 - PHP 8.0 or later
 - No other plugin, library or build step
 
+The `Requires Plugins` dependency check used by WPSeoKit, ContentHealth and CookieKit needs WordPress 6.5 or later. On older versions the header is ignored and only the runtime check applies.
+
 ## Installation
 
 1. Download `adminkit-0.1.0.zip` from [Releases](https://github.com/RbnCore/wpadminkit/releases). If you downloaded the package by hand, compare its SHA-256 with the `.sha256` asset next to it.
 2. In WordPress go to **Plugins → Add New → Upload Plugin**, choose the zip, install and activate.
 3. Open **RBN Kit → AdminKit** in the sidebar (just below Dashboard) and switch the modules you want. Save.
+
+If you also use WPSeoKit, ContentHealth or CookieKit, do this first: they cannot be activated until AdminKit is active.
 
 You can also copy the `adminkit` folder into `wp-content/plugins/`.
 
@@ -54,7 +88,7 @@ English is the source language. A Turkish (`tr_TR`) translation ships in `langua
 
 ## RBN Kit menu
 
-All RBN plugins appear under one **RBN Kit** top-level menu just below Dashboard. AdminKit adds the "AdminKit" item; it has no entry under Settings. The menu order is fixed (Overview → AdminKit → Cookies and Consent → Content Health) and this plugin ships the shared `RbnKitMenu` file that the other plugins copy.
+All RBN plugins appear under one **RBN Kit** top-level menu just below Dashboard. AdminKit adds the "AdminKit" item; it has no entry under Settings. The menu order is fixed (Overview → AdminKit → Cookies and Consent → Content Health → SEO Toolkit) and AdminKit is the only place that ships the `RbnKitMenu` class — the other plugins load it from here and do not carry a copy.
 
 ## Version and license
 

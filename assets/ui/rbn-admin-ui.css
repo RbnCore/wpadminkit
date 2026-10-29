@@ -211,7 +211,9 @@
 .rbn-log__detail>td{background:var(--rbn-surface-2)}
 .rbn-log__kv{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:var(--rbn-s1) var(--rbn-s4);margin:0}
 .rbn-log__kv dt{font-weight:var(--rbn-fw-m)}.rbn-log__kv dd{margin:0;overflow-wrap:anywhere}
-.rbn-pager{display:flex;flex-wrap:wrap;align-items:center;gap:var(--rbn-s2) var(--rbn-s3);padding:var(--rbn-s3) var(--rbn-s5) 0}
+.rbn-pager{display:flex;flex-wrap:wrap;align-items:center;gap:var(--rbn-s2) var(--rbn-s3);padding:var(--rbn-s3) var(--rbn-s5) var(--rbn-s4)}   /* ÜST 12 tablodan ayırır, ALT 16: düğmeler kartın alt kenarına yapışmaz (WPRJ-626) */
+.rbn-pager:empty{display:none}                                                         /* JS doldurmadan önce boş şerit yer tutmaz */
+.rbn-card__b--flush>.rbn-pager:last-child{padding-bottom:0}                            /* gövde zaten alt 16 veriyor: çift boşluk olmaz */
 .rbn-pager__n{margin-right:auto;color:var(--rbn-muted)}
 
 /* ═══ DİYALOG ═══ */
@@ -226,7 +228,7 @@
   .rbn-wrap{padding:var(--rbn-s4) var(--rbn-s3) var(--rbn-s6)}
   .rbn-tabs{flex-wrap:wrap;overflow-x:visible}   /* dar ekranda sekme etiketleri SARAR: yatay kaydırma yok, etiket kesilmez */
   .rbn-tabs__tab{min-height:var(--rbn-ctl-touch)}
-  .rbn-card__h,.rbn-card__b,.rbn-card__foot{padding-left:var(--rbn-s4);padding-right:var(--rbn-s4)}
+  .rbn-card__h,.rbn-card__b,.rbn-card__foot,.rbn-pager{padding-left:var(--rbn-s4);padding-right:var(--rbn-s4)}
   .rbn-card__foot--split .rbn-card__ops{flex:1 1 100%;margin-inline-start:0}   /* dar ekranda sarar: durum üstte, eylem altta tam genişlik */
   .rbn-card__foot--split .rbn-card__ops>.rbn-btn,.rbn-card__foot--split .rbn-card__ops>form{flex:1 1 100%}
   .rbn-card__foot--split .rbn-card__ops>form .rbn-btn{width:100%}

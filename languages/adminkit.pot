@@ -821,3 +821,48 @@ msgstr ""
 #: includes/Modules/NoticeTidy.php:44
 msgid "Your own open/closed choice is remembered per user and overrides this."
 msgstr ""
+
+#: includes/Core/Updater.php
+msgid "The update check is off; GitHub is never contacted."
+msgstr ""
+
+#: includes/Core/Updater.php
+msgid "Not checked yet."
+msgstr ""
+
+#: includes/Core/Updater.php
+msgid "There is no published version yet."
+msgstr ""
+
+#: includes/Core/Updater.php
+msgid "Could not check; it will be tried again later. The plugin works normally."
+msgstr ""
+
+#: includes/Core/Updater.php
+#, php-format
+msgid "A new version is available: %s. Click “Update” on the Plugins page."
+msgstr ""
+
+#: includes/Core/Updater.php
+msgid "The plugin is up to date."
+msgstr ""
+
+#: includes/Core/Updater.php
+msgid "Check now"
+msgstr ""
+
+#: includes/Core/Updater.php
+msgid "There are no release notes for this version."
+msgstr ""
+
+#: includes/Core/Updater.php
+msgid "Update stopped: the digest or signature file could not be downloaded. The old version was kept."
+msgstr ""
+
+#: includes/Core/Updater.php
+msgid "Update rejected: the package did not pass the signature verification. The old version was kept."
+msgstr ""
+
+#: includes/Core/Updater.php
+msgid "You do not have permission for this action."
+msgstr ""

@@ -38,6 +38,11 @@ final class Installer {
 		add_action( 'admin_post_' . self::ACT_ACTIVE, array( self::class, 'action_activate' ) );
 	}
 
+	/** Katalog kurulumu sürüyor mu? Merkezi güncelleyici bu sırada paketi kendisi işlemez. */
+	public static function installing(): bool {
+		return '' !== self::$expect;
+	}
+
 	/** Bu sitede eklenti kurmaya WordPress izin veriyor mu (DISALLOW_FILE_MODS ve `file_mod_allowed` süzgeci). */
 	public static function file_mods_allowed(): bool {
 		return function_exists( 'wp_is_file_mod_allowed' ) ? wp_is_file_mod_allowed( 'adminkit_catalog_install' ) : ! ( defined( 'DISALLOW_FILE_MODS' ) && DISALLOW_FILE_MODS );

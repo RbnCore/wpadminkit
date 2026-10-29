@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
 final class Core {
 
 	/** Core API level. Consumers check `ADMINKIT_CORE_API >= N`; raised when the public contract grows. */
-	public const API = 2;
+	public const API = 3;
 
 	public static function boot(): void {
 		Schema::maybe_upgrade();
@@ -23,6 +23,13 @@ final class Core {
 		add_action( Log::PRUNE_HOOK, array( Log::class, 'prune_all' ) );
 		add_action( 'shutdown', array( Cache::class, 'save_stats' ) );
 		Cache::register_group( 'adminkit', 'catalog', 12 * HOUR_IN_SECONDS );
+		Cache::register_group( 'adminkit', 'updates', 12 * HOUR_IN_SECONDS );
+		Log::register_channel( 'adminkit', 'updates', 90, 200 );
+		// Central updater (API level 3): one hook set for every registered RBN plugin; admin, cron and WP-CLI only, never the front end.
+		if ( is_admin() || wp_doing_cron() || defined( 'WP_CLI' ) ) {
+			Updater::init();
+		}
+		Updater::register( 'adminkit', ADMINKIT_FILE, ADMINKIT_VERSION );
 		/**
 		 * Core is ready: register cache groups and log channels here. If this already fired, call directly.
 		 */

@@ -4,7 +4,7 @@ Tags: admin, back to top, sticky save, notices, admin color scheme, dashboard
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 0.1.0
+Stable tag: 0.1.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -19,7 +19,7 @@ Adds features to the WordPress admin area, module by module. You turn each modul
 * Notice organizer: collects informational notices in one box. Error notices are never hidden.
 * Hide side menu items (example module, off by default): only changes the view, does not block access.
 * Color theme (off by default): 5 ready themes or your own colors; per user, with a live preview; the contrast is checked against WCAG AA (4.5:1).
-* Adds nothing to the front end. An outside connection is made only when the RBN Kit → Overview page is opened, and only to GitHub (plugin catalog); if you turn off "Allow RBN plugins to check GitHub for updates and the plugin catalog" in the AdminKit settings, no network request is made at all.
+* Adds nothing to the front end. An outside connection is made only to GitHub: when the RBN Kit → Overview page is opened (plugin catalog) and inside WordPress' own update check (new versions of the RBN plugins; no token, cookie or site address is sent); if you turn off "Allow RBN plugins to check GitHub for updates and the plugin catalog" in the AdminKit settings, no network request is made at all.
 * RBN Kit → Overview: **Installed** and **Plugin catalog** tabs. One-click install from the catalog: a signed GitHub release, with SHA-256 + Ed25519 verification required; after the install you still select "Activate" yourself.
 
 == Installation ==
@@ -28,6 +28,10 @@ Adds features to the WordPress admin area, module by module. You turn each modul
 2. Turn modules on or off under RBN Kit → AdminKit, in the side menu just below Dashboard.
 
 == Changelog ==
+
+= 0.1.1 =
+* Central updater (core API level 3): the AdminKit core class Updater is the one update module for every RBN plugin (WPSeoKit, ContentHealth, CookieKit and AdminKit itself). Signed GitHub releases (SHA-256 + Ed25519), switched by the central Network setting; plugins register with Updater::register() instead of carrying their own updater.
+* The plugin catalog lists all four plugins as released.
 
 = 0.1.0 =
 * First release: 5 modules (back to top, sticky save bar, notice organizer, hide side menu items, color theme), a module registry, tr_TR translation.

@@ -18,7 +18,7 @@ return array(
 		'icon'          => 'cog',
 		'plugin_file'   => 'adminkit/adminkit.php',
 		'repo'          => 'RbnCore/wpadminkit',
-		'status'        => 'soon',
+		'status'        => 'released',
 		'settings_slug' => 'adminkit',
 	),
 	array(
@@ -28,7 +28,7 @@ return array(
 		'icon'          => 'heart',
 		'plugin_file'   => 'contenthealth/contenthealth.php',
 		'repo'          => 'RbnCore/wpcontenthealth',
-		'status'        => 'soon',
+		'status'        => 'released',
 		'settings_slug' => 'contenthealth',
 	),
 	array(
@@ -38,7 +38,7 @@ return array(
 		'icon'          => 'shield',
 		'plugin_file'   => 'cookiekit/cookiekit.php',
 		'repo'          => 'RbnCore/wpcookiekit',
-		'status'        => 'soon',
+		'status'        => 'released',
 		'settings_slug' => 'cookiekit',
 	),
 	array(
@@ -48,7 +48,7 @@ return array(
 		'icon'          => 'search',
 		'plugin_file'   => 'wpseokit/wpseokit.php',
 		'repo'          => 'RbnCore/wpseokit',
-		'status'        => 'soon',
+		'status'        => 'released',
 		'settings_slug' => 'wpseokit',
 	),
 );

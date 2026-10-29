@@ -442,8 +442,8 @@ msgid "AdminKit — Admin Area Tools"
 msgstr "AdminKit — Yönetim Paneli Araçları"
 
 #. Plugin header
-msgid "Adds features to the WordPress admin area, module by module: back-to-top button, sticky save bar, notice organizer, color theme and a sample customization. Each module can be turned on or off. Adds nothing to the front end; connects to GitHub only for the plugin catalog (can be turned off in the settings)."
-msgstr "WordPress yönetim paneline modül modül özellik ekler: yukarı çık düğmesi, yapışkan kaydet çubuğu, bildirim düzenleyici, renk teması ve örnek özelleştirme. Her modül açılıp kapatılır. Ön yüze çıktı vermez; yalnız eklenti kataloğu için GitHub'a bağlanır (ayardan kapatılabilir)."
+msgid "Adds features to the WordPress admin area, module by module: back-to-top button, sticky save bar, notice organizer, color theme and a sample customization. Each module can be turned on or off. Adds nothing to the front end; connects to GitHub only for the plugin catalog and for update checks of RBN plugins (can be turned off in the settings)."
+msgstr "WordPress yönetim paneline modül modül özellik ekler: yukarı çık düğmesi, yapışkan kaydet çubuğu, bildirim düzenleyici, renk teması ve örnek özelleştirme. Her modül açılıp kapatılır. Ön yüze çıktı vermez; yalnız eklenti kataloğu ve RBN eklentilerinin güncelleme denetimi için GitHub'a bağlanır (ayardan kapatılabilir)."
 
 msgid "Modules"
 msgstr "Modüller"
@@ -695,3 +695,36 @@ msgstr "Bu günlüğü okuma izniniz yok."
 #: includes/RbnKitMenu.php:176
 msgid "You do not have permission to access this page."
 msgstr "Bu sayfaya erişim izniniz yok."
+
+msgid "The update check is off; GitHub is never contacted."
+msgstr "Güncelleme denetimi kapalı; GitHub'a hiç bağlanılmaz."
+
+msgid "Not checked yet."
+msgstr "Henüz denetlenmedi."
+
+msgid "There is no published version yet."
+msgstr "Henüz yayınlanmış bir sürüm yok."
+
+msgid "Could not check; it will be tried again later. The plugin works normally."
+msgstr "Denetlenemedi; daha sonra yeniden denenecek. Eklenti normal çalışır."
+
+msgid "A new version is available: %s. Click “Update” on the Plugins page."
+msgstr "Yeni sürüm var: %s. Eklentiler sayfasında “Güncelle”ye tıklayın."
+
+msgid "The plugin is up to date."
+msgstr "Eklenti güncel."
+
+msgid "Check now"
+msgstr "Şimdi denetle"
+
+msgid "There are no release notes for this version."
+msgstr "Bu sürüm için sürüm notu yok."
+
+msgid "Update stopped: the digest or signature file could not be downloaded. The old version was kept."
+msgstr "Güncelleme durdu: özet ya da imza dosyası indirilemedi. Eski sürüm korundu."
+
+msgid "Update rejected: the package did not pass the signature verification. The old version was kept."
+msgstr "Güncelleme reddedildi: paket imza doğrulamasından geçmedi. Eski sürüm korundu."
+
+msgid "You do not have permission for this action."
+msgstr "Bu işlem için izniniz yok."

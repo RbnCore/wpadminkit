@@ -41,6 +41,13 @@ html:has(.rbn-wrap){scrollbar-gutter:stable}
 /* Kapsayıcı geometrisi TEK: .rbn-wrap'i WP'nin .wrap kabuğu (margin 10px 20px 0 2px) sarmışsa o kenar boşlukları sıfırlanır */
 .wrap:has(>.rbn-wrap){margin:0}
 .rbn-wrap[data-tone=koyu]{background:var(--rbn-bg)}
+/* Koyu ton + WP "Gece yarısı": `body` ve `#wpfooter` kit kökünün DIŞINDA kalır; WP gövde zemini açık (#f0f0f1) olduğundan panel kısa kalınca altta açık şerit çıkıp altbilgi okunmuyordu. Yalnız kit sayfasında (body:has) aynı koyu jetonlar altbilgiye ve gövde zeminine verilir; açık ton ve öteki şemalar etkilenmez. */
+body:has(.rbn-wrap[data-tone=koyu]) #wpfooter{
+  --rbn-bg:#0f1316;--rbn-muted:#a9b4bb;--rbn-ac:#8aa4ff;color-scheme:dark;
+}
+body:has(.rbn-wrap[data-tone=koyu]){background:#0f1316}
+body:has(.rbn-wrap[data-tone=koyu]) #wpfooter{background:var(--rbn-bg);color:var(--rbn-muted)}
+body:has(.rbn-wrap[data-tone=koyu]) #wpfooter a{color:var(--rbn-ac)}
 .rbn-wrap *,.rbn-wrap *::before,.rbn-wrap *::after,.rbn-dlg *,.rbn-sticky *{box-sizing:border-box}
 .rbn-wrap [hidden],.rbn-dlg [hidden]{display:none!important}
 .rbn-wrap h1,.rbn-wrap h2,.rbn-wrap h3,.rbn-wrap h4{color:var(--rbn-text);margin:0;padding:0;font-weight:var(--rbn-fw-m)}

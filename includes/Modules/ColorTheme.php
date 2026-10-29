@@ -176,6 +176,8 @@ final class ColorTheme implements Module {
 		if ( ( '' === SettingsPage::screen() || SettingsPage::screen() !== $hook ) && ( '' === self::$page_hook || self::$page_hook !== $hook ) ) {
 			return;
 		}
+		wp_enqueue_style( Assets::UI );
+		wp_enqueue_script( Assets::UI );
 		if ( wp_script_is( 'adminkit-colortheme', 'enqueued' ) ) {
 			return;
 		}
@@ -230,26 +232,26 @@ final class ColorTheme implements Module {
 		$values   = is_array( $meta ) && isset( $meta['scheme'] ) ? array_merge( $settings, $meta ) : $settings;
 		$values['scheme'] = in_array( $values['scheme'] ?? '', Color::scheme_ids(), true ) ? $values['scheme'] : 'wp';
 		?>
-		<div class="wrap adminkit-ctwrap">
-			<h1><?php esc_html_e( 'Admin colors', 'adminkit' ); ?></h1>
+		<div class="wrap rbn-wrap"<?php echo Assets::tone_attr(); // phpcs:ignore WordPress.Security.EscapeOutput ?>>
+			<div class="rbn-head"><h1><?php esc_html_e( 'Admin colors', 'adminkit' ); ?></h1></div>
 			<?php // phpcs:ignore WordPress.Security.NonceVerification ?>
 			<?php if ( isset( $_GET['saved'] ) ) : ?>
-				<div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'Your colors were saved.', 'adminkit' ); ?></p></div>
+				<?php echo Assets::note( 'ok', __( 'Your colors were saved.', 'adminkit' ) ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 			<?php elseif ( isset( $_GET['reset'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification ?>
-				<div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'Your colors were reset.', 'adminkit' ); ?></p></div>
+				<?php echo Assets::note( 'ok', __( 'Your colors were reset.', 'adminkit' ) ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 			<?php endif; ?>
 			<?php if ( ! $allowed ) : ?>
-				<p><?php esc_html_e( 'The site administrator chose the admin colors. You cannot change them.', 'adminkit' ); ?></p>
+				<p class="rbn-lead"><?php esc_html_e( 'The site administrator chose the admin colors. You cannot change them.', 'adminkit' ); ?></p>
 			<?php else : ?>
-				<p><?php esc_html_e( 'Only you see these colors. The preview changes this page right away; nothing is saved until you press Save.', 'adminkit' ); ?></p>
+				<p class="rbn-lead"><?php esc_html_e( 'Only you see these colors. The preview changes this page right away; nothing is saved until you press Save.', 'adminkit' ); ?></p>
 				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 					<input type="hidden" name="action" value="adminkit_color_save" />
 					<?php wp_nonce_field( self::NONCE, 'adminkit_ct_nonce' ); ?>
 					<?php self::widget( 'adminkit_ct', $values, 'user' ); ?>
-					<p class="submit">
-						<button type="submit" class="button button-primary"><?php esc_html_e( 'Save', 'adminkit' ); ?></button>
-						<button type="button" class="button" data-ck-cancel><?php esc_html_e( 'Cancel preview', 'adminkit' ); ?></button>
-						<button type="submit" class="button" name="action" value="adminkit_color_reset" formnovalidate><?php esc_html_e( 'Back to default', 'adminkit' ); ?></button>
+					<p class="ak-ct__actions">
+						<button type="submit" class="rbn-btn rbn-btn--pri"><?php esc_html_e( 'Save', 'adminkit' ); ?></button>
+						<button type="button" class="rbn-btn" data-ck-cancel><?php esc_html_e( 'Cancel preview', 'adminkit' ); ?></button>
+						<button type="submit" class="rbn-btn" name="action" value="adminkit_color_reset" formnovalidate><?php esc_html_e( 'Back to default', 'adminkit' ); ?></button>
 					</p>
 				</form>
 			<?php endif; ?>
@@ -280,51 +282,51 @@ final class ColorTheme implements Module {
 		$stored = get_option( Settings::OPTION, array() );
 		$on     = is_array( $stored ) && ! empty( $stored['modules']['color_theme']['enabled'] );
 		?>
-		<div class="adminkit-ct" data-ck-ctx="<?php echo esc_attr( $ctx ); ?>">
+		<div class="ak-ct" data-ck-ctx="<?php echo esc_attr( $ctx ); ?>">
 			<?php if ( 'default' === $ctx && ! $on && 'wp' !== $scheme ) : ?>
-				<p class="adminkit-ct__warn" role="status"><?php esc_html_e( 'Your chosen theme is saved but not applied, because the color theme is off. Turn the switch on and press Save to apply it.', 'adminkit' ); ?></p>
+				<?php echo Assets::note( 'warn', __( 'Your chosen theme is saved but not applied, because the color theme is off. Turn the switch on and press Save to apply it.', 'adminkit' ) ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 			<?php endif; ?>
-			<fieldset class="adminkit-ct__themes" role="radiogroup">
+			<fieldset class="ak-ct__themes" role="radiogroup">
 				<legend><?php esc_html_e( 'Theme', 'adminkit' ); ?></legend>
 				<?php foreach ( $all as $id => $t ) : ?>
-					<label class="adminkit-ct__opt" data-ck-card="<?php echo esc_attr( (string) $id ); ?>">
+					<label class="ak-ct__opt" data-ck-card="<?php echo esc_attr( (string) $id ); ?>">
 						<input type="radio" name="<?php echo esc_attr( $base . '[scheme]' ); ?>" value="<?php echo esc_attr( (string) $id ); ?>" data-ck="scheme" <?php checked( $scheme, $id ); ?> />
-						<span class="adminkit-ct__sw" aria-hidden="true">
+						<span class="ak-ct__sw" aria-hidden="true">
 							<i style="background:<?php echo esc_attr( $t['top'] ); ?>"></i><i style="background:<?php echo esc_attr( $t['side'] ); ?>"></i><i style="background:<?php echo esc_attr( $t['accent'] ); ?>"></i><i style="background:<?php echo esc_attr( $t['bg'] ); ?>"></i>
 						</span>
-						<span class="adminkit-ct__nm"><?php echo esc_html( (string) $t['name'] ); ?></span>
-						<span class="adminkit-ct__tick" aria-hidden="true"></span>
+						<span class="ak-ct__nm"><?php echo esc_html( (string) $t['name'] ); ?></span>
+						<span class="ak-ct__tick" aria-hidden="true"></span>
 					</label>
 				<?php endforeach; ?>
 			</fieldset>
-			<fieldset class="adminkit-ct__custom">
+			<fieldset class="ak-ct__custom">
 				<legend><?php esc_html_e( 'Custom colors', 'adminkit' ); ?></legend>
 				<?php foreach ( $fields as $key => $label ) : ?>
-					<div class="adminkit-ct__row">
+					<div class="ak-ct__row">
 						<label for="adminkit-<?php echo esc_attr( $ctx . '-' . $key ); ?>"><?php echo esc_html( $label ); ?></label>
 						<input type="color" value="<?php echo esc_attr( (string) ( Color::hex( $v[ $key ] ?? '' ) ?: '#000000' ) ); ?>" data-ck="<?php echo esc_attr( $key ); ?>-pick" aria-label="<?php echo esc_attr( $label ); ?>" />
-						<input type="text" id="adminkit-<?php echo esc_attr( $ctx . '-' . $key ); ?>" name="<?php echo esc_attr( $base . '[' . $key . ']' ); ?>" value="<?php echo esc_attr( (string) ( Color::hex( $v[ $key ] ?? '' ) ?: '' ) ); ?>" maxlength="7" size="9" pattern="#[0-9a-fA-F]{6}" data-ck="<?php echo esc_attr( $key ); ?>" />
+						<input type="text" class="rbn-input rbn-input--s rbn-input--mono" id="adminkit-<?php echo esc_attr( $ctx . '-' . $key ); ?>" name="<?php echo esc_attr( $base . '[' . $key . ']' ); ?>" value="<?php echo esc_attr( (string) ( Color::hex( $v[ $key ] ?? '' ) ?: '' ) ); ?>" maxlength="7" size="9" pattern="#[0-9a-fA-F]{6}" data-ck="<?php echo esc_attr( $key ); ?>" />
 					</div>
 				<?php endforeach; ?>
-				<div class="adminkit-ct__row">
+				<div class="ak-ct__row">
 					<label for="adminkit-<?php echo esc_attr( $ctx ); ?>-shell"><?php esc_html_e( 'Shell tone', 'adminkit' ); ?></label>
-					<select id="adminkit-<?php echo esc_attr( $ctx ); ?>-shell" name="<?php echo esc_attr( $base . '[shell]' ); ?>" data-ck="shell">
+					<select class="rbn-select" id="adminkit-<?php echo esc_attr( $ctx ); ?>-shell" name="<?php echo esc_attr( $base . '[shell]' ); ?>" data-ck="shell">
 						<option value="koyu" <?php selected( (string) ( $v['shell'] ?? 'koyu' ), 'koyu' ); ?>><?php esc_html_e( 'Dark (white text)', 'adminkit' ); ?></option>
 						<option value="acik" <?php selected( (string) ( $v['shell'] ?? 'koyu' ), 'acik' ); ?>><?php esc_html_e( 'Light (dark text)', 'adminkit' ); ?></option>
 					</select>
 				</div>
 			</fieldset>
-			<div class="adminkit-ct__rep">
+			<div class="ak-ct__rep">
 				<strong><?php esc_html_e( 'Contrast (WCAG AA needs at least 4.5:1)', 'adminkit' ); ?></strong>
 				<ul data-ck-report aria-live="polite"></ul>
-				<p class="adminkit-ct__st" data-ck-status role="status"></p>
+				<p class="rbn-help ak-ct__st" data-ck-status role="status"></p>
 			</div>
 			<?php if ( 'default' === $ctx ) : ?>
 				<p>
-					<button type="button" class="button" data-ck-cancel><?php esc_html_e( 'Cancel preview', 'adminkit' ); ?></button>
+					<button type="button" class="rbn-btn" data-ck-cancel><?php esc_html_e( 'Cancel preview', 'adminkit' ); ?></button>
 					<?php wp_nonce_field( self::NONCE, 'adminkit_ct_nonce', false ); ?>
 					<?php // Ayar formunun gizli "action=update" alanını, sonra gelen düğme değeri ezer. ?>
-					<button type="submit" class="button" name="action" value="adminkit_color_reset" formaction="<?php echo esc_url( admin_url( 'admin-post.php?scope=default' ) ); ?>" formnovalidate><?php esc_html_e( 'Back to default', 'adminkit' ); ?></button>
+					<button type="submit" class="rbn-btn" name="action" value="adminkit_color_reset" formaction="<?php echo esc_url( admin_url( 'admin-post.php?scope=default' ) ); ?>" formnovalidate><?php esc_html_e( 'Back to default', 'adminkit' ); ?></button>
 				</p>
 			<?php endif; ?>
 		</div>

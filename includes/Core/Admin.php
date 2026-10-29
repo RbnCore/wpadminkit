@@ -35,8 +35,9 @@ final class Admin {
 
 	/** Registers (does not enqueue) the reusable log list component for every admin screen. */
 	public static function register_assets(): void {
-		wp_register_style( self::HANDLE, ADMINKIT_URL . 'assets/logs.css', array( 'dashicons' ), \AdminKit\Assets::ver( 'logs.css' ) );
-		wp_register_script( self::HANDLE, ADMINKIT_URL . 'assets/logs.js', array(), \AdminKit\Assets::ver( 'logs.js' ), array( 'strategy' => 'defer', 'in_footer' => true ) );
+		// Stil dosyası yok: bileşen ortak kitin `.rbn-log*` sınıflarını kullanır; tutamaç yalnız kiti bağımlılık olarak getirir.
+		wp_register_style( self::HANDLE, false, array( \AdminKit\Assets::UI ), \AdminKit\Assets::ver( 'ui/rbn-admin-ui.css' ) );
+		wp_register_script( self::HANDLE, ADMINKIT_URL . 'assets/logs.js', array( \AdminKit\Assets::UI ), \AdminKit\Assets::ver( 'logs.js' ), array( 'strategy' => 'defer', 'in_footer' => true ) );
 		wp_localize_script(
 			self::HANDLE,
 			'rbnkitLogs',
@@ -96,25 +97,25 @@ final class Admin {
 		$n = absint( $_GET['cleared'] ); // phpcs:ignore WordPress.Security.NonceVerification
 		/* translators: %d: number of cleared cache groups */
 		$text = $n > 0 ? sprintf( _n( '%d cache group cleared.', '%d cache groups cleared.', $n, 'adminkit' ), $n ) : __( 'No cache group was cleared.', 'adminkit' );
-		echo '<div class="rbn-kit__note ' . ( $n > 0 ? 'is-ok' : 'is-err' ) . '" role="status">' . esc_html( $text ) . '</div>';
+		echo \AdminKit\Assets::note( $n > 0 ? 'ok' : 'warn', $text ); // phpcs:ignore WordPress.Security.EscapeOutput -- Assets::note() kaçışlar.
 	}
 
 	public static function cache_panel(): void {
 		if ( ! self::can_manage() ) {
-			echo '<p class="rbn-muted">' . esc_html__( 'You are not allowed to manage the cache.', 'adminkit' ) . '</p>';
+			echo \AdminKit\Assets::note( 'warn', __( 'You are not allowed to manage the cache.', 'adminkit' ) ); // phpcs:ignore WordPress.Security.EscapeOutput -- Assets::note() kaçışlar.
 			return;
 		}
 		$stats   = Cache::stats();
 		$plugins = array_values( array_unique( wp_list_pluck( $stats, 'plugin' ) ) );
 		sort( $plugins );
-		echo '<p class="rbn-muted rbn-kit__lead">' . esc_html__( 'Cache groups registered by RBN plugins. Clearing a group makes its next request rebuild the data.', 'adminkit' ) . '</p>';
+		echo '<p class="rbn-lead">' . esc_html__( 'Cache groups registered by RBN plugins. Clearing a group makes its next request rebuild the data.', 'adminkit' ) . '</p>';
 		if ( ! $stats ) {
-			echo '<p class="rbn-kit__empty">' . esc_html__( 'No cache group is registered.', 'adminkit' ) . '</p>';
+			echo self::empty_state( __( 'No cache group is registered.', 'adminkit' ) ); // phpcs:ignore WordPress.Security.EscapeOutput -- empty_state() kaçışlar.
 			return;
 		}
-		echo '<div class="rbn-kit__bar">';
+		echo '<div class="rbn-bar">';
 		if ( count( $plugins ) > 1 ) {
-			echo '<div class="rbn-kit__field"><label for="rbn-kit-cache-plugin">' . esc_html__( 'Plugin', 'adminkit' ) . '</label><select id="rbn-kit-cache-plugin" data-rbn-row-filter="rbn-kit-cache-rows"><option value="">' . esc_html__( 'All plugins', 'adminkit' ) . '</option>';
+			echo '<div class="rbn-field"><label for="rbn-kit-cache-plugin">' . esc_html__( 'Plugin', 'adminkit' ) . '</label><select id="rbn-kit-cache-plugin" class="rbn-select" data-rbn-row-filter="rbn-kit-cache-rows"><option value="">' . esc_html__( 'All plugins', 'adminkit' ) . '</option>';
 			foreach ( $plugins as $plugin ) {
 				echo '<option value="' . esc_attr( $plugin ) . '">' . esc_html( $plugin ) . '</option>';
 			}
@@ -123,7 +124,8 @@ final class Admin {
 		self::clear_form( '', __( 'Clear all caches', 'adminkit' ), __( 'Clear every cache group?', 'adminkit' ), true );
 		echo '</div>';
 		?>
-		<table class="rbn-kit__table">
+		<section class="rbn-card"><div class="rbn-card__b rbn-card__b--flush"><div class="rbn-tw">
+		<table class="rbn-table rbn-table--stack">
 			<caption class="rbn-sr"><?php esc_html_e( 'Cache groups', 'adminkit' ); ?></caption>
 			<thead><tr>
 				<th scope="col"><?php esc_html_e( 'Plugin', 'adminkit' ); ?></th>
@@ -137,10 +139,10 @@ final class Admin {
 			<tbody id="rbn-kit-cache-rows">
 			<?php foreach ( $stats as $row ) : ?>
 				<tr data-plugin="<?php echo esc_attr( $row['plugin'] ); ?>">
-					<td data-label="<?php esc_attr_e( 'Plugin', 'adminkit' ); ?>"><?php echo esc_html( $row['plugin'] ); ?></td>
+					<th scope="row" data-label="<?php esc_attr_e( 'Plugin', 'adminkit' ); ?>"><?php echo esc_html( $row['plugin'] ); ?></th>
 					<td data-label="<?php esc_attr_e( 'Group', 'adminkit' ); ?>"><?php echo esc_html( $row['name'] ); ?></td>
 					<td data-label="<?php esc_attr_e( 'Lifetime', 'adminkit' ); ?>"><?php echo esc_html( human_time_diff( 0, (int) $row['ttl'] ) ); ?></td>
-					<td data-label="<?php esc_attr_e( 'Writes', 'adminkit' ); ?>"><?php echo esc_html( number_format_i18n( (int) $row['sets'] ) ); ?></td>
+					<td class="rbn-num" data-label="<?php esc_attr_e( 'Writes', 'adminkit' ); ?>"><?php echo esc_html( number_format_i18n( (int) $row['sets'] ) ); ?></td>
 					<td data-label="<?php esc_attr_e( 'Last cleared', 'adminkit' ); ?>"><?php echo $row['flushed_at'] ? esc_html( wp_date( 'Y-m-d H:i', (int) $row['flushed_at'] ) ) : '<span aria-hidden="true">&mdash;</span><span class="rbn-sr">' . esc_html__( 'Never', 'adminkit' ) . '</span>'; // phpcs:ignore WordPress.Security.EscapeOutput -- parçalar kaçışlı. ?></td>
 					<td data-label="<?php esc_attr_e( 'Version', 'adminkit' ); ?>"><?php echo esc_html( (string) $row['version'] ); ?></td>
 					<td data-label="<?php esc_attr_e( 'Action', 'adminkit' ); ?>">
@@ -153,15 +155,16 @@ final class Admin {
 			<?php endforeach; ?>
 			</tbody>
 		</table>
-		<p class="rbn-kit__empty" id="rbn-kit-cache-none" hidden><?php esc_html_e( 'No cache group for this plugin.', 'adminkit' ); ?></p>
+		</div></div></section>
+		<div class="rbn-empty" id="rbn-kit-cache-none" hidden><h2><?php esc_html_e( 'No cache group for this plugin.', 'adminkit' ); ?></h2></div>
 		<?php
 	}
 
 	public static function logs_panel(): void {
 		$channels = Log::channels();
-		echo '<p class="rbn-muted rbn-kit__lead">' . esc_html__( 'Recent events written by RBN plugins. Personal data is removed before an entry is stored.', 'adminkit' ) . '</p>';
+		echo '<p class="rbn-lead">' . esc_html__( 'Recent events written by RBN plugins. Personal data is removed before an entry is stored.', 'adminkit' ) . '</p>';
 		if ( ! $channels ) {
-			echo '<p class="rbn-kit__empty">' . esc_html__( 'No log channel is registered.', 'adminkit' ) . '</p>';
+			echo self::empty_state( __( 'No log channel is registered.', 'adminkit' ) ); // phpcs:ignore WordPress.Security.EscapeOutput -- empty_state() kaçışlar.
 			return;
 		}
 		$list = array();
@@ -176,13 +179,18 @@ final class Admin {
 		echo '<div data-rbnkit-logs data-channels="' . esc_attr( (string) wp_json_encode( $list ) ) . '" data-channel="' . esc_attr( (string) $list[0]['id'] ) . '" data-per-page="8" data-filters="1"></div>';
 	}
 
+	/** Kit boş durumu (`.rbn-empty`). */
+	private static function empty_state( string $title ): string {
+		return '<div class="rbn-empty"><span class="rbn-empty__i">' . \AdminKit\Assets::icon( 'inbox' ) . '</span><h2>' . esc_html( $title ) . '</h2></div>';
+	}
+
 	private static function clear_form( string $group, string $label, string $confirm, bool $primary = false, string $sr = '' ): void {
 		?>
 		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" data-rbn-confirm="<?php echo esc_attr( $confirm ); ?>">
 			<input type="hidden" name="action" value="<?php echo esc_attr( self::ACTION ); ?>" />
 			<input type="hidden" name="group" value="<?php echo esc_attr( $group ); ?>" />
 			<input type="hidden" name="_wpnonce" value="<?php echo esc_attr( wp_create_nonce( self::ACTION ) ); ?>" />
-			<button type="submit" class="button<?php echo $primary ? ' button-primary' : ''; ?>"><?php echo esc_html( $label ); ?><?php echo '' !== $sr ? '<span class="rbn-sr"> — ' . esc_html( $sr ) . '</span>' : ''; // phpcs:ignore WordPress.Security.EscapeOutput ?></button>
+			<button type="submit" class="rbn-btn<?php echo $primary ? ' rbn-btn--pri' : ''; ?>"><?php echo esc_html( $label ); ?><?php echo '' !== $sr ? '<span class="rbn-sr"> — ' . esc_html( $sr ) . '</span>' : ''; // phpcs:ignore WordPress.Security.EscapeOutput ?></button>
 		</form>
 		<?php
 	}

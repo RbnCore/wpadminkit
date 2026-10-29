@@ -68,7 +68,7 @@ final class Catalog {
 			return null;
 		}
 		$out = array();
-		foreach ( array( 'id', 'name', 'tagline', 'dashicon', 'plugin_file', 'repo', 'status', 'settings_slug' ) as $key ) {
+		foreach ( array( 'id', 'name', 'tagline', 'icon', 'plugin_file', 'repo', 'status', 'settings_slug' ) as $key ) {
 			if ( ! isset( $row[ $key ] ) || ! is_string( $row[ $key ] ) || '' === trim( $row[ $key ] ) ) {
 				return null;
 			}
@@ -78,7 +78,7 @@ final class Catalog {
 		if ( 1 !== preg_match( '/^[a-z0-9\-]{2,40}$/', $id ) || 1 !== preg_match( '#^RbnCore/[a-z0-9\-]{2,42}$#', $out['repo'] ) || $id . '/' . $id . '.php' !== $out['plugin_file'] ) {
 			return null;
 		}
-		if ( ! in_array( $out['status'], array( 'released', 'soon' ), true ) || 1 !== preg_match( '/^[a-z0-9\-]{1,40}$/', $out['dashicon'] ) || 1 !== preg_match( '/^[a-z0-9_\-]+$/', $out['settings_slug'] ) ) {
+		if ( ! in_array( $out['status'], array( 'released', 'soon' ), true ) || 1 !== preg_match( '/^[a-z0-9\-]{1,40}$/', $out['icon'] ) || 1 !== preg_match( '/^[a-z0-9_\-]+$/', $out['settings_slug'] ) ) {
 			return null;
 		}
 		return $out;

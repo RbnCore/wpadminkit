@@ -52,15 +52,11 @@ final class SettingsPage {
 		if ( '' === self::screen() || self::screen() !== $hook ) {
 			return;
 		}
-		wp_enqueue_style( 'adminkit-admin', ADMINKIT_URL . 'assets/admin.css', array(), Assets::ver( 'admin.css' ) );
+		wp_enqueue_style( Assets::UI );
+		wp_enqueue_script( Assets::UI );
+		wp_enqueue_style( 'adminkit-admin', ADMINKIT_URL . 'assets/admin.css', array( Assets::UI ), Assets::ver( 'admin.css' ) );
 		// Renk kartının arayüzü (palet kartları, önizleme, kontrast) modül açık/kapalı olsa da bu ekranda hep gelir.
 		Modules\ColorTheme::enqueue( $hook );
-	}
-
-	/** Koyu ton: WP "Gece yarısı" şeması; süzgeçle ezilebilir. */
-	private static function tone(): string {
-		$tone = (string) apply_filters( 'adminkit_tone', 'midnight' === (string) get_user_option( 'admin_color' ) ? 'koyu' : 'acik' );
-		return 'koyu' === $tone ? ' data-tone="koyu"' : '';
 	}
 
 	public static function render(): void {
@@ -73,21 +69,19 @@ final class SettingsPage {
 			$open += Settings::for_module( $module )['enabled'] ? 1 : 0;
 		}
 		?>
-		<div class="wrap rbn-wrap"<?php echo self::tone(); // phpcs:ignore WordPress.Security.EscapeOutput ?>>
+		<div class="wrap rbn-wrap"<?php echo Assets::tone_attr(); // phpcs:ignore WordPress.Security.EscapeOutput ?>>
 			<div class="rbn-head">
-				<div class="rbn-head__id">
-					<h1><?php echo esc_html__( 'AdminKit', 'adminkit' ); ?></h1>
-					<span class="rbn-chip"><?php echo esc_html( 'v' . ADMINKIT_VERSION ); ?></span>
-					<span class="rbn-chip rbn-chip--ok"><span class="rbn-dot"></span>
-						<?php
-						/* translators: 1: open module count, 2: total module count */
-						echo esc_html( sprintf( __( '%1$d of %2$d modules on', 'adminkit' ), $open, count( $modules ) ) );
-						?>
-					</span>
-				</div>
+				<h1><?php echo esc_html__( 'AdminKit', 'adminkit' ); ?></h1>
+				<span class="rbn-chip"><?php echo esc_html( 'v' . ADMINKIT_VERSION ); ?></span>
+				<span class="rbn-chip rbn-chip--ok"><span class="rbn-dot"></span>
+					<?php
+					/* translators: 1: open module count, 2: total module count */
+					echo esc_html( sprintf( __( '%1$d of %2$d modules on', 'adminkit' ), $open, count( $modules ) ) );
+					?>
+				</span>
 			</div>
-			<p class="rbn-muted"><?php esc_html_e( 'Each module adds one feature to the admin area. Turn on only what you need. Nothing here changes the public site.', 'adminkit' ); ?></p>
-			<form method="post" action="options.php" class="adminkit-form">
+			<p class="rbn-lead"><?php esc_html_e( 'Each module adds one feature to the admin area. Turn on only what you need. Nothing here changes the public site.', 'adminkit' ); ?></p>
+			<form method="post" action="options.php">
 				<?php settings_fields( Settings::GROUP ); ?>
 				<ul class="rbn-cards">
 					<?php foreach ( $modules as $module ) : ?>
@@ -95,7 +89,7 @@ final class SettingsPage {
 					<?php endforeach; ?>
 				</ul>
 				<?php self::catalog_card(); ?>
-				<?php submit_button( __( 'Save changes', 'adminkit' ) ); ?>
+				<p><button type="submit" class="rbn-btn rbn-btn--pri"><?php esc_html_e( 'Save changes', 'adminkit' ); ?></button></p>
 			</form>
 		</div>
 		<?php
@@ -106,16 +100,14 @@ final class SettingsPage {
 		?>
 		<ul class="rbn-cards">
 			<li class="rbn-card" id="adminkit-katalog">
-				<div class="rbn-card__top">
-					<div>
-						<h2><?php esc_html_e( 'Plugin catalog', 'adminkit' ); ?></h2>
-						<p class="rbn-muted"><?php esc_html_e( 'The catalog on the RBN Kit → Overview page learns about new versions and install packages from GitHub. A plain GET request is sent only when that page is opened; your site address and user details are not sent.', 'adminkit' ); ?></p>
-					</div>
+				<div class="rbn-card__h">
+					<h2><?php esc_html_e( 'Plugin catalog', 'adminkit' ); ?></h2>
+					<p><?php esc_html_e( 'The catalog on the RBN Kit → Overview page learns about new versions and install packages from GitHub. A plain GET request is sent only when that page is opened; your site address and user details are not sent.', 'adminkit' ); ?></p>
 				</div>
-				<div class="rbn-card__body">
+				<div class="rbn-card__b">
 					<div class="rbn-field">
 						<label class="rbn-check"><input type="checkbox" name="<?php echo esc_attr( Kit\Catalog::OPT_LIVE ); ?>" value="1" <?php checked( Kit\Catalog::live() ); ?> aria-describedby="adminkit-katalog-h" /> <?php esc_html_e( 'Look up the plugin catalog on GitHub live', 'adminkit' ); ?></label>
-						<span class="rbn-muted rbn-help" id="adminkit-katalog-h"><?php esc_html_e( 'When off, the catalog is shown only from the list bundled with the plugin, no network request is made, and the “Install” buttons are disabled.', 'adminkit' ); ?></span>
+						<span class="rbn-help" id="adminkit-katalog-h"><?php esc_html_e( 'When off, the catalog is shown only from the list bundled with the plugin, no network request is made, and the “Install” buttons are disabled.', 'adminkit' ); ?></span>
 					</div>
 				</div>
 			</li>
@@ -134,15 +126,15 @@ final class SettingsPage {
 		?>
 		<li class="rbn-card" id="adminkit-<?php echo esc_attr( $id ); ?>">
 			<input type="hidden" name="<?php echo esc_attr( $base . '[present]' ); ?>" value="1" />
-			<div class="rbn-card__top">
+			<div class="rbn-card__h ak-card-top">
 				<div>
 					<h2><?php echo esc_html( $module->title() ); ?></h2>
-					<p class="rbn-muted"><?php echo esc_html( $module->description() ); ?></p>
+					<p><?php echo esc_html( $module->description() ); ?></p>
 				</div>
 				<label class="rbn-switch">
 					<input type="checkbox" role="switch" name="<?php echo esc_attr( $base . '[enabled]' ); ?>" value="1" <?php checked( $on ); ?> />
-					<span class="rbn-switch__ui" aria-hidden="true"></span>
-					<span class="rbn-switch__txt">
+					<span class="rbn-switch__x" aria-hidden="true"></span>
+					<span class="ak-switch-txt">
 						<?php if ( $label ) : ?>
 							<?php echo esc_html( $label ); ?>
 						<?php else : ?>
@@ -153,10 +145,10 @@ final class SettingsPage {
 				</label>
 			</div>
 			<?php if ( $hint ) : ?>
-				<p class="rbn-muted adminkit-offhint"><?php echo esc_html( $hint ); ?></p>
+				<p class="rbn-help ak-offhint"><?php echo esc_html( $hint ); ?></p>
 			<?php endif; ?>
 			<?php if ( $module->settings_schema() ) : ?>
-				<div class="rbn-card__body">
+				<div class="rbn-card__b">
 					<?php foreach ( $module->settings_schema() as $field ) : ?>
 						<?php
 						if ( empty( $field['hidden'] ) ) {
@@ -180,7 +172,7 @@ final class SettingsPage {
 		$name  = $base . '[' . $key . ']';
 		$fid   = 'adminkit-' . sanitize_html_class( str_replace( array( '[', ']' ), '-', $name ) );
 		$value = $settings[ $key ] ?? Settings::default_of( $field );
-		$help  = isset( $field['help'] ) ? '<span class="rbn-muted rbn-help" id="' . esc_attr( $fid ) . '-h">' . esc_html( (string) $field['help'] ) . '</span>' : '';
+		$help  = isset( $field['help'] ) ? '<span class="rbn-help" id="' . esc_attr( $fid ) . '-h">' . esc_html( (string) $field['help'] ) . '</span>' : '';
 		$desc  = isset( $field['help'] ) ? ' aria-describedby="' . esc_attr( $fid ) . '-h"' : '';
 		echo '<div class="rbn-field">';
 		switch ( $field['type'] ) {
@@ -188,7 +180,7 @@ final class SettingsPage {
 				call_user_func( $field['render'], $base, $settings );
 				break;
 			case 'color':
-				echo '<label for="' . esc_attr( $fid ) . '">' . esc_html( (string) $field['label'] ) . '</label><input type="text" id="' . esc_attr( $fid ) . '" name="' . esc_attr( $name ) . '" value="' . esc_attr( (string) $value ) . '" maxlength="7" size="9" />' . $help; // phpcs:ignore WordPress.Security.EscapeOutput
+				echo '<label for="' . esc_attr( $fid ) . '">' . esc_html( (string) $field['label'] ) . '</label><input type="text" class="rbn-input rbn-input--s rbn-input--mono" id="' . esc_attr( $fid ) . '" name="' . esc_attr( $name ) . '" value="' . esc_attr( (string) $value ) . '" maxlength="7" size="9" />' . $help; // phpcs:ignore WordPress.Security.EscapeOutput
 				break;
 			case 'checkbox':
 				$locked = ! empty( $field['locked'] );
@@ -196,10 +188,10 @@ final class SettingsPage {
 				break;
 			case 'number':
 				echo '<label for="' . esc_attr( $fid ) . '">' . esc_html( (string) $field['label'] ) . '</label>';
-				echo '<span class="rbn-num"><input type="number" class="small-text" id="' . esc_attr( $fid ) . '"' . $desc . ' name="' . esc_attr( $name ) . '" min="' . (int) $field['min'] . '" max="' . (int) $field['max'] . '" step="' . (int) ( $field['step'] ?? 1 ) . '" value="' . (int) $value . '" />' . ( isset( $field['unit'] ) ? ' <span class="rbn-muted">' . esc_html( (string) $field['unit'] ) . '</span>' : '' ) . '</span>' . $help; // phpcs:ignore WordPress.Security.EscapeOutput
+				echo '<span class="ak-num"><input type="number" class="rbn-input rbn-input--s" id="' . esc_attr( $fid ) . '"' . $desc . ' name="' . esc_attr( $name ) . '" min="' . (int) $field['min'] . '" max="' . (int) $field['max'] . '" step="' . (int) ( $field['step'] ?? 1 ) . '" value="' . (int) $value . '" />' . ( isset( $field['unit'] ) ? ' <span class="rbn-muted">' . esc_html( (string) $field['unit'] ) . '</span>' : '' ) . '</span>' . $help; // phpcs:ignore WordPress.Security.EscapeOutput
 				break;
 			case 'select':
-				echo '<label for="' . esc_attr( $fid ) . '">' . esc_html( (string) $field['label'] ) . '</label><select id="' . esc_attr( $fid ) . '"' . $desc . ' name="' . esc_attr( $name ) . '">'; // phpcs:ignore WordPress.Security.EscapeOutput
+				echo '<label for="' . esc_attr( $fid ) . '">' . esc_html( (string) $field['label'] ) . '</label><select class="rbn-select" id="' . esc_attr( $fid ) . '"' . $desc . ' name="' . esc_attr( $name ) . '">'; // phpcs:ignore WordPress.Security.EscapeOutput
 				foreach ( (array) $field['options'] as $opt => $label ) {
 					echo '<option value="' . esc_attr( (string) $opt ) . '"' . selected( (string) $value, (string) $opt, false ) . '>' . esc_html( (string) $label ) . '</option>'; // phpcs:ignore WordPress.Security.EscapeOutput
 				}

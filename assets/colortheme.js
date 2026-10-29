@@ -111,12 +111,12 @@
 		if (base) {
 			report(base, cfg.min).forEach(function (r) {
 				var ok = r[2] >= cfg.min;
-				rows += '<li class="' + (ok ? 'ok' : 'bad') + '"><span class="adminkit-ct__lbl">' + cfg.i18n[r[0]] + '</span> <b>' + r[2].toFixed(2) + ':1</b> ' +
-					'<span class="adminkit-ct__badge">' + (ok ? cfg.i18n.pass : cfg.i18n.fail) + '</span>' +
-					(ok ? '' : ' <span class="adminkit-ct__note">' + cfg.i18n.low.replace('%s', r[3]) + '</span> <button type="button" class="button button-small" data-ck-fix="' + r[1] + '" data-to="' + r[3] + '">' + cfg.i18n.fix + '</button>') + '</li>';
+				rows += '<li><span class="ak-ct__lbl">' + cfg.i18n[r[0]] + '</span> <b>' + r[2].toFixed(2) + ':1</b> ' +
+					'<span class="rbn-badge rbn-badge--' + (ok ? 'ok' : 'err') + '">' + (ok ? cfg.i18n.pass : cfg.i18n.fail) + '</span>' +
+					(ok ? '' : ' <span class="rbn-help ak-ct__note">' + cfg.i18n.low.replace('%s', r[3]) + '</span> <button type="button" class="rbn-btn rbn-btn--sm" data-ck-fix="' + r[1] + '" data-to="' + r[3] + '">' + cfg.i18n.fix + '</button>') + '</li>';
 			});
 		} else {
-			rows = '<li class="bad"><span class="adminkit-ct__lbl">' + cfg.i18n.invalid + '</span></li>';
+			rows = '<li><span class="ak-ct__lbl">' + cfg.i18n.invalid + '</span></li>';
 		}
 		// Aynı içerik yeniden çizilmez: metin kutusundan çıkışta (change) düğme DOM'dan koparsa "Düzelt" tıklaması kaybolur.
 		if (rows !== this.rows) { this.rep.innerHTML = rows; this.rows = rows; }
@@ -132,7 +132,7 @@
 	};
 	// "Özel" kartının şeridi, yazılan özel renkleri gösterir (geçersiz hex'te önceki renk kalır).
 	Box.prototype.swatch = function (v) {
-		var card = this.root.querySelector('[data-ck-card="custom"] .adminkit-ct__sw');
+		var card = this.root.querySelector('[data-ck-card="custom"] .ak-ct__sw');
 		if (!card) { return; }
 		['top', 'side', 'accent'].forEach(function (k, i) { if (hex(v[k])) { card.children[i].style.background = hex(v[k]); } });
 	};
@@ -146,6 +146,6 @@
 	};
 
 	d.addEventListener('DOMContentLoaded', function () {
-		d.querySelectorAll('.adminkit-ct').forEach(function (el) { new Box(el); });
+		d.querySelectorAll('.ak-ct').forEach(function (el) { new Box(el); });
 	});
 }(window));

@@ -17,25 +17,12 @@ wp_clear_scheduled_hook( 'rbnkit_core_prune' );
 
 // The group counters live in one row per group (`rbnkit_core_gv_<plugin>.<name>`). Only AdminKit's own rows are
 // deleted here: the counters of the other plugins must survive, otherwise their old cache entries would become
-// reachable again (a counter that falls back to 1 revives every entry of that version). The legacy mirror option is
-// shared, so only AdminKit's own keys are removed from it; the option itself survives with the other plugins' keys.
+// reachable again (a counter that falls back to 1 revives every entry of that version).
 global $wpdb;
 $counters = $wpdb->get_col( $wpdb->prepare( "SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s", $wpdb->esc_like( 'rbnkit_core_gv_adminkit.' ) . '%' ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 foreach ( (array) $counters as $name ) {
 	if ( is_string( $name ) && 0 === strpos( $name, 'rbnkit_core_gv_adminkit.' ) ) {
 		delete_option( $name );
-	}
-}
-$mirror = get_option( 'rbnkit_core_group_versions', array() );
-if ( is_array( $mirror ) ) {
-	$own_keys = array_filter( array_keys( $mirror ), static fn( $k ): bool => 0 === strpos( (string) $k, 'adminkit.' ) );
-	if ( count( $own_keys ) === count( $mirror ) ) {
-		delete_option( 'rbnkit_core_group_versions' );
-	} elseif ( $own_keys ) {
-		foreach ( $own_keys as $key ) {
-			unset( $mirror[ $key ] );
-		}
-		update_option( 'rbnkit_core_group_versions', $mirror, true );
 	}
 }
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * AdminKit Helpers: Safe HTTP GET transport for text and JSON assets.
+ * AdminKit Helpers: Safe HTTP GET transport for small text assets.
  *
  * @package AdminKit
  */
@@ -38,40 +38,5 @@ final class Http {
 			);
 		}
 		return (string) wp_remote_retrieve_body( $res );
-	}
-
-	/**
-	 * Safely fetches and decodes JSON from a remote URL.
-	 *
-	 * @param string               $url       Remote URL.
-	 * @param array<string,string> $headers   Optional request headers.
-	 * @param int                  $max_bytes Maximum body size in bytes.
-	 * @param int                  $timeout   Timeout in seconds.
-	 * @return mixed|\WP_Error Decoded JSON or WP_Error on failure.
-	 */
-	public static function get_json( string $url, array $headers = array(), int $max_bytes = 32768, int $timeout = 10 ) {
-		$ver  = defined( 'ADMINKIT_VERSION' ) ? ADMINKIT_VERSION : '0.1.0';
-		$args = array(
-			'timeout'             => $timeout,
-			'limit_response_size' => $max_bytes,
-			'user-agent'          => 'AdminKit/' . $ver,
-		);
-		if ( ! empty( $headers ) ) {
-			$args['headers'] = $headers;
-		}
-		$res = wp_safe_remote_get( $url, $args );
-		if ( is_wp_error( $res ) ) {
-			return $res;
-		}
-		$code = (int) wp_remote_retrieve_response_code( $res );
-		if ( 200 !== $code ) {
-			return new \WP_Error( 'adminkit_http_error', sprintf( 'HTTP error %d', $code ) );
-		}
-		$body = (string) wp_remote_retrieve_body( $res );
-		$data = json_decode( $body, true );
-		if ( null === $data && '' !== trim( $body ) ) {
-			return new \WP_Error( 'adminkit_json_error', 'Invalid JSON response' );
-		}
-		return $data;
 	}
 }

@@ -7,8 +7,8 @@
  *
  * Every group keeps its version counter in its OWN option row (`rbnkit_core_gv_<plugin>.<name>`). One row per
  * group means a flush can never drop another group's counter, and the counter is raised with a single atomic
- * UPDATE, so two processes can never lower it. The legacy option `rbnkit_core_group_versions` is kept as a
- * read-only mirror (for readers of the old shape) and as the seed of the first run after the upgrade.
+ * UPDATE, so two processes can never lower it. The counter is the ONE source: a row that is missing is created
+ * above every version the group's stored entries have reached, so an old entry can never become reachable again.
  *
  * @package AdminKit
  */
@@ -26,9 +26,8 @@ defined( 'ABSPATH' ) || exit;
 
 final class Cache {
 
-	/** Legacy option (all groups in one row). Kept as a mirror and as the seed of the first run after the upgrade. */
-	public const OPT_VERSIONS = 'rbnkit_core_group_versions';
-	public const OPT_STATS    = 'rbnkit_core_cache_stats';
+	/** Statistics option (write counters per group). */
+	public const OPT_STATS = 'rbnkit_core_cache_stats';
 
 	/** One option row per group: `rbnkit_core_gv_<plugin>.<name>`. */
 	public const OPT_GROUP_PREFIX = 'rbnkit_core_gv_';
@@ -50,9 +49,6 @@ final class Cache {
 
 	/** @var array<string, int> Writes counted in this request, saved once at shutdown. */
 	private static array $pending = array();
-
-	/** True when a counter row was created in this request: the legacy mirror has to catch up. */
-	private static bool $mirror_dirty = false;
 
 	/**
 	 * Registers a cache group. The first registration of an id wins.
@@ -181,7 +177,6 @@ final class Cache {
 		self::bump_row( $option );
 		self::$versions[ $def['id'] ] = self::row_value( $option );
 		self::sync_option_cache( $option, self::$versions[ $def['id'] ] );
-		self::sync_mirror();
 		$stats                = self::stats_raw();
 		$stats[ $def['id'] ]  = array(
 			'sets'       => 0,
@@ -216,19 +211,11 @@ final class Cache {
 		if ( 1 !== preg_match( self::NAME_RE, $plugin ) ) {
 			return;
 		}
-		// Groups of the plugin: the counter rows and the groups the legacy mirror still knows (a group of a
-		// deactivated plugin has no row yet, but the mirror knows its id).
+		// Groups of the plugin: the counter rows (a group of a deactivated plugin has a row too, because the row is
+		// created above every stored entry when the group is first used).
 		$ids = array();
 		foreach ( self::plugin_group_options( $plugin ) as $option ) {
 			$ids[] = substr( $option, strlen( self::OPT_GROUP_PREFIX ) );
-		}
-		$mirror = get_option( self::OPT_VERSIONS, array() );
-		if ( is_array( $mirror ) ) {
-			foreach ( array_keys( $mirror ) as $id ) {
-				if ( 0 === strpos( (string) $id, $plugin . '.' ) ) {
-					$ids[] = (string) $id;
-				}
-			}
 		}
 		foreach ( array_unique( $ids ) as $id ) {
 			$option = self::group_option( $id );
@@ -237,7 +224,6 @@ final class Cache {
 			self::$versions[ $id ] = self::row_value( $option );
 			self::sync_option_cache( $option, self::$versions[ $id ] );
 		}
-		self::sync_mirror();
 		$stats = self::stats_raw();
 		foreach ( array_keys( $stats ) as $id ) {
 			if ( 0 === strpos( (string) $id, $plugin . '.' ) ) {
@@ -281,9 +267,6 @@ final class Cache {
 
 	/** `shutdown`: saves the write counters with one option update, only when something was written. */
 	public static function save_stats(): void {
-		if ( self::$mirror_dirty ) {
-			self::sync_mirror();
-		}
 		if ( ! self::$pending ) {
 			return;
 		}
@@ -300,11 +283,10 @@ final class Cache {
 
 	/** Test helper: forgets registrations, drivers and in-request state (stored options are not touched). */
 	public static function reset(): void {
-		self::$groups       = array();
-		self::$drivers      = array();
-		self::$versions     = array();
-		self::$pending      = array();
-		self::$mirror_dirty = false;
+		self::$groups   = array();
+		self::$drivers  = array();
+		self::$versions = array();
+		self::$pending  = array();
 	}
 
 	/* ------------------------------------------------------------------ internals */
@@ -338,20 +320,19 @@ final class Cache {
 		$option = self::group_option( $id );
 		$stored = get_option( $option, false );
 		$value  = is_numeric( $stored ) ? (int) $stored : 0;
-		$legacy = self::legacy_version( $id );
+		// The high-water mark comes from the group's own stored entries: an entry that was written with version N
+		// means the counter has reached N, and a counter below N would make that entry reachable again.
+		$high = self::max_stored_version( $id );
 		if ( $value < 1 ) {
-			// The row is missing. It starts above every version the group has ever reached (the legacy mirror and
-			// the versions of the stored entries), so no old entry can become reachable again.
-			$high = max( $legacy, self::max_stored_version( $id ) );
+			// The row is missing. It starts above every version the group has ever reached, so no old entry can
+			// become reachable again.
 			self::create_row( $option, $high > 0 ? $high + 1 : 1 );
 			$value = self::row_value( $option );
-			self::$mirror_dirty = true;
-		} elseif ( $value < $legacy ) {
-			// The row was written back to a lower value (a stale writer or a hand-made edit). The mirror holds the
-			// high-water mark, so the row is raised again: a counter that falls makes an old entry reachable.
-			self::create_row( $option, $legacy + 1 );
+		} elseif ( $value < $high ) {
+			// The row was written back to a lower value (a stale writer or a hand-made edit). The counter is raised
+			// again: a counter that falls makes an old entry reachable.
+			self::create_row( $option, $high + 1 );
 			$value = self::row_value( $option );
-			self::$mirror_dirty = true;
 		}
 		self::sync_option_cache( $option, $value );
 		return self::$versions[ $id ] = $value;
@@ -363,15 +344,6 @@ final class Cache {
 			self::version( $id );
 		}
 		return self::$versions;
-	}
-
-	/** The counter the legacy mirror knows for one group (0 when it does not know it). */
-	private static function legacy_version( string $id ): int {
-		$stored = get_option( self::OPT_VERSIONS, array() );
-		if ( is_array( $stored ) && isset( $stored[ $id ] ) && is_numeric( $stored[ $id ] ) ) {
-			return (int) $stored[ $id ];
-		}
-		return 0;
 	}
 
 	/** The highest version among the stored entries of one group (0 when there is none). */
@@ -468,47 +440,6 @@ final class Cache {
 			unset( $notoptions[ $option ] );
 			wp_cache_set( 'notoptions', $notoptions, 'options' );
 		}
-	}
-
-	/**
-	 * Keeps the legacy option in step with the counter rows: every value is raised, never lowered, and a value that
-	 * is missing from the mirror is written again. The mirror is not used for the cache keys any more.
-	 */
-	private static function sync_mirror(): void {
-		self::$mirror_dirty = false;
-		$mirror             = get_option( self::OPT_VERSIONS, array() );
-		$mirror             = is_array( $mirror ) ? $mirror : array();
-		$changed            = false;
-		// Every counter row wins over the mirror: a mirror value that is lower is raised, never lowered.
-		foreach ( self::all_group_options() as $id => $option ) {
-			$stored = get_option( $option, false );
-			if ( ! is_numeric( $stored ) ) {
-				continue;
-			}
-			$value = (int) $stored;
-			if ( ! isset( $mirror[ $id ] ) || (int) $mirror[ $id ] < $value ) {
-				$mirror[ $id ] = $value;
-				$changed       = true;
-			}
-		}
-		if ( $changed ) {
-			update_option( self::OPT_VERSIONS, $mirror, true );
-		}
-	}
-
-	/** Every counter row of the site: id => option name. @return array<string, string> */
-	private static function all_group_options(): array {
-		global $wpdb;
-		$rows = $wpdb->get_col( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
-			$wpdb->prepare( "SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s", $wpdb->esc_like( self::OPT_GROUP_PREFIX ) . '%' )
-		);
-		$out  = array();
-		foreach ( (array) $rows as $name ) {
-			if ( is_string( $name ) && str_starts_with( $name, self::OPT_GROUP_PREFIX ) ) {
-				$out[ substr( $name, strlen( self::OPT_GROUP_PREFIX ) ) ] = $name;
-			}
-		}
-		return $out;
 	}
 
 	/** Key shape `rbnkit_<plugin>.<name>.<version>.<md5>`; "." never occurs in plugin/name, so a plugin prefix cannot match another plugin. */

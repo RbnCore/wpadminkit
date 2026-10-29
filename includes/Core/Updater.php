@@ -121,6 +121,20 @@ final class Updater {
 		return null;
 	}
 
+	/**
+	 * The slug of an unpacked package, taken from its folder name.
+	 *
+	 * The installation path of WordPress (`Plugin_Upgrader::install`) has no `plugin` key in its hook arguments, so the
+	 * folder name is the only hint. Only a REGISTERED plugin's slug counts: another plugin's installation is not touched.
+	 *
+	 * @param string $source Unpacked folder.
+	 */
+	private static function slug_of_source( string $source ): ?string {
+		$dir  = rtrim( str_replace( '\\', '/', $source ), '/' );
+		$name = basename( $dir );
+		return isset( self::$plugins[ $name ] ) ? $name : null;
+	}
+
 	// ───────────────────────── Release information ─────────────────────────
 
 	/**
@@ -342,6 +356,38 @@ final class Updater {
 		return $package === $prefix . $version . '/' . $slug . '-' . $version . '.zip' ? $package : '';
 	}
 
+	/**
+	 * Is this the ONE release address of this plugin's own repository?
+	 *
+	 * @param string $slug    Plugin slug.
+	 * @param string $package Package address.
+	 */
+	private static function is_own_package( string $slug, string $package ): bool {
+		$item = Catalog::find( $slug );
+		if ( null === $item ) {
+			return false;
+		}
+		$prefix = Catalog::PKG_BASE . Catalog::repo_name( $item ) . '/releases/download/';
+		return 1 === preg_match( '#^' . preg_quote( $prefix, '#' ) . '(\d{1,4}\.\d{1,4}\.\d{1,4})/' . preg_quote( $slug, '#' ) . '-\1\.zip$#', $package );
+	}
+
+	/**
+	 * The slug a package address names, when it names one of OUR plugins.
+	 *
+	 * The file name of a package carries its slug (`<slug>-<version>.zip`). A package that names a plugin we manage
+	 * has to come from our own repository; a package of a plugin we do NOT manage is not ours and is left alone.
+	 *
+	 * @param string $package Package address.
+	 */
+	private static function slug_of_package_name( string $package ): ?string {
+		$path = (string) wp_parse_url( $package, PHP_URL_PATH );
+		$name = basename( $path );
+		if ( 1 !== preg_match( '/^([a-z0-9\-]{2,40})-\d{1,4}\.\d{1,4}\.\d{1,4}\.zip$/', $name, $m ) ) {
+			return null;
+		}
+		return isset( self::$plugins[ $m[1] ] ) ? $m[1] : null;
+	}
+
 	/** @return array{requires:string,requires_php:string,tested:string} */
 	private static function local_meta( string $slug ): array {
 		$file   = self::$plugins[ $slug ]['file'];
@@ -384,7 +430,7 @@ final class Updater {
 			'requires'      => $meta['requires'],
 			'requires_php'  => $meta['requires_php'],
 			'tested'        => $meta['tested'],
-			'download_link' => $new ? $rel['package'] : '',
+			'download_link' => $new ? self::safe_package( $slug, $rel ) : '',
 			'sections'      => array(
 				'description' => esc_html( $item['tagline'] ),
 				'changelog'   => '' !== $notes ? wp_kses_post( nl2br( esc_html( $notes ) ) ) : esc_html__( 'There are no release notes for this version.', 'adminkit' ),
@@ -409,7 +455,22 @@ final class Updater {
 	 * @return mixed
 	 */
 	public static function pre_download( $reply, $package ) {
-		if ( false !== $reply || ! is_string( $package ) || 0 !== strpos( $package, Catalog::PKG_BASE ) || ! self::$plugins || Installer::installing() ) {
+		if ( false !== $reply || ! is_string( $package ) || ! self::$plugins || Installer::installing() ) {
+			return $reply;
+		}
+		// A package that names one of OUR plugins has to come from our own repository, with our own version. A
+		// foreign address for such a package is refused here (not passed on); the package of a plugin we do NOT
+		// manage is left to WordPress.
+		$named = self::slug_of_package_name( $package );
+		if ( null !== $named && ! self::is_own_package( $named, $package ) ) {
+			$error = new \WP_Error(
+				'adminkit_update_foreign_package',
+				__( 'Update rejected: the package address does not belong to this plugin\'s own release (repository or version). The old version was kept.', 'adminkit' )
+			);
+			self::log_rejected( $named, '', $error );
+			return $error;
+		}
+		if ( 0 !== strpos( $package, Catalog::PKG_BASE ) ) {
 			return $reply;
 		}
 		if ( 1 !== preg_match( '#^' . preg_quote( Catalog::PKG_BASE, '#' ) . '([A-Za-z0-9\-]{2,42})/releases/download/(\d{1,4}\.\d{1,4}\.\d{1,4})/([a-z0-9\-]{2,40})-\2\.zip$#', $package, $m ) ) {
@@ -528,6 +589,11 @@ final class Updater {
 	/**
 	 * Unpacked package: root folder and main file check. Runs only for a registered plugin's update.
 	 *
+	 * The verification is not optional on ANY path: a package whose folder is one of OUR plugins must have passed
+	 * the signature verification in `pre_download()`. The installation path of WordPress
+	 * (`Plugin_Upgrader::install()`) has no plugin key in its hook arguments, so the folder name is the hint there.
+	 * A plugin we do not manage (a slug we did not register) is not touched — WordPress' own flow stays as it is.
+	 *
 	 * @param mixed               $source        Unpacked folder.
 	 * @param string              $remote_source Unpack location.
 	 * @param mixed               $upgrader      Upgrader.
@@ -535,10 +601,21 @@ final class Updater {
 	 * @return mixed
 	 */
 	public static function source_selection( $source, $remote_source = '', $upgrader = null, $hook_extra = array() ) {
+		if ( is_wp_error( $source ) ) {
+			return $source;
+		}
+		// The catalog installer verifies the package itself (the same rules, one implementation); it must not be
+		// blocked here.
+		if ( Installer::installing() ) {
+			return $source;
+		}
 		$plugin = is_array( $hook_extra ) && is_string( $hook_extra['plugin'] ?? null ) ? $hook_extra['plugin'] : '';
 		$slug   = '' !== $plugin ? self::slug_of_basename( $plugin ) : null;
-		if ( is_wp_error( $source ) || null === $slug ) {
-			return $source;
+		if ( null === $slug ) {
+			$slug = self::slug_of_source( (string) $source );
+		}
+		if ( null === $slug ) {
+			return $source; // Not one of ours: WordPress' own flow.
 		}
 		$verified       = self::$verified;
 		self::$verified = null;

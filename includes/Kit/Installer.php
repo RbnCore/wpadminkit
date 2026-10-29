@@ -81,7 +81,18 @@ final class Installer {
 		if ( 32 !== strlen( $key ) ) {
 			return new \WP_Error( 'adminkit_no_key', __( 'Could not verify the package signature: the plugin has no valid signature key. Nothing was installed.', 'adminkit' ) );
 		}
-		if ( ! is_string( $sig ) || 64 !== strlen( $sig ) || ! sodium_crypto_sign_verify_detached( $sig, $message, $key ) ) {
+		if ( ! is_string( $sig ) || 64 !== strlen( $sig ) ) {
+			return new \WP_Error( 'adminkit_bad_sig', __( 'Could not verify the package signature. Nothing was installed.', 'adminkit' ) );
+		}
+		// A key that is not a valid curve point makes the sodium library THROW instead of returning false
+		// (sodium_compat raises a RangeException). The verification must fail closed: the throw is caught here and
+		// turned into the same refusal as a wrong signature.
+		try {
+			$valid = sodium_crypto_sign_verify_detached( $sig, $message, $key );
+		} catch ( \Throwable $e ) {
+			$valid = false;
+		}
+		if ( ! $valid ) {
 			return new \WP_Error( 'adminkit_bad_sig', __( 'Could not verify the package signature. Nothing was installed.', 'adminkit' ) );
 		}
 		return true;

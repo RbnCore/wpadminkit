@@ -79,6 +79,8 @@ final class SettingsPage {
 				$small[] = $module;
 			}
 		}
+		// Modüller · Renk teması (büyük modül sekmeleri) · Genel: en sık kullanılandan en nadire.
+		$tabs['general'] = __( 'General', 'adminkit' );
 		$tab = isset( $_GET['tab'] ) && isset( $tabs[ (string) $_GET['tab'] ] ) ? (string) $_GET['tab'] : 'modules'; // phpcs:ignore WordPress.Security.NonceVerification,WordPress.Security.ValidatedSanitizedInput -- yalnız sekme seçimi, anahtar listeyle eşlenir.
 		?>
 		<div class="wrap rbn-wrap"<?php echo Assets::tone_attr(); // phpcs:ignore WordPress.Security.EscapeOutput ?>>
@@ -104,16 +106,15 @@ final class SettingsPage {
 				</div>
 				<?php foreach ( $tabs as $key => $label ) : ?>
 					<div role="tabpanel" id="adminkit-panel-<?php echo esc_attr( $key ); ?>" class="rbn-tabpanel" aria-labelledby="adminkit-tab-<?php echo esc_attr( $key ); ?>" tabindex="0"<?php echo $tab === $key ? '' : ' hidden'; ?>>
-						<ul class="rbn-cards ak-cards<?php echo 'modules' === $key ? '' : ' ak-cards--one'; ?>">
-							<?php foreach ( 'modules' === $key ? $small : array_filter( $big, static fn( Module $m ): bool => $m->id() === $key ) as $module ) : ?>
-								<?php self::card( $module ); ?>
-							<?php endforeach; ?>
-						</ul>
-						<?php
-						if ( 'modules' === $key ) {
-							self::network_section();
-						}
-						?>
+						<?php if ( 'general' === $key ) : ?>
+							<?php self::network_section(); ?>
+						<?php else : ?>
+							<ul class="rbn-cards ak-cards<?php echo 'modules' === $key ? '' : ' ak-cards--one'; ?>">
+								<?php foreach ( 'modules' === $key ? $small : array_filter( $big, static fn( Module $m ): bool => $m->id() === $key ) as $module ) : ?>
+									<?php self::card( $module ); ?>
+								<?php endforeach; ?>
+							</ul>
+						<?php endif; ?>
 					</div>
 				<?php endforeach; ?>
 				<div class="rbn-form-actions"><button type="submit" class="rbn-btn rbn-btn--pri"><?php esc_html_e( 'Save changes', 'adminkit' ); ?></button></div>
@@ -158,7 +159,7 @@ final class SettingsPage {
 						<?php if ( $label ) : ?>
 							<?php echo esc_html( $label ); ?>
 						<?php else : ?>
-							<?php echo esc_html( $on ? __( 'On', 'adminkit' ) : __( 'Off', 'adminkit' ) ); ?>
+							<span class="rbn-switch__st" data-on="<?php echo esc_attr__( 'On', 'adminkit' ); ?>" data-off="<?php echo esc_attr__( 'Off', 'adminkit' ); ?>"><?php echo esc_html( $on ? __( 'On', 'adminkit' ) : __( 'Off', 'adminkit' ) ); ?></span>
 							<span class="rbn-sr"> — <?php echo esc_html( $module->title() ); ?></span>
 						<?php endif; ?>
 					</span>

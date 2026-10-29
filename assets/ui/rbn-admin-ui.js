@@ -126,10 +126,37 @@
 		}
 	}, true);
 
-	window.RbnUi = { initTabs: init };
+	/* Anahtar durum yazısı: <label class="rbn-switch"> içinde data-on / data-off taşıyan öğe (ör. .rbn-switch__st) anahtarla canlı eşlenir.
+	 * Kaydedilmeden de görünüm ile yazı tutarlı kalır; tarayıcının geri yüklediği durum da sayfa açılışında eşitlenir. */
+	function syncSwitch(input) {
+		var label = input.closest ? input.closest('.rbn-switch') : null;
+		if (!label) {
+			return;
+		}
+		label.querySelectorAll('[data-on][data-off]').forEach(function (el) {
+			var text = input.checked ? el.getAttribute('data-on') : el.getAttribute('data-off');
+			if (el.textContent !== text) {
+				el.textContent = text;
+			}
+		});
+	}
+
+	function syncSwitches(scope) {
+		(scope || document).querySelectorAll('.rbn-switch input[type="checkbox"]').forEach(syncSwitch);
+	}
+
+	document.addEventListener('change', function (e) {
+		if (e.target && e.target.matches && e.target.matches('.rbn-switch input[type="checkbox"]')) {
+			syncSwitch(e.target);
+		}
+	});
+	window.addEventListener('pageshow', function () { syncSwitches(); });
+
+	window.RbnUi = { initTabs: init, syncSwitches: syncSwitches };
 	if (document.readyState === 'loading') {
-		document.addEventListener('DOMContentLoaded', function () { init(); });
+		document.addEventListener('DOMContentLoaded', function () { init(); syncSwitches(); });
 	} else {
 		init();
+		syncSwitches();
 	}
 }());

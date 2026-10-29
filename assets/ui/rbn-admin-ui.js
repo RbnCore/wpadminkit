@@ -355,12 +355,16 @@
 		return toastObj;
 	}
 
-	function toast(opts) {
+	function toast(opts, maybeOpts) {
 		if (typeof opts === 'string') {
-			opts = { message: opts };
+			var msg = opts;
+			opts = (typeof maybeOpts === 'object' && maybeOpts) ? maybeOpts : {};
+			opts.message = msg;
 		}
 		opts = opts || {};
-		var type = opts.type || 'info';
+		var type = opts.type || opts.tone || 'info';
+		if (type === 'danger') { type = 'error'; }
+		if (type === 'warn') { type = 'warning'; }
 		if (['success', 'info', 'warning', 'error'].indexOf(type) === -1) {
 			type = 'info';
 		}

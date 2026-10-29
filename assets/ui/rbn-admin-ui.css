@@ -35,6 +35,11 @@
   --rbn-ac:#8aa4ff;--rbn-ac-fg:#0b1020;--rbn-shadow:none;color-scheme:dark;
 }
 .rbn-wrap{margin:0 auto;padding:var(--rbn-s5) var(--rbn-s5) var(--rbn-s7);max-width:76rem}
+/* Kaydırma çubuğu yeri HER ZAMAN ayrılır: sekmeler arası yükseklik farkı sayfa genişliğini 15 px oynatıp başlığı/kapsayıcıyı kaydırmasın. Yalnız kit sayfasında (html:has). Desteklemeyen tarayıcıda overflow-y:scroll yedeği. */
+html:has(.rbn-wrap){scrollbar-gutter:stable}
+@supports not (scrollbar-gutter:stable){html:has(.rbn-wrap){overflow-y:scroll}}
+/* Kapsayıcı geometrisi TEK: .rbn-wrap'i WP'nin .wrap kabuğu (margin 10px 20px 0 2px) sarmışsa o kenar boşlukları sıfırlanır */
+.wrap:has(>.rbn-wrap){margin:0}
 .rbn-wrap[data-tone=koyu]{background:var(--rbn-bg)}
 .rbn-wrap *,.rbn-wrap *::before,.rbn-wrap *::after,.rbn-dlg *,.rbn-sticky *{box-sizing:border-box}
 .rbn-wrap [hidden],.rbn-dlg [hidden]{display:none!important}

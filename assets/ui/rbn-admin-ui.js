@@ -458,6 +458,7 @@
 				requireInput.type = 'text';
 				requireInput.autocomplete = 'off';
 				requireInput.setAttribute('aria-label', reqLabelText);
+				requireInput.setAttribute('data-confirm-input', '1');
 				reqWrap.appendChild(reqLabel);
 				reqWrap.appendChild(requireInput);
 				body.appendChild(reqWrap);
@@ -469,9 +470,11 @@
 			var foot = el('div', 'rbn-dlg__f');
 			var cancelBtn = el('button', 'rbn-btn', cancelLabel);
 			cancelBtn.type = 'button';
+			cancelBtn.setAttribute('data-confirm-cancel', '1');
 
 			var confirmBtn = el('button', 'rbn-btn ' + (isDanger ? 'rbn-btn--danger' : 'rbn-btn--pri'), confirmLabel);
 			confirmBtn.type = 'button';
+			confirmBtn.setAttribute('data-confirm-ok', '1');
 
 			if (requireText && requireInput) {
 				confirmBtn.disabled = true;

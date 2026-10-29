@@ -1,1 +1,4 @@
+.gitignore export-ignore
+.gitattributes export-ignore
+*.mo binary
 README.md export-ignore

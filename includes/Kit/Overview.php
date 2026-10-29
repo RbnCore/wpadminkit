@@ -110,6 +110,12 @@ final class Overview {
 				$text = $ok ? Installer::note_text( $note['code'] ) : $note['message'];
 				echo Assets::note( $ok ? 'ok' : 'err', '' !== $text ? $text : __( 'The action could not be completed.', 'adminkit' ) ); // phpcs:ignore WordPress.Security.EscapeOutput -- Assets::note() kaçışlar.
 			}
+				$update_note = \AdminKit\Core\Updater::note();
+				if ( 'checked' === $update_note ) {
+					echo Assets::note( 'ok', __( 'Update check finished.', 'adminkit' ) ); // phpcs:ignore WordPress.Security.EscapeOutput -- Assets::note() kaçışlar.
+				} elseif ( 'off' === $update_note ) {
+					echo Assets::note( 'info', __( 'The update check is off; nothing was checked.', 'adminkit' ) ); // phpcs:ignore WordPress.Security.EscapeOutput -- Assets::note() kaçışlar.
+				}
 			?>
 			<div class="rbn-tabs" role="tablist" aria-label="<?php esc_attr_e( 'RBN Kit tabs', 'adminkit' ); ?>" data-rbn-tabs>
 				<?php foreach ( $tabs as $key => $label ) : ?>

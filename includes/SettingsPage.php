@@ -97,28 +97,37 @@ final class SettingsPage {
 				</div>
 			</div>
 			<p class="rbn-lead"><?php esc_html_e( 'Each module adds one feature to the admin area. Turn on only what you need. Nothing here changes the public site.', 'adminkit' ); ?></p>
-			<form method="post" action="options.php">
-				<?php settings_fields( Settings::GROUP ); ?>
-				<div class="rbn-tabs" role="tablist" aria-label="<?php esc_attr_e( 'AdminKit settings tabs', 'adminkit' ); ?>" data-rbn-tabs>
-					<?php foreach ( $tabs as $key => $label ) : ?>
-						<a role="tab" id="adminkit-tab-<?php echo esc_attr( $key ); ?>" class="rbn-tabs__tab" href="<?php echo esc_url( add_query_arg( 'tab', $key, self::url() ) ); ?>" data-key="<?php echo esc_attr( $key ); ?>" aria-controls="adminkit-panel-<?php echo esc_attr( $key ); ?>" aria-selected="<?php echo $tab === $key ? 'true' : 'false'; ?>" tabindex="<?php echo $tab === $key ? '0' : '-1'; ?>"><?php echo esc_html( $label ); ?></a>
-					<?php endforeach; ?>
-				</div>
+			<?php
+			$update_note = Core\Updater::note();
+			if ( 'checked' === $update_note ) {
+				echo Assets::note( 'ok', __( 'Update check finished.', 'adminkit' ) ); // phpcs:ignore WordPress.Security.EscapeOutput -- Assets::note() escapes.
+			} elseif ( 'off' === $update_note ) {
+				echo Assets::note( 'info', __( 'The update check is off; nothing was checked.', 'adminkit' ) ); // phpcs:ignore WordPress.Security.EscapeOutput -- Assets::note() escapes.
+			}
+			?>
+			<div class="rbn-tabs" role="tablist" aria-label="<?php esc_attr_e( 'AdminKit settings tabs', 'adminkit' ); ?>" data-rbn-tabs>
 				<?php foreach ( $tabs as $key => $label ) : ?>
+					<a role="tab" id="adminkit-tab-<?php echo esc_attr( $key ); ?>" class="rbn-tabs__tab" href="<?php echo esc_url( add_query_arg( 'tab', $key, self::url() ) ); ?>" data-key="<?php echo esc_attr( $key ); ?>" aria-controls="adminkit-panel-<?php echo esc_attr( $key ); ?>" aria-selected="<?php echo $tab === $key ? 'true' : 'false'; ?>" tabindex="<?php echo $tab === $key ? '0' : '-1'; ?>"><?php echo esc_html( $label ); ?></a>
+				<?php endforeach; ?>
+			</div>
+			<form id="adminkit-settings-form" method="post" action="options.php">
+				<?php settings_fields( Settings::GROUP ); ?>
+				<?php foreach ( $tabs as $key => $label ) : ?>
+					<?php if ( 'general' === $key ) { continue; } ?>
 					<div role="tabpanel" id="adminkit-panel-<?php echo esc_attr( $key ); ?>" class="rbn-tabpanel" aria-labelledby="adminkit-tab-<?php echo esc_attr( $key ); ?>" tabindex="0"<?php echo $tab === $key ? '' : ' hidden'; ?>>
-						<?php if ( 'general' === $key ) : ?>
-							<?php self::network_section(); ?>
-						<?php else : ?>
-							<ul class="rbn-cards ak-cards<?php echo 'modules' === $key ? '' : ' ak-cards--one'; ?>">
-								<?php foreach ( 'modules' === $key ? $small : array_filter( $big, static fn( Module $m ): bool => $m->id() === $key ) as $module ) : ?>
-									<?php self::card( $module ); ?>
-								<?php endforeach; ?>
-							</ul>
-						<?php endif; ?>
+						<ul class="rbn-cards ak-cards<?php echo 'modules' === $key ? '' : ' ak-cards--one'; ?>">
+							<?php foreach ( 'modules' === $key ? $small : array_filter( $big, static fn( Module $m ): bool => $m->id() === $key ) as $module ) : ?>
+								<?php self::card( $module ); ?>
+							<?php endforeach; ?>
+						</ul>
+						<div class="rbn-form-actions"><button type="submit" class="rbn-btn rbn-btn--pri"><?php esc_html_e( 'Save changes', 'adminkit' ); ?></button></div>
 					</div>
 				<?php endforeach; ?>
-				<div class="rbn-form-actions"><button type="submit" class="rbn-btn rbn-btn--pri"><?php esc_html_e( 'Save changes', 'adminkit' ); ?></button></div>
 			</form>
+			<div role="tabpanel" id="adminkit-panel-general" class="rbn-tabpanel" aria-labelledby="adminkit-tab-general" tabindex="0"<?php echo $tab === 'general' ? '' : ' hidden'; ?>>
+				<?php self::network_section(); ?>
+				<?php self::updates_card(); ?>
+			</div>
 		</div>
 		<?php
 	}
@@ -129,8 +138,44 @@ final class SettingsPage {
 		<section class="ak-network" id="adminkit-network" aria-labelledby="adminkit-network-t">
 			<h2 id="adminkit-network-t"><?php esc_html_e( 'Network', 'adminkit' ); ?></h2>
 			<div class="rbn-field">
-				<label class="rbn-check"><input type="checkbox" name="<?php echo esc_attr( Core\Network::OPT_GITHUB ); ?>" value="1" <?php checked( Core\Network::github_allowed() ); ?> aria-describedby="adminkit-network-h" /> <?php esc_html_e( 'Allow RBN plugins to check GitHub for updates and the plugin catalog', 'adminkit' ); ?></label>
+				<label class="rbn-check"><input type="checkbox" name="<?php echo esc_attr( Core\Network::OPT_GITHUB ); ?>" form="adminkit-settings-form" value="1" <?php checked( Core\Network::github_allowed() ); ?> aria-describedby="adminkit-network-h" /> <?php esc_html_e( 'Allow RBN plugins to check GitHub for updates and the plugin catalog', 'adminkit' ); ?></label>
 				<span class="rbn-help" id="adminkit-network-h"><?php esc_html_e( 'Off: no network request is sent; update checks and catalog installs are disabled for all RBN plugins.', 'adminkit' ); ?></span>
+			</div>
+			<div class="rbn-form-actions"><button type="submit" form="adminkit-settings-form" class="rbn-btn rbn-btn--pri"><?php esc_html_e( 'Save changes', 'adminkit' ); ?></button></div>
+		</section>
+		<?php
+	}
+
+	/** Version / update check card. Sits outside the settings form because check_form() posts to admin-post.php. */
+	private static function updates_card(): void {
+		$st      = Core\Updater::status( 'adminkit' );
+		$checked = (int) $st['checked_at'];
+		$state   = Core\Updater::state_html( $st );
+		$last    = $checked > 0 ? esc_html( wp_date( 'd.m.Y H:i', $checked ) ) : esc_html__( 'never', 'adminkit' );
+		$act     = Core\Updater::check_form( 'adminkit', add_query_arg( 'tab', 'general', self::url() ), Assets::icon( 'refresh' ) . esc_html__( 'Check now', 'adminkit' ) );
+		?>
+		<section class="rbn-card ak-updates" id="adminkit-updates" aria-labelledby="adminkit-updates-t">
+			<div class="rbn-card__h">
+				<h2 id="adminkit-updates-t"><?php esc_html_e( 'Updates', 'adminkit' ); ?></h2>
+			</div>
+			<div class="rbn-card__b">
+				<div class="rbn-field">
+					<span class="rbn-label"><?php esc_html_e( 'Installed version', 'adminkit' ); ?></span>
+					<b><?php echo esc_html( ADMINKIT_VERSION ); ?></b>
+				</div>
+				<div class="rbn-field">
+					<span class="rbn-label"><?php esc_html_e( 'Update status', 'adminkit' ); ?></span>
+					<p><?php echo $state; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Core\Updater::state_html() escapes. ?></p>
+				</div>
+				<div class="rbn-field">
+					<span class="rbn-label"><?php esc_html_e( 'Last check', 'adminkit' ); ?></span>
+					<span><?php echo $last; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+					<p class="rbn-help"><?php esc_html_e( 'The package is verified with its SHA-256 digest and Ed25519 signature before installation; a package that cannot be verified is not installed. Automatic updates are turned on or off with the “Enable auto-updates” link on the Plugins page.', 'adminkit' ); ?></p>
+				</div>
+				<p class="rbn-help"><a href="#adminkit-network"><?php esc_html_e( 'Update checks follow the RBN Kit network setting.', 'adminkit' ); ?></a></p>
+				<?php if ( '' !== $act ) : ?>
+					<div class="rbn-form-actions"><?php echo $act; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- check_form() escapes. ?></div>
+				<?php endif; ?>
 			</div>
 		</section>
 		<?php

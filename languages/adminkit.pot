@@ -866,3 +866,39 @@ msgstr ""
 #: includes/Core/Updater.php
 msgid "You do not have permission for this action."
 msgstr ""
+
+#: includes/SettingsPage.php
+msgid "Updates"
+msgstr ""
+
+#: includes/SettingsPage.php
+msgid "Installed version"
+msgstr ""
+
+#: includes/SettingsPage.php
+msgid "Update status"
+msgstr ""
+
+#: includes/SettingsPage.php
+msgid "Last check"
+msgstr ""
+
+#: includes/SettingsPage.php
+msgid "never"
+msgstr ""
+
+#: includes/SettingsPage.php
+msgid "The package is verified with its SHA-256 digest and Ed25519 signature before installation; a package that cannot be verified is not installed. Automatic updates are turned on or off with the “Enable auto-updates” link on the Plugins page."
+msgstr ""
+
+#: includes/SettingsPage.php
+msgid "Update checks follow the RBN Kit network setting."
+msgstr ""
+
+#: includes/SettingsPage.php
+msgid "Update check finished."
+msgstr ""
+
+#: includes/SettingsPage.php
+msgid "The update check is off; nothing was checked."
+msgstr ""

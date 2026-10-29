@@ -728,3 +728,39 @@ msgstr "Güncelleme reddedildi: paket imza doğrulamasından geçmedi. Eski sür
 
 msgid "You do not have permission for this action."
 msgstr "Bu işlem için izniniz yok."
+
+#: includes/SettingsPage.php
+msgid "Updates"
+msgstr "Güncellemeler"
+
+#: includes/SettingsPage.php
+msgid "Installed version"
+msgstr "Kurulu sürüm"
+
+#: includes/SettingsPage.php
+msgid "Update status"
+msgstr "Güncelleme durumu"
+
+#: includes/SettingsPage.php
+msgid "Last check"
+msgstr "Son denetim"
+
+#: includes/SettingsPage.php
+msgid "never"
+msgstr "hiç"
+
+#: includes/SettingsPage.php
+msgid "The package is verified with its SHA-256 digest and Ed25519 signature before installation; a package that cannot be verified is not installed. Automatic updates are turned on or off with the “Enable auto-updates” link on the Plugins page."
+msgstr "Paket kurulumdan önce SHA-256 özeti ve Ed25519 imzasıyla doğrulanır; doğrulanamayan paket kurulmaz. Otomatik güncellemeler Eklentiler sayfasındaki “Otomatik güncellemeleri etkinleştir” bağlantısıyla açılır ya da kapatılır."
+
+#: includes/SettingsPage.php
+msgid "Update checks follow the RBN Kit network setting."
+msgstr "Güncelleme denetimleri RBN Kit ağ ayarını izler."
+
+#: includes/SettingsPage.php
+msgid "Update check finished."
+msgstr "Güncelleme denetimi tamamlandı."
+
+#: includes/SettingsPage.php
+msgid "The update check is off; nothing was checked."
+msgstr "Güncelleme denetimi kapalı; hiçbir şey denetlenmedi."

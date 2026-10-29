@@ -193,7 +193,8 @@ final class Updater {
 		$checked          = is_array( $checked ) ? $checked : array();
 		$checked[ $slug ] = $record['time'];
 		update_option( self::OPT_CHECKED, $checked, false );
-		$found = null !== $rel && version_compare( $rel['version'], self::$plugins[ $slug ]['version'], '>' );
+		$version = null !== $rel && isset( $rel['version'] ) ? (string) $rel['version'] : '';
+		$found   = '' !== $version && version_compare( $version, self::$plugins[ $slug ]['version'], '>' );
 		Log::log(
 			self::CHANNEL,
 			'error' === $status ? 'warning' : 'info',
@@ -201,7 +202,7 @@ final class Updater {
 			'error' === $status ? 'failed' : ( $found ? 'update_found' : 'up_to_date' ),
 			array(
 				'plugin'  => $slug,
-				'version' => $found ? $rel['version'] : self::$plugins[ $slug ]['version'],
+				'version' => $found ? $version : self::$plugins[ $slug ]['version'],
 			)
 		);
 		return $record;
@@ -213,7 +214,8 @@ final class Updater {
 		if ( null === $rec || 'ok' !== $rec['status'] || ! is_array( $rec['release'] ) ) {
 			return null;
 		}
-		return version_compare( $rec['release']['version'], self::$plugins[ $slug ]['version'], '>' ) ? $rec['release'] : null;
+		$version = isset( $rec['release']['version'] ) ? (string) $rec['release']['version'] : '';
+		return '' !== $version && version_compare( $version, self::$plugins[ $slug ]['version'], '>' ) ? $rec['release'] : null;
 	}
 
 	/**
@@ -314,12 +316,15 @@ final class Updater {
 		$item = Catalog::find( $slug );
 		$rel  = self::newer( $slug );
 		$meta = self::local_meta( $slug );
+		// A release record comes from the cache and may be incomplete (a poisoned or half-written entry). Every field is
+		// read with a fallback, so a missing key never produces a PHP warning and never reaches WordPress.
+		$own = 'https://github.com/' . $item['repo'];
 		return array_merge(
 			array(
-				'id'           => 'https://github.com/' . $item['repo'],
+				'id'           => $own,
 				'slug'         => $slug,
-				'version'      => $rel ? $rel['version'] : self::$plugins[ $slug ]['version'],
-				'url'          => $rel ? $rel['url'] : 'https://github.com/' . $item['repo'],
+				'version'      => isset( $rel['version'] ) ? (string) $rel['version'] : self::$plugins[ $slug ]['version'],
+				'url'          => isset( $rel['url'] ) ? (string) $rel['url'] : $own,
 				'package'      => self::safe_package( $slug, $rel ),
 				'icons'        => array(),
 				'requires'     => $meta['requires'],
@@ -418,13 +423,16 @@ final class Updater {
 		$item   = Catalog::find( $slug );
 		$cached = Cache::get( self::GROUP, $slug );
 		$rel    = ( is_array( $cached ) && 'ok' === ( $cached['status'] ?? '' ) && is_array( $cached['release'] ?? null ) ) ? $cached['release'] : null;
-		$new    = $rel && version_compare( $rel['version'], self::$plugins[ $slug ]['version'], '>' );
+		// The release record comes from the cache and may be incomplete: every field is read with a fallback, so a
+		// missing key never produces a PHP warning and never reaches WordPress.
+		$version = isset( $rel['version'] ) ? (string) $rel['version'] : '';
+		$new     = '' !== $version && version_compare( $version, self::$plugins[ $slug ]['version'], '>' );
 		$meta   = self::local_meta( $slug );
 		$notes  = $rel ? (string) ( $rel['notes'] ?? '' ) : '';
 		return (object) array(
 			'name'          => $item['name'],
 			'slug'          => $slug,
-			'version'       => $new ? $rel['version'] : self::$plugins[ $slug ]['version'],
+			'version'       => $new ? $version : self::$plugins[ $slug ]['version'],
 			'author'        => '<a href="https://github.com/RbnCore">RBN Bilişim</a>',
 			'homepage'      => 'https://github.com/' . $item['repo'],
 			'requires'      => $meta['requires'],

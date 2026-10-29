@@ -465,21 +465,48 @@ final class Updater {
 		$sha = self::fetch_text( $package . '.sha256' );
 		$sig = is_wp_error( $sha ) ? $sha : self::fetch_text( $package . '.sig' );
 		if ( is_wp_error( $sig ) ) {
+			self::log_rejected( $slug, $version, $sig );
 			return $sig;
 		}
 		// The package download carries the size cap of the installer (`Download::package`); the digest and the
 		// signature are small text files with their own cap.
 		$tmp = Download::package( $package, 300 );
 		if ( is_wp_error( $tmp ) ) {
+			self::log_rejected( $slug, $version, $tmp );
 			return $tmp;
 		}
 		$ok = Installer::check_package( $slug, $tmp, $version, $sha, $sig );
 		if ( is_wp_error( $ok ) ) {
 			wp_delete_file( $tmp );
+			self::log_rejected( $slug, $version, $ok );
 			return $ok;
 		}
 		self::$verified = $slug . '|' . $version;
 		return $tmp;
+	}
+
+	/**
+	 * Writes a refused update to the log. Every refusal has to be visible in the log screen: a package that was
+	 * rejected (bad signature, wrong version, size overrun, unreadable digest) is otherwise a silent event.
+	 *
+	 * @param string         $slug    Plugin slug.
+	 * @param string         $version Released version.
+	 * @param \WP_Error|mixed $error   The refusal.
+	 */
+	private static function log_rejected( string $slug, string $version, $error ): void {
+		$code    = is_wp_error( $error ) ? $error->get_error_code() : 'unknown';
+		$message = is_wp_error( $error ) ? (string) $error->get_error_message() : __( 'Update rejected: the package was not installed. The old version was kept.', 'adminkit' );
+		Log::log(
+			self::CHANNEL,
+			'warning',
+			'update_rejected',
+			$message,
+			array(
+				'plugin'  => $slug,
+				'reason'  => (string) $code,
+				'version' => $version,
+			)
+		);
 	}
 
 	/** Downloads a small text asset (digest / signature). @return string|\WP_Error */
@@ -516,10 +543,16 @@ final class Updater {
 		$verified       = self::$verified;
 		self::$verified = null;
 		if ( null === $verified || 0 !== strpos( $verified, $slug . '|' ) ) {
-			return new \WP_Error( 'adminkit_update_unverified', __( 'Update rejected: the package did not pass the signature verification. The old version was kept.', 'adminkit' ) );
+			$error = new \WP_Error( 'adminkit_update_unverified', __( 'Update rejected: the package did not pass the signature verification. The old version was kept.', 'adminkit' ) );
+			self::log_rejected( $slug, '', $error );
+			return $error;
 		}
 		$ok = Installer::check_source( $slug, (string) $source, substr( $verified, strlen( $slug ) + 1 ) );
-		return is_wp_error( $ok ) ? $ok : $source;
+		if ( is_wp_error( $ok ) ) {
+			self::log_rejected( $slug, substr( $verified, strlen( $slug ) + 1 ), $ok );
+			return $ok;
+		}
+		return $source;
 	}
 
 	// ───────────────────────── "Check now" ─────────────────────────

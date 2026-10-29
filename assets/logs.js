@@ -10,12 +10,12 @@
 	var seq = 0;
 	var NS = 'http://www.w3.org/2000/svg';
 
-	function el(tag, cls, text) {
+	var el = (window.RbnUi && window.RbnUi.el) || function (tag, cls, text) {
 		var n = document.createElement(tag);
 		if (cls) { n.className = cls; }
 		if (text !== undefined) { n.textContent = text; }
 		return n;
-	}
+	};
 	/** Kit ikonu: sayfadaki sprite'tan (`<symbol id="i-…">`). */
 	function icon(name) {
 		var svg = document.createElementNS(NS, 'svg');

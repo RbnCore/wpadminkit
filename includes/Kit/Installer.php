@@ -292,18 +292,7 @@ final class Installer {
 
 	/** Küçük metin varlığı (özet/imza) indirir. @return string|\WP_Error */
 	private static function fetch_text( string $url ) {
-		$res = wp_safe_remote_get(
-			$url,
-			array(
-				'timeout'             => 15,
-				'limit_response_size' => 4096,
-				'user-agent'          => 'AdminKit/' . ADMINKIT_VERSION,
-			)
-		);
-		if ( is_wp_error( $res ) || 200 !== (int) wp_remote_retrieve_response_code( $res ) ) {
-			return new \WP_Error( 'adminkit_fetch_fail', __( 'Could not download the digest or signature file. Nothing was installed.', 'adminkit' ) );
-		}
-		return (string) wp_remote_retrieve_body( $res );
+		return \AdminKit\Helpers\Http::get_text( $url );
 	}
 
 	/**

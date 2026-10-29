@@ -152,7 +152,22 @@
 	});
 	window.addEventListener('pageshow', function () { syncSwitches(); });
 
-	window.RbnUi = { initTabs: init, syncSwitches: syncSwitches };
+	function $(s, r) { return (r || document).querySelector(s); }
+	function $$(s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
+	function el(tag, cls, txt) {
+		var e = document.createElement(tag);
+		if (cls) { e.className = cls; }
+		if (txt != null) { e.textContent = txt; }
+		return e;
+	}
+
+	window.RbnUi = {
+		initTabs: init,
+		syncSwitches: syncSwitches,
+		$: $,
+		$$: $$,
+		el: el
+	};
 	if (document.readyState === 'loading') {
 		document.addEventListener('DOMContentLoaded', function () { init(); syncSwitches(); });
 	} else {

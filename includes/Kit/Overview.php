@@ -149,12 +149,13 @@ final class Overview {
 			$any    = true;
 			$update = is_array( $row['rel'] ) && 'ok' === $row['rel']['status'] && is_array( $row['rel']['release'] ) && version_compare( $row['rel']['release']['version'], $state['version'], '>' ) ? $row['rel']['release']['version'] : '';
 			$url    = $state['active'] ? self::settings_url( $item ) : '';
-			echo '<li class="rbn-card"><div class="rbn-card__h"><div class="rbn-idrow"><span class="rbn-icobox">' . Assets::icon( $item['icon'] ) . '</span><div><h2>' . esc_html( $item['name'] ) . '</h2><p class="rbn-muted">' . esc_html( 'v' . $state['version'] ) . '</p></div></div></div><div class="rbn-card__foot rbn-card__foot--split"><div class="rbn-card__st">'; // phpcs:ignore WordPress.Security.EscapeOutput -- Assets::icon() kaçışlar.
-			echo '<span class="rbn-chip' . ( $state['active'] ? ' rbn-chip--ok' : '' ) . '"><span class="rbn-dot"></span>' . esc_html( $state['active'] ? __( 'Active', 'adminkit' ) : __( 'Not active', 'adminkit' ) ) . '</span>';
+			echo '<li class="rbn-card"><div class="rbn-card__h"><div class="rbn-idrow"><span class="rbn-icobox">' . Assets::icon( $item['icon'] ) . '</span><div><h2>' . esc_html( $item['name'] ) . '</h2><div class="rbn-card__ver"><span>' . esc_html( 'v' . $state['version'] ) . '</span>'; // phpcs:ignore WordPress.Security.EscapeOutput -- Assets::icon() kaçışlar.
 			if ( '' !== $update ) {
 				/* translators: %s: new version */
 				echo '<span class="rbn-badge rbn-badge--warn">' . esc_html( sprintf( __( 'Update available: %s', 'adminkit' ), $update ) ) . '</span>';
 			}
+			echo '</div></div></div></div><div class="rbn-card__foot rbn-card__foot--split"><div class="rbn-card__st">';
+			echo '<span class="rbn-chip' . ( $state['active'] ? ' rbn-chip--ok' : '' ) . '"><span class="rbn-dot"></span>' . esc_html( $state['active'] ? __( 'Active', 'adminkit' ) : __( 'Not active', 'adminkit' ) ) . '</span>';
 			echo '</div><div class="rbn-card__ops">';
 			if ( ! $state['active'] ) {
 				self::activate_form( $item );

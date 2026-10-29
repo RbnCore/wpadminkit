@@ -148,19 +148,19 @@ final class Overview {
 			$any    = true;
 			$update = is_array( $row['rel'] ) && 'ok' === $row['rel']['status'] && is_array( $row['rel']['release'] ) && version_compare( $row['rel']['release']['version'], $state['version'], '>' ) ? $row['rel']['release']['version'] : '';
 			$url    = $state['active'] ? self::settings_url( $item ) : '';
-			echo '<li class="rbn-card"><div class="rbn-card__h"><div class="rbn-idrow"><span class="rbn-icobox">' . Assets::icon( $item['icon'] ) . '</span><div><h2>' . esc_html( $item['name'] ) . '</h2><p class="rbn-muted">' . esc_html( 'v' . $state['version'] ) . '</p></div></div></div><div class="rbn-card__b"><div class="rbn-card__act">'; // phpcs:ignore WordPress.Security.EscapeOutput -- Assets::icon() kaçışlar.
+			echo '<li class="rbn-card"><div class="rbn-card__h"><div class="rbn-idrow"><span class="rbn-icobox">' . Assets::icon( $item['icon'] ) . '</span><div><h2>' . esc_html( $item['name'] ) . '</h2><p class="rbn-muted">' . esc_html( 'v' . $state['version'] ) . '</p></div></div></div><div class="rbn-card__foot rbn-card__foot--split"><div class="rbn-card__st">'; // phpcs:ignore WordPress.Security.EscapeOutput -- Assets::icon() kaçışlar.
 			echo '<span class="rbn-chip' . ( $state['active'] ? ' rbn-chip--ok' : '' ) . '"><span class="rbn-dot"></span>' . esc_html( $state['active'] ? __( 'Active', 'adminkit' ) : __( 'Not active', 'adminkit' ) ) . '</span>';
 			if ( '' !== $update ) {
 				/* translators: %s: new version */
 				echo '<span class="rbn-badge rbn-badge--warn">' . esc_html( sprintf( __( 'Update available: %s', 'adminkit' ), $update ) ) . '</span>';
 			}
-			echo '</div></div><div class="rbn-card__foot">';
+			echo '</div><div class="rbn-card__ops">';
 			if ( ! $state['active'] ) {
 				self::activate_form( $item );
 			} elseif ( '' !== $url ) {
 				echo '<a class="rbn-btn rbn-btn--sm" href="' . esc_url( $url ) . '">' . esc_html__( 'Go to settings', 'adminkit' ) . '<span class="rbn-sr"> — ' . esc_html( $item['name'] ) . '</span></a>';
 			}
-			echo '</div></li>';
+			echo '</div></div></li>';
 		}
 		echo '</ul>';
 		if ( ! $any ) {
@@ -190,9 +190,9 @@ final class Overview {
 		$item  = $row['item'];
 		$state = $row['state'];
 		$rel   = $row['rel'];
-		echo '<li class="rbn-card" id="rbn-kit-' . esc_attr( $item['id'] ) . '"><div class="rbn-card__h"><div class="rbn-idrow"><span class="rbn-icobox">' . Assets::icon( $item['icon'] ) . '</span><h2>' . esc_html( $item['name'] ) . '</h2></div></div><div class="rbn-card__b"><p>' . esc_html( $item['tagline'] ) . '</p></div><div class="rbn-card__foot">'; // phpcs:ignore WordPress.Security.EscapeOutput -- Assets::icon() kaçışlar.
+		echo '<li class="rbn-card" id="rbn-kit-' . esc_attr( $item['id'] ) . '"><div class="rbn-card__h"><div class="rbn-idrow"><span class="rbn-icobox">' . Assets::icon( $item['icon'] ) . '</span><h2>' . esc_html( $item['name'] ) . '</h2></div></div><div class="rbn-card__b"><p>' . esc_html( $item['tagline'] ) . '</p></div><div class="rbn-card__foot rbn-card__foot--split"><div class="rbn-card__st">'; // phpcs:ignore WordPress.Security.EscapeOutput -- Assets::icon() kaçışlar.
 		if ( $state['installed'] ) {
-			echo '<span class="rbn-badge rbn-badge--ok">' . Assets::icon( 'check' ) . esc_html__( 'Installed', 'adminkit' ) . '</span>'; // phpcs:ignore WordPress.Security.EscapeOutput -- Assets::icon() kaçışlar.
+			echo '<span class="rbn-badge rbn-badge--ok">' . Assets::icon( 'check' ) . esc_html__( 'Installed', 'adminkit' ) . '</span></div><div class="rbn-card__ops">'; // phpcs:ignore WordPress.Security.EscapeOutput -- Assets::icon() kaçışlar.
 			if ( ! $state['active'] ) {
 				if ( Installer::file_mods_allowed() ) {
 					self::activate_form( $item );
@@ -204,20 +204,24 @@ final class Overview {
 				}
 			}
 		} elseif ( 'released' !== $item['status'] ) {
-			echo '<span class="rbn-badge rbn-badge--mute">' . esc_html__( 'Coming soon', 'adminkit' ) . '</span>';
+			echo '<span class="rbn-badge rbn-badge--mute">' . esc_html__( 'Coming soon', 'adminkit' ) . '</span></div><div class="rbn-card__ops">';
 		} elseif ( ! Installer::file_mods_allowed() || ! current_user_can( 'install_plugins' ) ) {
-			echo '<span class="rbn-help">' . esc_html__( 'Plugins cannot be installed on this site.', 'adminkit' ) . '</span>';
+			echo '<span class="rbn-help">' . esc_html__( 'Plugins cannot be installed on this site.', 'adminkit' ) . '</span></div><div class="rbn-card__ops">';
 		} else {
 			$ready = is_array( $rel ) && 'ok' === $rel['status'] && is_array( $rel['release'] );
+			if ( ! $ready ) {
+				$why = ! Catalog::live() ? __( 'Offline mode', 'adminkit' ) : ( is_array( $rel ) && 'none' === $rel['status'] ? __( 'No release found', 'adminkit' ) : __( 'Could not get version information', 'adminkit' ) );
+				echo '<span class="rbn-help">' . esc_html( $why ) . '</span>';
+			}
+			echo '</div><div class="rbn-card__ops">';
 			if ( $ready ) {
 				$label = sprintf( /* translators: %s: version */ __( 'Install (v%s)', 'adminkit' ), $rel['release']['version'] );
 				echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '"><input type="hidden" name="action" value="' . esc_attr( Installer::ACT_INSTAL ) . '" /><input type="hidden" name="id" value="' . esc_attr( $item['id'] ) . '" />' . wp_nonce_field( Installer::ACT_INSTAL . '_' . $item['id'], '_wpnonce', true, false ) . '<button type="submit" class="rbn-btn rbn-btn--pri rbn-btn--sm">' . esc_html( $label ) . '<span class="rbn-sr"> — ' . esc_html( $item['name'] ) . '</span></button></form>'; // phpcs:ignore WordPress.Security.EscapeOutput -- parçalar kaçışlı.
 			} else {
-				$why = ! Catalog::live() ? __( 'Offline mode', 'adminkit' ) : ( is_array( $rel ) && 'none' === $rel['status'] ? __( 'No release found', 'adminkit' ) : __( 'Could not get version information', 'adminkit' ) );
-				echo '<button type="button" class="rbn-btn rbn-btn--sm" disabled>' . esc_html__( 'Install', 'adminkit' ) . '<span class="rbn-sr"> — ' . esc_html( $item['name'] ) . '</span></button><span class="rbn-help">' . esc_html( $why ) . '</span>';
+				echo '<button type="button" class="rbn-btn rbn-btn--sm" disabled>' . esc_html__( 'Install', 'adminkit' ) . '<span class="rbn-sr"> — ' . esc_html( $item['name'] ) . '</span></button>';
 			}
 		}
-		echo '</div></li>';
+		echo '</div></div></li>';
 	}
 
 	/** @param array<string, string> $item Katalog öğesi. */

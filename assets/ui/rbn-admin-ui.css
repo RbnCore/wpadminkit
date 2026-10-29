@@ -86,7 +86,9 @@
 .rbn-tabs__tab:hover{color:var(--rbn-text);background:var(--rbn-surface-2)}
 .rbn-tabs__tab[aria-selected=true],.rbn-tabs__tab[aria-current=page]{color:var(--rbn-text)}
 .rbn-tabs__tab[aria-selected=true]::after,.rbn-tabs__tab[aria-current=page]::after{content:"";position:absolute;left:var(--rbn-s2);right:var(--rbn-s2);bottom:0;height:3px;border-radius:3px 3px 0 0;background:var(--rbn-ac)}
-.rbn-tabs__tab:focus-visible{outline-offset:-2px}
+.rbn-tabs__tab:focus{box-shadow:none}                                          /* WP çekirdeği `a:focus{box-shadow:0 0 0 2px}` fareyle tıklanan sekmeye KUTU çizer: kapalı */
+.rbn-tabs__tab:focus-visible{outline-offset:-5px;border-radius:var(--rbn-r)}   /* klavye halkası sekmenin İÇİNDE, seçili alt çizgiyle çakışmaz */
+.rbn-mouse .rbn-tabs__tab:focus-visible{outline:0}                              /* fare/dokunma: halka yok (JS, kök sınıf rbn-mouse); klavyede ve JS'siz kalır */
 .rbn-tabs--sub{gap:var(--rbn-s2);margin:0 0 var(--rbn-s4);border-bottom:0;overflow-x:visible;flex-wrap:wrap}
 .rbn-tabs--sub .rbn-tabs__tab{border:var(--rbn-bw) solid var(--rbn-line-strong);border-radius:var(--rbn-r-pill);background:var(--rbn-surface);color:var(--rbn-text)}
 .rbn-tabs--sub .rbn-tabs__tab:hover{background:var(--rbn-surface-2)}
@@ -103,6 +105,10 @@
 .rbn-card__b--flush{padding:0 0 var(--rbn-s4)}                      /* tablo/liste kartı: alt 16 korunur */
 .rbn-card__b>:last-child{margin-bottom:0}
 .rbn-card__foot{display:flex;flex-wrap:wrap;align-items:center;gap:var(--rbn-s2) var(--rbn-s3);padding:var(--rbn-s4) var(--rbn-s5);border-top:var(--rbn-bw) solid var(--rbn-line)}
+.rbn-card__foot--split{flex-wrap:wrap;justify-content:space-between}
+.rbn-card__st{display:flex;flex-wrap:wrap;align-items:center;gap:var(--rbn-s2) var(--rbn-s3);min-width:0}   /* durum: solda */
+.rbn-card__ops{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:var(--rbn-s2) var(--rbn-s3);margin-inline-start:auto}   /* eylem: en sağda */
+.rbn-cards>.rbn-card>.rbn-card__foot{margin-top:auto}
 .rbn-card__act{display:flex;flex-wrap:wrap;gap:var(--rbn-s2) var(--rbn-s3);margin-top:var(--rbn-s3)}
 .rbn-card--accent{border-left:4px solid var(--rbn-err)}
 .rbn-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,18.5rem),1fr));gap:var(--rbn-s4);margin:0 0 var(--rbn-s5);padding:0;list-style:none}
@@ -221,6 +227,9 @@
   .rbn-tabs{flex-wrap:wrap;overflow-x:visible}   /* dar ekranda sekme etiketleri SARAR: yatay kaydırma yok, etiket kesilmez */
   .rbn-tabs__tab{min-height:var(--rbn-ctl-touch)}
   .rbn-card__h,.rbn-card__b,.rbn-card__foot{padding-left:var(--rbn-s4);padding-right:var(--rbn-s4)}
+  .rbn-card__foot--split .rbn-card__ops{flex:1 1 100%;margin-inline-start:0}   /* dar ekranda sarar: durum üstte, eylem altta tam genişlik */
+  .rbn-card__foot--split .rbn-card__ops>.rbn-btn,.rbn-card__foot--split .rbn-card__ops>form{flex:1 1 100%}
+  .rbn-card__foot--split .rbn-card__ops>form .rbn-btn{width:100%}
   .rbn-head h1{font-size:1.5rem}
   .rbn-bar .rbn-field,.rbn-bar .rbn-select,.rbn-bar .rbn-btn{width:100%}
   .rbn-stats{grid-template-columns:repeat(2,minmax(0,1fr))}

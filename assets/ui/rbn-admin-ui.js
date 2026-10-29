@@ -115,6 +115,17 @@
 		});
 	}
 
+	/* Giriş biçimi: fare/dokunma → <html class="rbn-mouse"> (sekme odak halkası gizlenir); klavye tuşu → sınıf kalkar. */
+	var root = document.documentElement;
+	['pointerdown', 'mousedown', 'touchstart'].forEach(function (ev) {
+		document.addEventListener(ev, function () { root.classList.add('rbn-mouse'); }, true);
+	});
+	document.addEventListener('keydown', function (e) {
+		if (['Tab', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'].indexOf(e.key) !== -1) {
+			root.classList.remove('rbn-mouse');
+		}
+	}, true);
+
 	window.RbnUi = { initTabs: init };
 	if (document.readyState === 'loading') {
 		document.addEventListener('DOMContentLoaded', function () { init(); });

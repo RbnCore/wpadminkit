@@ -52,7 +52,8 @@ body:has(.rbn-wrap[data-tone=koyu]) #wpfooter a{color:var(--rbn-ac)}
 .rbn-wrap [hidden],.rbn-dlg [hidden],.rbn-toasts [hidden]{display:none!important}
 .rbn-wrap h1,.rbn-wrap h2,.rbn-wrap h3,.rbn-wrap h4{color:var(--rbn-text);margin:0;padding:0;font-weight:var(--rbn-fw-m)}
 .rbn-wrap p{margin:0 0 var(--rbn-s3);font-size:inherit;line-height:inherit}   /* WP `p{13px}` kuralını ezer */
-.rbn-wrap a:not(.rbn-btn):not(.rbn-tabs__tab){color:var(--rbn-ac)}
+/* Başkasının WP öğeleri kendi rengini korur: WP düğmeleri (a.button*, .page-title-action) ve kit dışı bildirimlerin (.notice) bağlantıları. Vurgu rengi zemin rengiyle aynı olup düğme yazısını siliyor, koyu tonda açık bildirim zemininde bağlantıyı okunmaz yapıyordu. Kitin kendi bildirimi (.rbn-note) vurgu rengini almaya devam eder. */
+.rbn-wrap a:not(.rbn-btn):not(.rbn-tabs__tab):not(.button):not(.page-title-action):not(.notice:not(.rbn-note) a){color:var(--rbn-ac)}
 .rbn-wrap :focus-visible,.rbn-dlg :focus-visible,.rbn-sticky :focus-visible,.rbn-toasts :focus-visible{outline:var(--rbn-ring) solid var(--rbn-ac);outline-offset:var(--rbn-ring-off);border-radius:3px}
 .rbn-sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .rbn-muted{color:var(--rbn-muted)}.rbn-nowrap{white-space:nowrap}

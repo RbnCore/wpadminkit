@@ -671,6 +671,40 @@
 				});
 			}
 		}
+
+		var chk = (e.target && e.target.matches && e.target.matches('input[type="checkbox"][data-rbn-confirm]')) ? e.target : null;
+		if (chk && !chk.__rbnConfirmed) {
+			var when = chk.getAttribute('data-rbn-confirm-when') || 'on';
+			var shouldPrompt = ('on' === when && chk.checked) || ('off' === when && !chk.checked) || ('both' === when);
+			if (shouldPrompt) {
+				var cMsg = chk.getAttribute('data-rbn-confirm');
+				if (cMsg) {
+					e.preventDefault();
+					e.stopPropagation();
+					var targetState = chk.checked;
+					chk.checked = !targetState;
+					syncSwitch(chk);
+					confirm({
+						message: cMsg,
+						title: chk.getAttribute('data-rbn-confirm-title') || null,
+						confirmLabel: chk.getAttribute('data-rbn-confirm-ok') || null,
+						cancelLabel: chk.getAttribute('data-rbn-confirm-cancel') || null,
+						tone: chk.getAttribute('data-rbn-confirm-tone') || 'danger'
+					}).then(function (ok) {
+						if (ok) {
+							chk.__rbnConfirmed = true;
+							chk.checked = targetState;
+							syncSwitch(chk);
+							chk.dispatchEvent(new Event('change', { bubbles: true }));
+							setTimeout(function () {
+								chk.__rbnConfirmed = false;
+							}, 300);
+						}
+					});
+				}
+			}
+			return;
+		}
 	}, true);
 
 	/* Sayfa başlığı menüsü (Helpers\Header): tıkla aç/kapa, Esc kapatır ve düğmeye döner, dışarı tık/odak kapatır. */

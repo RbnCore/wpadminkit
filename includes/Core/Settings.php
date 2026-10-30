@@ -529,6 +529,22 @@ final class Settings {
 
 	/* ------------------------------------------------------------------ internals */
 
+	/**
+	 * Is a registered definition (schema, messages) a callable rather than data? An array is data unless it is the
+	 * two-string form `array( Class::class, 'method' )` / `array( $object, 'method' )`.
+	 *
+	 * @param mixed $value Registered definition.
+	 */
+	private static function is_definition_callable( $value ): bool {
+		if ( ! is_callable( $value ) ) {
+			return false;
+		}
+		if ( ! is_array( $value ) ) {
+			return true;
+		}
+		return 2 === count( $value ) && isset( $value[0], $value[1] ) && is_string( $value[1] );
+	}
+
 	/** Resolves a registration once: callable schema, flat rows, defaults. */
 	private static function def( string $slug ): ?array {
 		if ( ! isset( self::$schemas[ $slug ] ) ) {
@@ -540,14 +556,15 @@ final class Settings {
 			return $def;
 		}
 		$schema = $def['raw_schema'];
-		if ( ! is_array( $schema ) ) {
-			$schema = is_callable( $schema ) ? call_user_func( $schema ) : array();
+		// A schema may be a closure, a function name or `array( Class::class, 'method' )`; only a plain map is data.
+		if ( self::is_definition_callable( $schema ) ) {
+			$schema = call_user_func( $schema );
 		}
 		$flat = array();
 		self::flatten( (array) $schema, '', $flat, 0 );
 		// Messages may be a callable: a plugin's `__()` must not run before `init` (translations load too early).
 		$messages = $def['messages'];
-		if ( ! is_array( $messages ) && is_callable( $messages ) ) {
+		if ( self::is_definition_callable( $messages ) ) {
 			$messages = call_user_func( $messages );
 		}
 		$def['schema']   = (array) $schema;
@@ -965,9 +982,16 @@ final class Settings {
 	private static function clean_list( array $row, $raw, bool &$notice ): array {
 		$items = self::lines( $raw, 'both' === $row['split'] );
 		$out   = array();
-		$text  = 'text' === $row['key'];
+		$kind  = (string) $row['key'];
 		foreach ( $items as $item ) {
-			$value = $text ? self::clean_text( $item, (int) $row['max_len'] ) : sanitize_key( $item );
+			// `raw` = the item is source text (a regex pattern): trim and cut only, no tag stripping.
+			if ( 'text' === $kind ) {
+				$value = self::clean_text( $item, (int) $row['max_len'] );
+			} elseif ( 'raw' === $kind ) {
+				$value = self::cut( trim( $item ), (int) $row['max_len'] );
+			} else {
+				$value = sanitize_key( $item );
+			}
 			if ( '' === $value ) {
 				continue;
 			}

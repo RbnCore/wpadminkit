@@ -54,6 +54,9 @@ Motor **ön yüzde de** çalışır (CookieKit ön yüzde `Settings::get('enable
 **Çeviri zamanı:** `messages` callable olabilir. Eklentinin `__()` çağrıları `plugins_loaded` sırasında değil, ilk
 okuma/yazmada çalışır — WP 6.7+ "metin alanı çok erken yüklendi" uyarısı debug.log'a düşmez.
 
+**Callable biçimi:** `schema`/`messages` için hem `'fonksiyon_adı'`, hem `fn()`/`Closure`, hem de
+`array( Sınıf::class, 'statik_metot' )` geçerlidir; dizi-callable **şema haritası sanılmaz** (WPRJ-674).
+
 Kayıt kimliği (`slug`) eklentinin metin alanı adıyla aynıdır (`adminkit`, `wpseokit`, `contenthealth`,
 `cookiekit`). Aynı slug iki kez kaydedilirse ikinci kayıt **ilkini ezmez**, `_doing_it_wrong` verir (tek şema ilkesi).
 
@@ -82,7 +85,7 @@ anahtarların nokta ile birleşimidir: `templates.sep`, `social.profiles`, `rule
 | `max_len` | `text`/`text_multi`/`list` öğesi en çok karakter (varsayılan 300) |
 | `values` | `enum` beyaz listesi (`value => etiket` ya da düz liste) |
 | `keys` | `list`: yalnız bu değerler kabul edilir (boşsa serbest); `map`: anahtar beyaz listesi |
-| `key` | `list`: öğe biçimi `slug` (varsayılan) \| `text`; `map`: anahtar biçimi `slug` \| `int` \| `raw` |
+| `key` | `list`: öğe biçimi `slug` (varsayılan) \| `text` \| `raw` (**ham metin**: etiket sıyrılmaz, yalnız `trim` + `max_len` — regex/desen listeleri, WPRJ-674); `map`: anahtar biçimi `slug` \| `int` \| `raw` |
 | `max_entries` | `list`/`map` üst sınırı (varsayılan 50) |
 | `value` | `map`: değer alan tanımı (tek alan) — ör. `array( 'type' => 'url' )` |
 | `fields` | `map`: değer satırı alanları (ör. `title`, `description`) |
@@ -109,10 +112,14 @@ anahtarların nokta ile birleşimidir: `templates.sep`, `social.profiles`, `rule
 | `host` | küçük harf, katı alan adı (IP ve tek etiket reddedilir) | `string` \| `''` | WPSeoKit |
 | `host_port` | küçük harf, `[a-z0-9.\-:]` dışı atılır (port serbest) | `string` | ContentHealth |
 | `enum` | `values` içindeyse değer, değilse varsayılan | `string` | hepsi |
-| `list` | satır/virgül ayrılmış metin ya da dizi → normalize → `slug` ya da `text` öğe → `keys` süzgeci → tekilleştir → `max_entries` | düz dizi (`array_values`) | hepsi |
+| `list` | satır/virgül ayrılmış metin ya da dizi → normalize → `slug`/`text`/`raw` öğe → `keys` süzgeci → tekilleştir → `max_entries` | düz dizi (`array_values`) | hepsi |
 | `map` | anahtar biçimi + beyaz liste + değer alanı/temizliği + `filter` + `max_entries` | ilişkisel dizi | WPSeoKit |
 
-`checklist` türü ayrı değildir: AdminKit modül alanlarındaki `checklist` = `list` (`key => 'raw'` değil, `slug`).
+`raw` öğe biçimi **regex/desen** listeleri içindir: `wp_strip_all_tags` uygulanmaz (desen içindeki `<div>` gibi
+etiketler bozulmaz), yalnız `trim` + `max_len` + `max_entries`. Doğrulama `clean` kancasına bırakılır
+(ör. ContentHealth `Patterns::validate_list`).
+
+`checklist` türü ayrı değildir: AdminKit modül alanlarındaki `checklist` = `list` (`key => 'slug'`).
 
 ## 4. Depolama ve okuma
 
@@ -231,9 +238,13 @@ anahtar sözlüğü (`$o['data']`) — elle HTML yazılmaz.
 | `rules.<kural>.*` | kuralın `defaults()` türlerinden türetilen satırlar (§10.2.1) |
 
 **`rules.<kural>` şeması tek yerde türetilir:** `Rule::settings_schema()` (taban sınıf) — `defaults()` bir
-*sözleşmedir*: `bool` → `bool`, `int` → `int` (0…100000), dizi → `list` (öğe `text`, `max_entries 100`,
-`max_len Patterns::MAX_LEN`; adı `patterns`/`pat_` ile başlayan alanlarda `clean` = `Patterns::validate_list`
-+ hataları `validate`'e taşır), metin → `text`. `Rule::sanitize()` **silinir**.
+*sözleşmedir*: `bool` → `bool`, `int` → `int` (0…100000), dizi → `list` (öğe `raw`, `split => lines`,
+`max_entries 100`, `max_len Patterns::MAX_LEN`; adı `patterns`/`pat_` ile başlayan alanlarda
+`clean` = `Patterns::validate_list` + hataları `$errors[$path]`'e yazar), metin → `text`. `Rule::sanitize()` **silinir**.
+
+**Modül alanları** (`term_taxonomies`, `alt_template`) `$module->settings()` varsayılanlarından türetilir
+(`bool`→`bool`, `int`→`int`, dizi→`list key=>slug`, diğer→`text max_len 200`); sırası eski
+`array_merge(defaults, module->settings())` sırasıyla aynıdır — depolanan şekil ve anahtar sırası değişmez.
 
 ### 10.3 WPSeoKit (`wpseokit_settings`, bölümlü — model buradan alındı)
 

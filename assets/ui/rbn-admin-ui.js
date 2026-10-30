@@ -673,6 +673,34 @@
 		}
 	}, true);
 
+	/* Sayfa başlığı menüsü (Helpers\Header): tıkla aç/kapa, Esc kapatır ve düğmeye döner, dışarı tık/odak kapatır. */
+	function setMenu(btn, open) {
+		var list = document.getElementById(btn.getAttribute('aria-controls'));
+		if (!list) { return; }
+		btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+		list.hidden = !open;
+	}
+	document.addEventListener('click', function (e) {
+		var btn = e.target.closest ? e.target.closest('[data-rbn-menu]') : null;
+		document.querySelectorAll('[data-rbn-menu][aria-expanded="true"]').forEach(function (b) {
+			if (b !== btn && !(btn === null && b.parentNode.contains(e.target))) { setMenu(b, false); }
+		});
+		if (btn) {
+			var open = btn.getAttribute('aria-expanded') !== 'true';
+			setMenu(btn, open);
+			var first = open ? document.querySelector('#' + btn.getAttribute('aria-controls') + ' a') : null;
+			if (first) { first.focus(); }
+		}
+	});
+	document.addEventListener('keydown', function (e) {
+		if (e.key !== 'Escape') { return; }
+		document.querySelectorAll('[data-rbn-menu][aria-expanded="true"]').forEach(function (b) { setMenu(b, false); b.focus(); });
+	});
+	document.addEventListener('focusout', function (e) {
+		var wrap = e.target.closest ? e.target.closest('.rbn-menu') : null;
+		if (wrap && e.relatedTarget && !wrap.contains(e.relatedTarget)) { setMenu(wrap.querySelector('[data-rbn-menu]'), false); }
+	});
+
 	window.RbnUi = {
 		initTabs: init,
 		syncSwitches: syncSwitches,

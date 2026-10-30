@@ -971,3 +971,7 @@ msgstr ""
 #: includes/Modules/ColorTheme.php
 msgid "Default colors were reset."
 msgstr ""
+
+#: includes/Helpers/Header.php
+msgid "Page navigation"
+msgstr ""

@@ -62,8 +62,21 @@ body:has(.rbn-wrap[data-tone=koyu]) #wpfooter a{color:var(--rbn-ac)}
 /* ═══ SAYFA BAŞLIĞI ŞERİDİ ═══ */
 .rbn-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--rbn-s3) var(--rbn-s5);margin:0 0 var(--rbn-s4)}
 .rbn-head__id{display:flex;flex-wrap:wrap;align-items:center;gap:var(--rbn-s2) var(--rbn-s3);min-width:0}
-.rbn-head h1{font-size:var(--rbn-fs-h1);line-height:var(--rbn-lh-h1)}
-.rbn-head__act{display:flex;flex-wrap:wrap;gap:var(--rbn-s2)}
+.rbn-head h1,.rbn-head .rbn-brand{margin:0;padding:0;font-size:var(--rbn-fs-h1);line-height:var(--rbn-lh-h1);font-weight:var(--rbn-fw-m);color:var(--rbn-text)}
+.rbn-head__act{display:flex;flex-wrap:wrap;align-items:center;gap:var(--rbn-s2);margin-inline-start:auto}
+.rbn-head__nav{display:flex;flex-wrap:wrap;align-items:center;gap:var(--rbn-s3);margin:0}
+/* Açılır menü (Helpers\Header): düğme + liste; açma/kapama rbn-admin-ui.js'te */
+.rbn-menu{position:relative}
+.rbn-menu__list{position:absolute;z-index:20;top:calc(100% + var(--rbn-s1));inset-inline-end:0;min-width:16rem;margin:0;padding:var(--rbn-s1);list-style:none;background:var(--rbn-surface);border:var(--rbn-bw) solid var(--rbn-line);border-radius:var(--rbn-r-lg);box-shadow:var(--rbn-shadow-lg,var(--rbn-shadow))}
+.rbn-menu__list[hidden]{display:none}
+.rbn-wrap .rbn-menu__list a:not(.rbn-btn):not(.rbn-tabs__tab){color:var(--rbn-text)}
+.rbn-wrap .rbn-menu__list a{display:flex;align-items:center;gap:var(--rbn-s2);min-height:var(--rbn-ctl);padding:0 var(--rbn-s3);border-radius:var(--rbn-r);color:var(--rbn-text);text-decoration:none;font-weight:600}
+.rbn-wrap .rbn-menu__list a:hover{background:var(--rbn-surface-2)}
+.rbn-wrap .rbn-menu__list a:not(.rbn-btn):not(.rbn-tabs__tab)[aria-current=page]{background:var(--rbn-ac-soft,var(--rbn-surface-2));color:var(--rbn-ac)}
+.rbn-menu__list a:focus-visible,.rbn-menu>.rbn-btn:focus-visible{outline:var(--rbn-ring) solid var(--rbn-ac);outline-offset:var(--rbn-ring-off)}
+.rbn-menu>.rbn-btn .rbn-ico:last-child{transition:transform .15s}
+.rbn-menu>.rbn-btn[aria-expanded=true] .rbn-ico:last-child{transform:rotate(180deg)}
+@media (prefers-reduced-motion:reduce){.rbn-menu>.rbn-btn .rbn-ico:last-child{transition:none}}
 .rbn-lead{margin:0 0 var(--rbn-s4);color:var(--rbn-muted);max-width:60rem}
 
 /* ═══ ROZET + ÇİP ═══ */
@@ -293,7 +306,11 @@ html[dir=rtl] .rbn-toast__close,body.rtl .rbn-toast__close{margin:-.25rem 0 0 -.
   .rbn-card__foot--split .rbn-card__ops{flex:1 1 100%;margin-inline-start:0}   /* dar ekranda sarar: durum üstte, eylem altta tam genişlik */
   .rbn-card__foot--split .rbn-card__ops>.rbn-btn,.rbn-card__foot--split .rbn-card__ops>form{flex:1 1 100%}
   .rbn-card__foot--split .rbn-card__ops>form .rbn-btn{width:100%}
-  .rbn-head h1{font-size:1.5rem}
+  .rbn-head .rbn-brand{font-size:1.5rem}
+  .rbn-head__act,.rbn-head__nav{flex:1 1 100%;flex-direction:column;align-items:stretch}
+  .rbn-head__act .rbn-btn,.rbn-menu,.rbn-menu>.rbn-btn{width:100%}
+  .rbn-menu>.rbn-btn{justify-content:center}
+  .rbn-menu__list{position:static;margin-top:var(--rbn-s1);min-width:0}
   .rbn-bar .rbn-field,.rbn-bar .rbn-select,.rbn-bar .rbn-btn{width:100%}
   .rbn-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
   .rbn-toasts{right:var(--rbn-s3, .75rem);left:var(--rbn-s3, .75rem);max-width:none;width:auto;bottom:var(--rbn-s3, .75rem)}

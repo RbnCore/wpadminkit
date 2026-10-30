@@ -16,6 +16,7 @@ namespace AdminKit\Kit;
 use AdminKit\Assets;
 use AdminKit\Core\Admin;
 use AdminKit\Core\Network;
+use AdminKit\Helpers\Header;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -134,7 +135,7 @@ final class Overview {
 		$icons = array( 'kurulu' => 'home', 'katalog' => 'down', 'cache' => 'refresh', 'logs' => 'list' );
 		?>
 		<div class="wrap rbn-wrap"<?php echo Assets::tone_attr(); // phpcs:ignore WordPress.Security.EscapeOutput ?>>
-			<div class="rbn-head"><div class="rbn-head__id"><h1>RBN Kit</h1><span class="rbn-chip"><?php echo esc_html( 'AdminKit v' . ADMINKIT_VERSION ); ?></span></div></div>
+			<?php echo Header::render( array( 'name' => 'RBN Kit', 'version' => ADMINKIT_VERSION, 'status' => array( 'label' => __( 'Active', 'adminkit' ), 'tone' => 'ok' ) ) ); // phpcs:ignore WordPress.Security.EscapeOutput -- Header::render() kaçışlar. ?>
 			<?php
 			if ( null !== $note ) {
 				$ok   = 'hata' !== $note['code'];

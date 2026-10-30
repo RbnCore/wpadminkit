@@ -812,3 +812,7 @@ msgstr "Renkler varsayılana dönsün mü? Özel renk ayarlarınız silinir; bu 
 #: includes/Modules/ColorTheme.php
 msgid "Default colors were reset."
 msgstr "Varsayılan renkler sıfırlandı."
+
+#: includes/Helpers/Header.php
+msgid "Page navigation"
+msgstr "Sayfa gezintisi"

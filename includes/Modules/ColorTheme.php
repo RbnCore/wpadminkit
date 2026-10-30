@@ -19,6 +19,7 @@ use AdminKit\Settings;
 use AdminKit\SettingsPage;
 
 use AdminKit\Core\Security\Guard;
+use AdminKit\Helpers\Header;
 use AdminKit\Helpers\Toast;
 
 defined( 'ABSPATH' ) || exit;
@@ -241,7 +242,7 @@ final class ColorTheme implements Module {
 		$values['scheme'] = in_array( $values['scheme'] ?? '', Color::scheme_ids(), true ) ? $values['scheme'] : 'wp';
 		?>
 		<div class="wrap rbn-wrap"<?php echo Assets::tone_attr(); // phpcs:ignore WordPress.Security.EscapeOutput ?>>
-			<div class="rbn-head"><div class="rbn-head__id"><h1><?php esc_html_e( 'Admin colors', 'adminkit' ); ?></h1></div></div>
+			<?php echo Header::render( array( 'name' => 'AdminKit', 'version' => ADMINKIT_VERSION, 'status' => array( 'label' => __( 'Active', 'adminkit' ), 'tone' => 'ok' ), 'title' => __( 'Admin colors', 'adminkit' ) ) ); // phpcs:ignore WordPress.Security.EscapeOutput -- Header::render() kaçışlar. ?>
 			<?php // phpcs:ignore WordPress.Security.NonceVerification ?>
 			<?php if ( isset( $_GET['saved'] ) ) : ?>
 				<?php echo Assets::note( 'ok', __( 'Your colors were saved.', 'adminkit' ) ); // phpcs:ignore WordPress.Security.EscapeOutput ?>

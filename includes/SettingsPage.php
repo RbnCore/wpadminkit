@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace AdminKit;
 
+use AdminKit\Helpers\Header;
+
 defined( 'ABSPATH' ) || exit;
 
 final class SettingsPage {
@@ -107,18 +109,16 @@ final class SettingsPage {
 		$tab = isset( $_GET['tab'] ) && isset( $tabs[ (string) $_GET['tab'] ] ) ? (string) $_GET['tab'] : 'modules'; // phpcs:ignore WordPress.Security.NonceVerification,WordPress.Security.ValidatedSanitizedInput -- yalnız sekme seçimi, anahtar listeyle eşlenir.
 		?>
 		<div class="wrap rbn-wrap"<?php echo Assets::tone_attr(); // phpcs:ignore WordPress.Security.EscapeOutput ?>>
-			<div class="rbn-head">
-				<div class="rbn-head__id">
-					<h1><?php echo esc_html__( 'AdminKit', 'adminkit' ); ?></h1>
-					<span class="rbn-chip"><?php echo esc_html( 'v' . ADMINKIT_VERSION ); ?></span>
-					<span class="rbn-chip rbn-chip--ok"><span class="rbn-dot"></span>
-						<?php
-						/* translators: 1: open module count, 2: total module count */
-						echo esc_html( sprintf( __( '%1$d of %2$d modules on', 'adminkit' ), $open, count( $modules ) ) );
-						?>
-					</span>
-				</div>
-			</div>
+			<?php
+			echo Header::render( // phpcs:ignore WordPress.Security.EscapeOutput -- Header::render() kaçışlar.
+				array(
+					'name'    => 'AdminKit',
+					'version' => ADMINKIT_VERSION,
+					/* translators: 1: open module count, 2: total module count */
+					'status'  => array( 'label' => sprintf( __( '%1$d of %2$d modules on', 'adminkit' ), $open, count( $modules ) ), 'tone' => 'ok' ),
+				)
+			);
+			?>
 			<p class="rbn-lead"><?php esc_html_e( 'Each module adds one feature to the admin area. Turn on only what you need. Nothing here changes the public site.', 'adminkit' ); ?></p>
 			<div class="rbn-tabs" role="tablist" aria-label="<?php esc_attr_e( 'AdminKit settings tabs', 'adminkit' ); ?>" data-rbn-tabs>
 				<?php foreach ( $tabs as $key => $label ) : ?>

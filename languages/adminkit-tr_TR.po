@@ -816,3 +816,7 @@ msgstr "Varsayılan renkler sıfırlandı."
 #: includes/Helpers/Header.php
 msgid "Page navigation"
 msgstr "Sayfa gezintisi"
+
+#: includes/catalog.php
+msgid "Closes the doors a WordPress site leaves open: security headers, XML-RPC, user enumeration, version details, the file editor and login attempts."
+msgstr "Bir WordPress sitesinin açık bıraktığı kapıları kapatır: güvenlik başlıkları, XML-RPC, kullanıcı adı sayımı, sürüm bilgileri, dosya düzenleyici ve giriş denemeleri."

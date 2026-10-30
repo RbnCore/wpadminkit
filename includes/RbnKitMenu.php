@@ -7,7 +7,7 @@
  * Kopyaları eşitlemek için: `php araclar/menu-senkron.php` (AdminKit deposu; `--kontrol` yalnız denetler, `--yaz` eşitler).
  * Çeviri: ortak metin alanı `rbn-kit` (languages/rbn-kit.pot, rbn-kit-tr_TR.po/.mo); bu dosyayla BİRLİKTE kopyalanır.
  *
- * MENÜ SIRASI SABİTTİR: Overview → AdminKit → CookieKit → ContentHealth → WPSeoKit. Sıra yalnız aşağıdaki ORDER tablosundadır
+ * MENÜ SIRASI SABİTTİR: Overview → AdminKit → CookieKit → ContentHealth → WPSeoKit → SecurityKit. Sıra yalnız aşağıdaki ORDER tablosundadır
  * ve yalnız geliştirici koddan değiştirir; kurulum/yükleme sırası, `add()` çağrısı, başka eklentilerin `admin_menu`
  * öncelikleri ve kullanıcı sırayı değiştiremez (ayar, süzgeç, kanca yoktur). Yeni RBN eklentisi eklenince bu tabloya satır
  * eklenir ve kopyalar eşitlenir; tabloda olmayan slug'lar bu öğelerden SONRA, slug'a göre alfabetik gelir.
@@ -35,6 +35,7 @@ if ( ! class_exists( 'RbnKitMenu' ) ) {
 			'cookiekit'     => 20,
 			'contenthealth' => 30,
 			'wpseokit'      => 40,
+			'securitykit'   => 50,
 		);
 
 		/** @var array<string, array<string, mixed>> slug => öğe */

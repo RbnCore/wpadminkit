@@ -51,4 +51,14 @@ return array(
 		'status'        => 'released',
 		'settings_slug' => 'wpseokit',
 	),
+	array(
+		'id'            => 'securitykit',
+		'name'          => 'SecurityKit',
+		'tagline'       => __( 'Closes the doors a WordPress site leaves open: security headers, XML-RPC, user enumeration, version details, the file editor and login attempts.', 'adminkit' ),
+		'icon'          => 'lock',
+		'plugin_file'   => 'securitykit/securitykit.php',
+		'repo'          => 'RbnCore/wpsecuritykit',
+		'status'        => 'soon',
+		'settings_slug' => 'securitykit',
+	),
 );

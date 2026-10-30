@@ -975,3 +975,7 @@ msgstr ""
 #: includes/Helpers/Header.php
 msgid "Page navigation"
 msgstr ""
+
+#: includes/catalog.php
+msgid "Closes the doors a WordPress site leaves open: security headers, XML-RPC, user enumeration, version details, the file editor and login attempts."
+msgstr ""

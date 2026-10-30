@@ -877,6 +877,7 @@ msgid "The plugin is up to date."
 msgstr ""
 
 #: includes/Core/Updater.php
+#: includes/Kit/UpdateCard.php
 msgid "Check now"
 msgstr ""
 
@@ -916,28 +917,32 @@ msgstr ""
 msgid "Updates"
 msgstr ""
 
-#: includes/SettingsPage.php
+#: includes/Kit/UpdateCard.php
 msgid "Installed version"
 msgstr ""
 
-#: includes/SettingsPage.php
+#: includes/Kit/UpdateCard.php
 msgid "Update status"
 msgstr ""
 
-#: includes/SettingsPage.php
+#: includes/Kit/UpdateCard.php
 msgid "Last check"
 msgstr ""
 
-#: includes/SettingsPage.php
+#: includes/Kit/UpdateCard.php
 msgid "never"
 msgstr ""
 
-#: includes/SettingsPage.php
+#: includes/Kit/UpdateCard.php
 msgid "The package is verified with its SHA-256 digest and Ed25519 signature before installation; a package that cannot be verified is not installed. Automatic updates are turned on or off with the “Enable auto-updates” link on the Plugins page."
 msgstr ""
 
-#: includes/SettingsPage.php
+#: includes/Kit/UpdateCard.php
 msgid "Update checks follow the RBN Kit network setting."
+msgstr ""
+
+#: includes/Kit/UpdateCard.php
+msgid "Only a standard GET request is sent; your site address or user information is not sent."
 msgstr ""
 
 #: includes/SettingsPage.php

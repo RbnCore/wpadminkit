@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
 final class Core {
 
 	/** Core API level. Consumers check `ADMINKIT_CORE_API >= N`; raised when the public contract grows. */
-	public const API = 3;
+	public const API = 4;
 
 	public static function boot(): void {
 		Schema::maybe_upgrade();

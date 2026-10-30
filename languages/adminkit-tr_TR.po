@@ -728,29 +728,33 @@ msgstr "Bu işlem için izniniz yok."
 msgid "Updates"
 msgstr "Güncellemeler"
 
-#: includes/SettingsPage.php
+#: includes/Kit/UpdateCard.php
 msgid "Installed version"
 msgstr "Kurulu sürüm"
 
-#: includes/SettingsPage.php
+#: includes/Kit/UpdateCard.php
 msgid "Update status"
 msgstr "Güncelleme durumu"
 
-#: includes/SettingsPage.php
+#: includes/Kit/UpdateCard.php
 msgid "Last check"
 msgstr "Son denetim"
 
-#: includes/SettingsPage.php
+#: includes/Kit/UpdateCard.php
 msgid "never"
 msgstr "hiç"
 
-#: includes/SettingsPage.php
+#: includes/Kit/UpdateCard.php
 msgid "The package is verified with its SHA-256 digest and Ed25519 signature before installation; a package that cannot be verified is not installed. Automatic updates are turned on or off with the “Enable auto-updates” link on the Plugins page."
 msgstr "Paket kurulumdan önce SHA-256 özeti ve Ed25519 imzasıyla doğrulanır; doğrulanamayan paket kurulmaz. Otomatik güncellemeler Eklentiler sayfasındaki “Otomatik güncellemeleri etkinleştir” bağlantısıyla açılır ya da kapatılır."
 
-#: includes/SettingsPage.php
+#: includes/Kit/UpdateCard.php
 msgid "Update checks follow the RBN Kit network setting."
 msgstr "Güncelleme denetimleri RBN Kit ağ ayarını izler."
+
+#: includes/Kit/UpdateCard.php
+msgid "Only a standard GET request is sent; your site address or user information is not sent."
+msgstr "Yalnızca standart bir GET isteği gider; site adresiniz ya da kullanıcı bilginiz gönderilmez."
 
 #: includes/SettingsPage.php
 msgid "Update check finished."

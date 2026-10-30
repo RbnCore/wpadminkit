@@ -171,36 +171,15 @@ final class SettingsPage {
 		<?php
 	}
 
-	/** Version / update check card. Sits outside the settings form because check_form() posts to admin-post.php. */
+	/** Version / update check card. The body is the ONE shared card (Kit\UpdateCard); it sits outside the settings form. */
 	private static function updates_card(): void {
-		$st      = Core\Updater::status( 'adminkit' );
-		$checked = (int) $st['checked_at'];
-		$state   = Core\Updater::state_html( $st );
-		$last    = $checked > 0 ? esc_html( wp_date( 'd.m.Y H:i', $checked ) ) : esc_html__( 'never', 'adminkit' );
-		$act     = Core\Updater::check_form( 'adminkit', add_query_arg( 'tab', 'general', self::url() ), Assets::icon( 'refresh' ) . esc_html__( 'Check now', 'adminkit' ) );
 		?>
 		<section class="rbn-card ak-updates" id="adminkit-updates" aria-labelledby="adminkit-updates-t">
 			<div class="rbn-card__h">
 				<h2 id="adminkit-updates-t"><?php esc_html_e( 'Updates', 'adminkit' ); ?></h2>
 			</div>
 			<div class="rbn-card__b">
-				<div class="rbn-field">
-					<span class="rbn-label"><?php esc_html_e( 'Installed version', 'adminkit' ); ?></span>
-					<b><?php echo esc_html( ADMINKIT_VERSION ); ?></b>
-				</div>
-				<div class="rbn-field">
-					<span class="rbn-label"><?php esc_html_e( 'Update status', 'adminkit' ); ?></span>
-					<p><?php echo $state; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Core\Updater::state_html() escapes. ?></p>
-				</div>
-				<div class="rbn-field">
-					<span class="rbn-label"><?php esc_html_e( 'Last check', 'adminkit' ); ?></span>
-					<span><?php echo $last; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
-					<p class="rbn-help"><?php esc_html_e( 'The package is verified with its SHA-256 digest and Ed25519 signature before installation; a package that cannot be verified is not installed. Automatic updates are turned on or off with the “Enable auto-updates” link on the Plugins page.', 'adminkit' ); ?></p>
-				</div>
-				<p class="rbn-help"><a href="#adminkit-network"><?php esc_html_e( 'Update checks follow the RBN Kit network setting.', 'adminkit' ); ?></a></p>
-				<?php if ( '' !== $act ) : ?>
-					<div class="rbn-form-actions"><?php echo $act; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- check_form() escapes. ?></div>
-				<?php endif; ?>
+				<?php echo Kit\UpdateCard::render( 'adminkit', array( 'return_url' => add_query_arg( 'tab', 'general', self::url() ) ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- UpdateCard escapes its own output. ?>
 			</div>
 		</section>
 		<?php

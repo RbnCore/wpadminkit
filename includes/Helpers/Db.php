@@ -223,7 +223,77 @@ final class Db {
 		if ( array() === $args ) {
 			return $sql;
 		}
+		self::check_shape( $sql, $args );
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- the query is prepared right here.
 		return (string) $wpdb->prepare( $sql, $args );
+	}
+
+	/**
+	 * Catches the two shapes that make `$wpdb->prepare()` fail SILENTLY (WPRJ-691): an argument list that is a
+	 * single nested array (`array( array_merge( … ) )` — one argument, N placeholders) and a placeholder/argument
+	 * count mismatch. WordPress logs a notice and returns an empty string for the first; without this check the
+	 * caller just gets zero rows and nobody notices.
+	 *
+	 * The report carries COUNTS and the caller location only — never the values, never the SQL text (both may
+	 * contain personal data).
+	 */
+	private static function check_shape( string $sql, array $args ): void {
+		$nested = false;
+		foreach ( $args as $value ) {
+			if ( is_array( $value ) ) {
+				$nested = true;
+				break;
+			}
+		}
+		$placeholders = self::placeholder_count( $sql );
+		if ( ! $nested && $placeholders === count( $args ) ) {
+			return;
+		}
+		self::shape_error( $nested, $placeholders, count( $args ) );
+	}
+
+	/**
+	 * Number of `%s` / `%d` / `%f` / `%F` / `%i` placeholders in the query, by WordPress' own rules
+	 * (`class-wpdb.php::prepare()`): `%%` and any percent that does not start a placeholder (e.g. the `%` of a
+	 * LIKE pattern inside quotes) do not count.
+	 */
+	private static function placeholder_count( string $sql ): int {
+		if ( false === strpos( $sql, '%' ) ) {
+			return 0;
+		}
+		$allowed_format = '(?:[1-9][0-9]*[$])?[-+0-9]*(?: |0|\'.)?[-+0-9]*(?:\.[0-9]+)?';
+		$query          = str_replace( array( "'%s'", '"%s"' ), '%s', $sql );
+		$query          = (string) preg_replace( "/%(?:%|$|(?!($allowed_format)?[sdfFi]))/", '%%\\1', $query );
+		$split          = preg_split( "/(^|[^%]|(?:%%)+)(%(?:$allowed_format)?[sdfFi])/", $query, -1, PREG_SPLIT_DELIM_CAPTURE );
+		return (int) ( ( count( (array) $split ) - 1 ) / 3 );
+	}
+
+	/** Reports a broken prepare() shape: `_doing_it_wrong()` (visible with WP_DEBUG) plus one line in `adminkit.db`. */
+	private static function shape_error( bool $nested, int $placeholders, int $arguments ): void {
+		static $reported = array();
+		$caller = '';
+		foreach ( debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 12 ) as $frame ) { // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace -- locating the caller for the report.
+			if ( isset( $frame['file'] ) && __FILE__ !== $frame['file'] ) {
+				$caller = basename( (string) $frame['file'] ) . ':' . (int) ( $frame['line'] ?? 0 );
+				break;
+			}
+		}
+		$message = sprintf(
+			'Db prepare() %s: %d placeholder(s) but %d argument(s).',
+			$nested ? 'got a nested argument array' : 'argument count mismatch',
+			$placeholders,
+			$arguments
+		);
+		$key = $message . ' ' . $caller;
+		if ( isset( $reported[ $key ] ) ) {
+			return;
+		}
+		$reported[ $key ] = true;
+
+		_doing_it_wrong( __METHOD__, esc_html( $message . ' ' . $caller ), ADMINKIT_VERSION );
+
+		if ( class_exists( '\AdminKit\Core\Log' ) && isset( \AdminKit\Core\Log::channels()['adminkit.db'] ) ) {
+			\AdminKit\Core\Log::log( 'adminkit.db', 'error', 'prepare_shape', $message, array( 'caller' => $caller ) );
+		}
 	}
 }

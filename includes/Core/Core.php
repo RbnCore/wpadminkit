@@ -26,6 +26,8 @@ final class Core {
 		Cache::register_group( 'adminkit', 'updates', 12 * HOUR_IN_SECONDS );
 		Cache::register_group( 'adminkit', 'rate', HOUR_IN_SECONDS );
 		Log::register_channel( 'adminkit', 'updates', 90, 200 );
+		// WPRJ-691: a prepare() call with a broken argument shape would otherwise fail silently (empty result set).
+		Log::register_channel( 'adminkit', 'db', 90, 200, array( 'error', 'warning' ) );
 		// Central updater (API level 3): one hook set for every registered RBN plugin; admin, cron and WP-CLI only, never the front end.
 		if ( is_admin() || wp_doing_cron() || defined( 'WP_CLI' ) ) {
 			Updater::init();

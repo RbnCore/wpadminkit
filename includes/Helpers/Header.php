@@ -57,7 +57,8 @@ final class Header {
 		} elseif ( '' !== $title ) {
 			$out .= '<div class="rbn-head"><div class="rbn-head__id"><h1>' . esc_html( $title ) . '</h1></div></div>';
 		}
-		return $out . self::note( $args['note'] ?? null );
+		// WordPress `common.js` moves admin notices below this marker: after the whole head, never into the head row.
+		return $out . self::note( $args['note'] ?? null ) . '<hr class="wp-header-end rbn-sr">';
 	}
 
 	/** One chip; the status chip carries the leading dot. */

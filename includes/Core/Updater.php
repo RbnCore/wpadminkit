@@ -23,6 +23,7 @@ use AdminKit\Kit\Download;
 use AdminKit\Kit\Installer;
 
 use AdminKit\Core\Security\Guard;
+use AdminKit\Core\Security\Host;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -648,7 +649,9 @@ final class Updater {
 		Guard::admin_action( self::ACTION, 'update_plugins' );
 		$slug   = isset( $_POST['slug'] ) ? sanitize_key( wp_unslash( (string) $_POST['slug'] ) ) : '';
 		$return = isset( $_POST['return'] ) ? esc_url_raw( wp_unslash( (string) $_POST['return'] ) ) : '';
-		$to     = '' !== $return ? $return : admin_url( 'plugins.php' );
+		// One door for the "back to where you came from" address (WPRJ-685 D-1): the posted value is only followed
+		// when it stays on this site; anything else falls back to the plugins screen.
+		$to = Host::safe_redirect_target( $return, admin_url( 'plugins.php' ) );
 		if ( ! isset( self::$plugins[ $slug ] ) || ! self::enabled( $slug ) ) {
 			\AdminKit\Helpers\Toast::flash( 'info', __( 'The update check is off; nothing was checked.', 'adminkit' ) );
 			wp_safe_redirect( $to );

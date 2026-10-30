@@ -5,7 +5,7 @@
  * Two jobs, one file:
  *
  * - schema helpers (`install`, `maybe_upgrade`, `drop_tables`) — idempotent, additive;
- * - query helpers (`query`, `get_var`, `get_row`, `get_results`, `get_col`, `insert`, `update`, `delete`, `in`).
+ * - query helpers (`query`, `get_var`, `get_row`, `get_results`, `get_col`, `insert`, `update`, `delete`).
  *
  * A plugin never writes `$wpdb->…` itself: every call goes through these thin wrappers, which prepare the SQL with
  * the given arguments first. Placeholders are WordPress' own (`%s`, `%d`, `%i`, `%f`); a value is never pasted into
@@ -199,22 +199,6 @@ final class Db {
 	public static function delete( string $table, array $where, array $where_format = array() ) {
 		global $wpdb;
 		return $wpdb->delete( $table, $where, $where_format ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
-	}
-
-	/**
-	 * Placeholder list for `IN ( … )`: `Db::in( $ids )` gives `%d, %d, %d`.
-	 *
-	 * The values are passed to the query as arguments in the SAME order; an empty list becomes NULL, which matches
-	 * no row (`IN (NULL)`), so the query stays valid.
-	 *
-	 * @param array<int, mixed> $values Values that will be passed as query arguments.
-	 * @param string            $format Placeholder per value.
-	 */
-	public static function in( array $values, string $format = '%d' ): string {
-		if ( array() === $values ) {
-			return 'NULL';
-		}
-		return implode( ', ', array_fill( 0, count( $values ), $format ) );
 	}
 
 	/** Prepares the SQL when there are arguments; an empty argument list is returned unchanged. */

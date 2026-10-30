@@ -28,5 +28,10 @@ foreach ( (array) $counters as $name ) {
 
 $own = $wpdb->esc_like( 'rbnkit_adminkit.' ) . '%'; // Cache key shape rbnkit_<plugin>.<group>...: only AdminKit's own prefix; every other plugin purges itself (Cache::purge_plugin).
 $wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s", '\_transient\_' . $own, '\_transient\_timeout\_' . $own ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+
+// Rate limit counters (WPRJ-685): their rows carry the transient shape, so they are named here by the same prefix the
+// class uses (`RateLimit::PREFIX`); the pair is deleted together with its timeout marker.
+$rate = $wpdb->esc_like( 'rbnkit_rate_' ) . '%';
+$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s", '\_transient\_' . $rate, '\_transient\_timeout\_' . $rate ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}rbnkit_log" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.SchemaChange
 $wpdb->query( "DELETE FROM {$wpdb->usermeta} WHERE meta_key LIKE 'adminkit\\_%'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.NotPrepared

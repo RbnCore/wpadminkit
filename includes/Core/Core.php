@@ -24,7 +24,6 @@ final class Core {
 		add_action( 'shutdown', array( Cache::class, 'save_stats' ) );
 		Cache::register_group( 'adminkit', 'catalog', 12 * HOUR_IN_SECONDS );
 		Cache::register_group( 'adminkit', 'updates', 12 * HOUR_IN_SECONDS );
-		Cache::register_group( 'adminkit', 'rate', HOUR_IN_SECONDS );
 		Log::register_channel( 'adminkit', 'updates', 90, 200 );
 		// WPRJ-691: a prepare() call with a broken argument shape would otherwise fail silently (empty result set).
 		Log::register_channel( 'adminkit', 'db', 90, 200, array( 'error', 'warning' ) );

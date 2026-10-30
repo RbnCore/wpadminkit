@@ -485,9 +485,23 @@ final class Settings {
 		return self::cut( $text, $max );
 	}
 
-	/** An http/https URL, or an empty string. @param mixed $raw Raw value. */
+	/**
+	 * An http/https URL, or an empty string.
+	 *
+	 * A protocol-relative address (`//evil.example/x`) is refused here too: it has no scheme, so `esc_url_raw()` would
+	 * keep it, and every `url` field (the WPSeoKit social addresses) must be an address with its own scheme.
+	 *
+	 * @param mixed $raw Raw value.
+	 */
 	public static function clean_url( $raw ): string {
-		return is_string( $raw ) ? (string) esc_url_raw( trim( $raw ), array( 'http', 'https' ) ) : '';
+		if ( ! is_string( $raw ) ) {
+			return '';
+		}
+		$url = trim( $raw );
+		if ( '' === $url || 0 === strpos( $url, '//' ) ) {
+			return '';
+		}
+		return (string) esc_url_raw( $url, array( 'http', 'https' ) );
 	}
 
 	/**
@@ -509,12 +523,42 @@ final class Settings {
 		return $host;
 	}
 
-	/** `host` or `host:port`, lower case. @param mixed $raw Raw value. */
+	/**
+	 * A bare host name with an optional port (`example.com`, `example.com:8080`), or ''.
+	 *
+	 * The host part is the `clean_host()` contract (lower case, no scheme, path, user information, IDN or IP), so the
+	 * `host_port` type can never store what `host` refuses: `user@example.com`, `https://example.com` and
+	 * `127.0.0.1:80` all become ''. The port is a number between 1 and 65535 and is stored without leading zeros.
+	 *
+	 * @param mixed $raw Raw value.
+	 */
 	public static function clean_host_port( $raw ): string {
 		if ( ! is_scalar( $raw ) ) {
 			return '';
 		}
-		return strtolower( (string) preg_replace( '/[^A-Za-z0-9.\-:]/', '', trim( (string) $raw ) ) );
+		$value = strtolower( trim( (string) $raw ) );
+		if ( '' === $value ) {
+			return '';
+		}
+		$port = '';
+		if ( false !== strpos( $value, ':' ) ) {
+			$parts = explode( ':', $value );
+			// One colon only: an IPv6 literal is an address, and this type stores a host name.
+			if ( 2 !== count( $parts ) || 1 !== preg_match( '/^\d{1,5}$/', $parts[1] ) ) {
+				return '';
+			}
+			$number = (int) $parts[1];
+			if ( $number < 1 || $number > 65535 ) {
+				return '';
+			}
+			$value = $parts[0];
+			$port  = (string) $number;
+		}
+		$host = self::clean_host( $value );
+		if ( '' === $host ) {
+			return '';
+		}
+		return '' === $port ? $host : $host . ':' . $port;
 	}
 
 	/** `#rrggbb` / `#rgb`, or ''. @param mixed $raw Raw value. */
@@ -977,7 +1021,9 @@ final class Settings {
 				$failed = ( '' !== $text && '' === $value );
 				break;
 			case 'host_port':
-				$value = self::clean_host_port( $raw );
+				$text  = trim( (string) ( is_scalar( $raw ) ? $raw : '' ) );
+				$value = self::clean_host_port( $text );
+				$failed = ( '' !== $text && '' === $value );
 				break;
 			case 'enum':
 				$text  = trim( (string) ( is_scalar( $raw ) ? $raw : '' ) );

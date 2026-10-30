@@ -107,10 +107,10 @@ anahtarların nokta ile birleşimidir: `templates.sep`, `social.profiles`, `rule
 | `text` | `wp_strip_all_tags` + geçersiz UTF-8 + satır sonu→boşluk + `trim` + `max_len`; **`sanitize_text_field` DEĞİL**: `%date%` gibi yüzde-çiftlerini bozmaz (WPRJ-672) | `string` tek satır | hepsi |
 | `text_multi` | `wp_strip_all_tags` + `\r\n|\r`→`\n` + `trim` + `max_len`; **satır sonu korunur** (WPRJ-670) | `string` çok satır | CookieKit |
 | `color` | `sanitize_hex_color` ya da `''` | `#rrggbb` \| `''` | CookieKit, AdminKit |
-| `url` | `esc_url_raw(…, http/https)` | tam URL \| `''` | WPSeoKit |
+| `url` | yalnız `http`/`https` şeması; **protokol-bağıl (`//alan/yol`) reddedilir** (WPRJ-685); geçerliyse `esc_url_raw` | tam URL \| `''` | WPSeoKit |
 | `link` | site içi `/yol` ya da **aynı alan adlı** http(s) adres; başka alan adı/`//`/ters bölü/denetim karakteri reddedilir | `string` \| `''` | CookieKit |
 | `host` | küçük harf, katı alan adı (IP ve tek etiket reddedilir) | `string` \| `''` | WPSeoKit |
-| `host_port` | küçük harf, `[a-z0-9.\-:]` dışı atılır (port serbest) | `string` | ContentHealth |
+| `host_port` | küçük harf + `trim`; en çok bir `:` ile `alan`/`port` ayrılır, port `1…65535` (baştaki sıfırlar atılır); alan kısmı `host` sözleşmesine uymalı — **IP, e-posta, şema ve yol reddedilir** (atılmaz, değer boş döner; WPRJ-685) | `alan` \| `alan:port` \| `''` | ContentHealth |
 | `enum` | `values` içindeyse değer, değilse varsayılan | `string` | hepsi |
 | `list` | satır/virgül ayrılmış metin ya da dizi → normalize → `slug`/`text`/`raw` öğe → `keys` süzgeci → tekilleştir → `max_entries` | düz dizi (`array_values`) | hepsi |
 | `map` | anahtar biçimi + beyaz liste + değer alanı/temizliği + `filter` + `max_entries` | ilişkisel dizi | WPSeoKit |

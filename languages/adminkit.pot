@@ -85,7 +85,7 @@ msgid "Also show in the block editor"
 msgstr ""
 
 #: includes/Modules/NoticeTidy.php:49
-msgid "Always show error notices"
+msgid "Always show error and warning notices"
 msgstr ""
 
 #: includes/Modules/ColorTheme.php:334
@@ -142,7 +142,7 @@ msgid "Clear the cache group %s?"
 msgstr ""
 
 #: includes/Modules/NoticeTidy.php:30
-msgid "Collects admin notices into one box. Errors always stay visible where they are."
+msgid "Collects admin success and info notices from other plugins into one collapsible box. Errors, warnings, and notices with actions always stay visible. Toasts take priority for core messages."
 msgstr ""
 
 #: includes/Modules/ColorTheme.php:56
@@ -235,6 +235,14 @@ msgstr ""
 
 #: includes/Modules/NoticeTidy.php:70
 msgid "errors stay visible below"
+msgstr ""
+
+#: includes/Modules/NoticeTidy.php:71
+msgid "warnings stay visible below"
+msgstr ""
+
+#: includes/Modules/NoticeTidy.php:72
+msgid "important notices stay visible below"
 msgstr ""
 
 #: includes/Core/Admin.php:50
@@ -355,7 +363,7 @@ msgid "Loading log entries…"
 msgstr ""
 
 #: includes/Modules/NoticeTidy.php:52
-msgid "Locked on: errors are never hidden or removed."
+msgid "Locked on: errors, warnings, and notices with actions or buttons are never collected into the box."
 msgstr ""
 
 #: includes/Core/Admin.php:53

@@ -1,4 +1,4 @@
-/*! AdminKit — bildirim düzenleyici. Hata bildirimleri yerinde kalır; hiçbir bildirim silinmez, yalnız taşınır. */
+/*! AdminKit — bildirim düzenleyici. Hata ve uyarı bildirimleri, düğmeli bildirimler yerinde kalır; yalnız düz başarı ve bilgi bildirimleri toplanır; hiçbir bildirim silinmez. */
 ( function () {
 	'use strict';
 	var cfg = ( window.AdminKit || {} ).notices;
@@ -15,9 +15,22 @@
 	function isError( el ) {
 		return el.classList.contains( 'notice-error' ) || el.classList.contains( 'error' );
 	}
-	// Kullanıcının kendi eyleminin geri bildirimi (ayar kaydedildi) ve satır içi bildirimler yerinde kalır. Kit kendi bildirimini `.rbn-note` ile yazar (SEL'e girmez); kit sayfalarında WordPress'in `.rbn-wrap` içine taşıdığı `.notice` da toplanır.
+	function isWarning( el ) {
+		return el.classList.contains( 'notice-warning' ) || el.classList.contains( 'warning' );
+	}
+	function hasActions( el ) {
+		return !! el.querySelector( 'a:not(.notice-dismiss), button:not(.notice-dismiss), form, input, select, textarea' );
+	}
+	function isToastCandidate( el ) {
+		return el.classList.contains( 'rbn-toast' ) || !! el.closest( '.rbn-toast-wrap' ) ||
+			el.classList.contains( 'no-toast' ) || el.classList.contains( 'rbn-tc-keep' ) ||
+			( document.documentElement.classList.contains( 'rbn-tc' ) && ( 'message' === el.id || 'setting-error-settings_updated' === el.id ) );
+	}
+	// Kullanıcının kendi eyleminin geri bildirimi (ayar kaydedildi), uyarılar, eylem/düğme içerenler ve satır içi bildirimler yerinde kalır.
 	function collectable( el ) {
-		return ! isError( el ) && ! el.hidden && ! el.classList.contains( 'inline' ) && ! el.classList.contains( 'settings-error' ) &&
+		return ! isError( el ) && ! isWarning( el ) && ! hasActions( el ) && ! isToastCandidate( el ) &&
+			! el.hidden && 'none' !== window.getComputedStyle( el ).display &&
+			! el.classList.contains( 'inline' ) && ! el.classList.contains( 'settings-error' ) &&
 			! el.closest( '.adminkit-nt, .rbn-dlg, form, .postbox, #screen-meta' );
 	}
 	function save() {
@@ -42,6 +55,8 @@
 		head.appendChild( errs );
 		panel.id = 'adminkit-nt-panel';
 		panel.className = 'adminkit-nt__p';
+		panel.setAttribute( 'role', 'region' );
+		panel.setAttribute( 'aria-label', cfg.i18n.title );
 		box.appendChild( head );
 		box.appendChild( panel );
 		before.parentNode.insertBefore( box, before );
@@ -56,18 +71,31 @@
 	function sync() {
 		var n = panel.children.length;
 		var e = 0;
+		var w = 0;
 		var list = area.querySelectorAll( SEL );
 		var i;
 		for ( i = 0; i < list.length; i++ ) {
-			if ( isError( list[ i ] ) && ! list[ i ].closest( '.adminkit-nt' ) && list[ i ].offsetParent !== null ) {
-				e++;
+			var item = list[ i ];
+			if ( ! item.closest( '.adminkit-nt' ) && item.offsetParent !== null ) {
+				if ( isError( item ) ) {
+					e++;
+				} else if ( isWarning( item ) ) {
+					w++;
+				}
 			}
 		}
 		box.hidden = 0 === n;
 		count.textContent = cfg.i18n.title + ' (' + n + ')';
 		var errs = box.querySelector( '.adminkit-nt__e' );
-		errs.hidden = 0 === e;
-		errs.textContent = e + ' ' + cfg.i18n.errors;
+		var totalOutside = e + w;
+		errs.hidden = 0 === totalOutside;
+		if ( e > 0 && w > 0 ) {
+			errs.textContent = totalOutside + ' ' + ( cfg.i18n.important || cfg.i18n.errors );
+		} else if ( e > 0 ) {
+			errs.textContent = e + ' ' + cfg.i18n.errors;
+		} else if ( w > 0 ) {
+			errs.textContent = w + ' ' + ( cfg.i18n.warnings || cfg.i18n.errors );
+		}
 		panel.hidden = ! open;
 		box.firstChild.setAttribute( 'aria-expanded', open ? 'true' : 'false' );
 	}

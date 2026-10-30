@@ -22,8 +22,8 @@ msgstr "RBN Kit, Ayarlar ve Eklentiler gizlenemez; bu sayfaya her zaman ulaşabi
 msgid "Notice organizer"
 msgstr "Bildirim düzenleyici"
 
-msgid "Collects admin notices into one box. Errors always stay visible where they are."
-msgstr "Yönetim bildirimlerini tek kutuda toplar. Hatalar her zaman yerinde ve görünür kalır."
+msgid "Collects admin success and info notices from other plugins into one collapsible box. Errors, warnings, and notices with actions always stay visible. Toasts take priority for core messages."
+msgstr "Diğer eklentilerin başarı ve bilgi bildirimlerini açılır kapanır tek kutuda toplar. Hatalar, uyarılar ve eylem gerektiren bildirimler her zaman yerinde ve görünür kalır. Çekirdek iletilerinde Toast bildirimleri önceliklidir."
 
 msgid "Keep the box closed until opened"
 msgstr "Kutu siz açana kadar kapalı kalsın"
@@ -31,17 +31,23 @@ msgstr "Kutu siz açana kadar kapalı kalsın"
 msgid "Your own open/closed choice is remembered per user and overrides this."
 msgstr "Sizin açık/kapalı seçiminiz kullanıcı bazında hatırlanır ve bunun yerine geçer."
 
-msgid "Always show error notices"
-msgstr "Hata bildirimlerini her zaman göster"
+msgid "Always show error and warning notices"
+msgstr "Hata ve uyarı bildirimlerini her zaman göster"
 
-msgid "Locked on: errors are never hidden or removed."
-msgstr "Kilitli açık: hatalar hiçbir zaman gizlenmez ya da silinmez."
+msgid "Locked on: errors, warnings, and notices with actions or buttons are never collected into the box."
+msgstr "Kilitli açık: hatalar, uyarılar ve eylem ya da düğme içeren bildirimler hiçbir zaman kutuya toplanmaz."
 
 msgid "Notices"
 msgstr "Bildirimler"
 
 msgid "errors stay visible below"
 msgstr "hata aşağıda görünür kalıyor"
+
+msgid "warnings stay visible below"
+msgstr "uyarı aşağıda görünür kalıyor"
+
+msgid "important notices stay visible below"
+msgstr "önemli bildirim aşağıda görünür kalıyor"
 
 msgid "Show or hide the collected notices"
 msgstr "Toplanan bildirimleri göster ya da gizle"

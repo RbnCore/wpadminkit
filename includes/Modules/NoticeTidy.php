@@ -29,11 +29,11 @@ final class NoticeTidy implements Module {
 	}
 
 	public function description(): string {
-		return __( 'Collects admin notices into one box. Errors always stay visible where they are.', 'adminkit' );
+		return __( 'Collects admin success and info notices from other plugins into one collapsible box. Errors, warnings, and notices with actions always stay visible. Toasts take priority for core messages.', 'adminkit' );
 	}
 
 	public function default_enabled(): bool {
-		return true;
+		return false;
 	}
 
 	public function settings_schema(): array {
@@ -48,10 +48,10 @@ final class NoticeTidy implements Module {
 			array(
 				'key'     => 'errors_visible',
 				'type'    => 'checkbox',
-				'label'   => __( 'Always show error notices', 'adminkit' ),
+				'label'   => __( 'Always show error and warning notices', 'adminkit' ),
 				'default' => true,
 				'locked'  => true,
-				'help'    => __( 'Locked on: errors are never hidden or removed.', 'adminkit' ),
+				'help'    => __( 'Locked on: errors, warnings, and notices with actions or buttons are never collected into the box.', 'adminkit' ),
 			),
 		);
 	}
@@ -68,9 +68,11 @@ final class NoticeTidy implements Module {
 						'ajax'  => admin_url( 'admin-ajax.php' ),
 						'nonce' => wp_create_nonce( 'adminkit_notices' ),
 						'i18n'  => array(
-							'title'  => __( 'Notices', 'adminkit' ),
-							'errors' => __( 'errors stay visible below', 'adminkit' ),
-							'toggle' => __( 'Show or hide the collected notices', 'adminkit' ),
+							'title'     => __( 'Notices', 'adminkit' ),
+							'errors'    => __( 'errors stay visible below', 'adminkit' ),
+							'warnings'  => __( 'warnings stay visible below', 'adminkit' ),
+							'important' => __( 'important notices stay visible below', 'adminkit' ),
+							'toggle'    => __( 'Show or hide the collected notices', 'adminkit' ),
 						),
 					)
 				);

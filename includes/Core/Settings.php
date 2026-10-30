@@ -229,34 +229,9 @@ final class Settings {
 			);
 		}
 
-		$before = self::all( $slug );
-		$after  = $before;
+		$before = array();
 		$errors = array();
-		foreach ( self::paths( $def, $form ) as $path ) {
-			$row = (array) $def['flat'][ $path ];
-			$raw = self::lookup( $input, explode( '.', $path ), self::MISSING );
-			$old = self::lookup( $before, explode( '.', $path ), $row['default'] );
-			if ( self::MISSING === $raw ) {
-				// PATCH: an absent path keeps its old value. FORM: a checkbox that is not posted is off.
-				if ( '' === $form ) {
-					continue;
-				}
-				$after = self::put( $after, $path, self::absent( $row, $old ) );
-				continue;
-			}
-			$res   = self::clean( $row, $raw, $old, $errors );
-			$after = self::put( $after, $path, $res['value'] );
-		}
-
-		// Plugin side effects (revision bump, wizard flag, form-only helpers) patch known paths here.
-		if ( null !== $def['on_save'] ) {
-			$patch = (array) call_user_func( $def['on_save'], $before, $after, $input, $form );
-			foreach ( $patch as $path => $value ) {
-				if ( isset( $def['flat'][ (string) $path ] ) ) {
-					$after = self::put( $after, (string) $path, $value );
-				}
-			}
-		}
+		$after  = self::compute( $slug, $def, $input, $form, $errors, $before );
 
 		$changed = $after !== $before;
 		self::write( $def, $after );
@@ -284,6 +259,75 @@ final class Settings {
 	}
 
 	/**
+	 * The result `update()` would write, without writing anything (dry run: REST/test previews, import probes).
+	 *
+	 * @param array<string,mixed> $input Raw input.
+	 * @param array<string,mixed> $args  `form` => a form id switches from PATCH to FORM mode; `base` => apply over this
+	 *                                   value set instead of the stored one (import probes: "what would this become?").
+	 * @return array{settings:array<string,mixed>,errors:array<string,string>}
+	 */
+	public static function preview( string $slug, array $input, array $args = array() ): array {
+		$def = self::def( $slug );
+		if ( null === $def ) {
+			return array(
+				'settings' => array(),
+				'errors'   => array(),
+			);
+		}
+		$errors = array();
+		$before = array();
+		$base   = isset( $args['base'] ) && is_array( $args['base'] ) ? (array) $args['base'] : null;
+		$after  = self::compute( $slug, $def, $input, (string) ( $args['form'] ?? '' ), $errors, $before, $base );
+		return array(
+			'settings' => $after,
+			'errors'   => $errors,
+		);
+	}
+
+	/**
+	 * Applies an input set over the current values (pure: no write, no log, no action). `update()` and `preview()`
+	 * share it so a dry run can never drift from the real save.
+	 *
+	 * @param array<string,mixed> $def     Registered definition.
+	 * @param array<string,mixed> $input   Raw input.
+	 * @param string              $form    Form id ('' = PATCH mode).
+	 * @param array<string,string> $errors  Collected field errors.
+	 * @param array<string,mixed> $before  Receives the values the input was applied over.
+	 * @param array<string,mixed>|null $base Apply over this value set instead of the stored one.
+	 * @return array<string,mixed> Clean settings that would be stored.
+	 */
+	private static function compute( string $slug, array $def, array $input, string $form, array &$errors, array &$before, ?array $base = null ): array {
+		$before = null !== $base ? $base : self::all( $slug );
+		$after  = $before;
+		foreach ( self::paths( $def, $form ) as $path ) {
+			$row = (array) $def['flat'][ $path ];
+			$raw = self::lookup( $input, explode( '.', $path ), self::MISSING );
+			$old = self::lookup( $before, explode( '.', $path ), $row['default'] );
+			if ( self::MISSING === $raw ) {
+				// PATCH: an absent path keeps its old value. FORM: a checkbox that is not posted is off.
+				if ( '' === $form ) {
+					continue;
+				}
+				$after = self::put( $after, $path, self::absent( $row, $old ) );
+				continue;
+			}
+			$res   = self::clean( $row, $raw, $old, $errors );
+			$after = self::put( $after, $path, $res['value'] );
+		}
+
+		// Plugin side effects (revision bump, wizard flag, form-only helpers) patch known paths here.
+		if ( null !== $def['on_save'] ) {
+			$patch = (array) call_user_func( $def['on_save'], $before, $after, $input, $form );
+			foreach ( $patch as $path => $value ) {
+				if ( isset( $def['flat'][ (string) $path ] ) ) {
+					$after = self::put( $after, (string) $path, $value );
+				}
+			}
+		}
+		return $after;
+	}
+
+	/**
 	 * Type check of a partial input set (no cleaning, no write). Messages are the ones the REST route returns.
 	 *
 	 * @param array<string,mixed> $partial Incoming data.
@@ -298,11 +342,8 @@ final class Settings {
 		foreach ( array_keys( (array) $def['flat'] ) as $path ) {
 			$path = (string) $path;
 			$row  = (array) $def['flat'][ $path ];
-			$raw  = self::lookup( $partial, explode( '.', $path ), self::MISSING );
-			if ( self::MISSING === $raw ) {
-				continue;
-			}
-			// A section that is not an object is one error, not one per key.
+			// A section that is not an object is ONE error (at the section path), not one per key and not silence:
+			// a scalar section makes every lookup inside it miss.
 			$parts = explode( '.', $path );
 			if ( count( $parts ) > 1 ) {
 				$section = self::lookup( $partial, array( $parts[0] ), self::MISSING );
@@ -310,6 +351,10 @@ final class Settings {
 					$errors[ $parts[0] ] = 'A section must be an object.';
 					continue;
 				}
+			}
+			$raw = self::lookup( $partial, explode( '.', $path ), self::MISSING );
+			if ( self::MISSING === $raw ) {
+				continue;
 			}
 			$msg = self::type_error( $row, $raw );
 			if ( '' !== $msg ) {
@@ -1049,6 +1094,10 @@ final class Settings {
 				continue;
 			}
 			if ( ! empty( $row['fields'] ) ) {
+				// A row that is not an array is not a row: drop it instead of inventing an empty one (old plugin behaviour).
+				if ( ! is_array( $value ) ) {
+					continue;
+				}
 				$line = array();
 				foreach ( (array) $row['fields'] as $name => $sub ) {
 					$cell        = is_array( $value ) ? ( $value[ $name ] ?? '' ) : '';

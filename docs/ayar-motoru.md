@@ -88,7 +88,7 @@ anahtarların nokta ile birleşimidir: `templates.sep`, `social.profiles`, `rule
 | `key` | `list`: öğe biçimi `slug` (varsayılan) \| `text` \| `raw` (**ham metin**: etiket sıyrılmaz, yalnız `trim` + `max_len` — regex/desen listeleri, WPRJ-674); `map`: anahtar biçimi `slug` \| `int` \| `raw` |
 | `max_entries` | `list`/`map` üst sınırı (varsayılan 50) |
 | `value` | `map`: değer alan tanımı (tek alan) — ör. `array( 'type' => 'url' )` |
-| `fields` | `map`: değer satırı alanları (ör. `title`, `description`) |
+| `fields` | `map`: değer satırı alanları (ör. `title`, `description`) — satırın kendisi dizi değilse satır **düşer** (boş satır uydurulmaz; WPSeoKit `tpl_map` davranışı) |
 | `filter` | `map`: `callable( $key, $deger ): bool` — satır kabul edilsin mi (ör. `term_exists`) |
 | `forms` | alanı çizen form kimlikleri (FORM modunda yetki kümesi) |
 | `internal` | `true`: yalnız kod yazar (`set()`/`on_save`); gönderimden **hiç** okunmaz |
@@ -137,6 +137,10 @@ etiketler bozulmaz), yalnız `trim` + `max_len` + `max_entries`. Doğrulama `cle
 - `get( $slug, 'a.b.c', $varsayilan )` her derinlikte çalışır; skalerin altına inilmez, eksik yolda varsayılan döner.
 - `set( $slug, 'a.b.c', $deger )`: tek yolu temizleyip yazar (sihirbaz, `wizard_skip` gibi kod yazımları).
 - `reset( $slug, '' | 'bolum' | 'bolum.alan' )`: varsayılana döner (mevcut UI'lar bugün kullanmıyor; yeni ekranlar için).
+- `preview( $slug, $girdi, array( 'form' => …, 'base' => … ) ): array( 'settings' => …, 'errors' => … )`:
+  **yazmadan** hesaplar (“bu gövde kaydedilirse ne olur”). `update()` de aynı saf `compute()` yolunu kullanır — tek kod,
+  iki giriş; arada davranış farkı oluşamaz. `base` verilirse girdi **o değer kümesi** üzerine uygulanır (WPSeoKit
+  `Settings::sanitize( $girdi, $taban )` içe aktarma probu böyle çalışır); verilmezse depolanan değerler kullanılır.
 
 ## 5. Kısmi güncelleme semantiği — **formdaki her alan gönderilir**
 
@@ -159,7 +163,8 @@ etiketler bozulmaz), yalnız `trim` + `max_len` + `max_entries`. Doğrulama `cle
 ## 6. Doğrulama, hata kaydı ve kullanıcıya gösterim
 
 - `validate( $slug, $partial ): array` — yalnız **tür** denetimi (yol => ileti). WPSeoKit REST'i bunu 400 ile
-  kullanır; iletiler bugünkü metinlerle aynıdır (`Expected a boolean.` …).
+  kullanır; iletiler bugünkü metinlerle aynıdır (`Expected a boolean.` …). Bölümün kendisi nesne değilse **tek** hata
+  bölüm yolunda döner (`general => A section must be an object.`), alan alan hata üretilmez; bilinmeyen yol hata değildir.
 - `sanitize()/update()` sonrası `Settings::last_errors(): array` — yol => ileti (kırpma/ret nedeni).
 - CookieKit `add_settings_error` ile alan kimliğine bağlar (bugünkü satır içi hata kutusu), ContentHealth kayıt
   sonrası toast'ta ilk 3 hatayı gösterir (bugünkü gibi), WPSeoKit REST 400 gövdesinde `errors` döner.
@@ -263,8 +268,18 @@ varsayılanlar ve sınırlar birebir aynı** kalır:
 
 `Settings::clean/check_type/sanitize/validate/text/host/url` **silinir**; `Settings::schema()` yeni biçimde
 kalır (tek bildirim yeri) ve `defaults()` motordan okunur. `SettingsRepository` motora delege eden **ince cephe**
-olarak kalır (112 çağrı yeri değişmesin; davranışı motordur). `Screens\Ui::text/toggle/seg/multi/media`
-`Settings\Form`'a delege eder; `Settings::TEXT_MAX` yerine `Settings::TEXT_MAX` (motor sabiti) kullanılır.
+olarak kalır (112 çağrı yeri değişmesin; davranışı motordur). `Settings::TEXT_MAX` motor sabitini gösterir;
+`text()/host()/url()` motorun `clean_text/clean_host/clean_url` fonksiyonlarını çağırır (üç eklentide tek kopya).
+
+**Kayıt (Kademe 3'te uygulandı):** `Plugin::boot()` içinde `Settings::register()` — `option => wpseokit_settings`,
+`autoload => true`, `read_clean => true` (her okumada temizleme bugünkü davranış), `capability => ''` (eski kod izin
+istemiyordu; kapı REST `permission_callback` + admin formu `Guard`), `log => array( Logs::class, 'settings_changed' )`
+(değişiklik günlüğü yalnız gerçekten değişince; motor no-op'ta çağırmaz). `register()` kendini korur: şema zaten
+kayıtlıysa sessizce döner (test/WP-CLI'de `boot()` iki kez koşabilir; `_doing_it_wrong` debug.log'a düşmez).
+
+**Bu kademede YAPILMAYAN (bilerek):** `Screens\Ui` form yardımcılarının `Settings\Form`'a taşınması. Kademe 3'ün
+kapsamı şema/yol/temizleme + depolamadır; `Ui` çizim kodu **hiç değişmedi** → önce/sonra HTML birebir aynı (20
+ekran/282 alan, bayt ve md5 dahil). Ortak form yardımcıları ayrı bir iş olarak duruyor.
 
 ## 11. HTML değişmezliği (kabul)
 
@@ -304,7 +319,7 @@ Kademe 1–3 bitmeden 4'e geçilmez.
 | `adminkit/tests/ayar-motoru-test.php` (yeni) | 11 tür + iç içe yol + FORM/PATCH + ikiz + `invalid=>keep` + `empty=>default` + `map` + `reset` + günlük geri çağrısı + autoload korunur + sınıf/alt ad alanı birlikte yüklenir |
 | `cookiekit/tests/ayar-motoru-test.php` (yeni) | sekme izolasyonu, işaretsiz kutu = 0, renk/adres geçersizse eski korunur, `days` kırpılır, **textarea satır sonu**, boş metin → varsayılan, `1/0` şekli korunur, **gerçek yerel veriden fixture** ile okuma aynı |
 | `contenthealth/tests/ayar-motoru-test.php` (yeni) | kural şeması, desen doğrulama/ret, **gönderilmeyen işaret kutusu = kapalı** (WPRJ-670 regresyonu), REST PATCH, fixture aynı |
-| `wpseokit/tests/ayar-motoru-test.php` (yeni) | **gerçek `wpseokit_settings` şekli** ile `all()` birebir aynı, `get('a.b.c')`, harita türleri, `default_image_id=4140` korunur |
+| `wpseokit/tests/ayar-motoru-test.php` (yeni) | **gerçek `wpseokit_settings`** ile `all()` birebir (SQL + kademe yedeği), bölüm/anahtar sırası, PATCH, on türün temizliği (tpl/url/type haritaları dahil), `validate` iletileri, gerçek yazma + SQL'den geri alma |
 | mevcut paket | `schema`, `a-paketi`, `report`, `redirect`, `meta`, `llms`, `score`, `ayar-yol`, `metin-tek-satir`, `settings-rules`, `wpseokit-entegrasyon`, `metinler`, `uninstall`, `core-*`, `guard`, `toast`, `menu-sirasi`, `yukleme`, `uninstall-kapi`, `db-imza` — kırmızı artmaz |
 | kapılar | `kopya-tara.py --calisma-agaci --sinir 0` = 0 izinsiz · `guvenlik-kapisi.py … = 0 kırmızı` · `ceviri-eksik.py = 0` · `debug.log` yeni satır 0 |
 

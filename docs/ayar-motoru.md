@@ -92,7 +92,7 @@ anahtarların nokta ile birleşimidir: `templates.sep`, `social.profiles`, `rule
 | `filter` | `map`: `callable( $key, $deger ): bool` — satır kabul edilsin mi (ör. `term_exists`) |
 | `forms` | alanı çizen form kimlikleri (FORM modunda yetki kümesi) |
 | `internal` | `true`: yalnız kod yazar (`set()`/`on_save`); gönderimden **hiç** okunmaz |
-| `invalid` | `clamp` (varsayılan) \| `keep`: geçersiz değerde eski değer korunur + hata kaydı |
+| `invalid` | `clamp` (varsayılan) \| `keep` (geçersiz değerde eski değer korunur) \| `default` (geçersiz değerde alanın varsayılanı — AdminKit modül sayıları) + hata kaydı |
 | `empty` | `text`/`text_multi`: `keep` (varsayılan) \| `default` (boş gönderim varsayılana döner) \| `clear` |
 | `clean` | `callable( $raw, $old ): mixed` — tür temizliğinin üstüne eklenti kuralı (ör. desen doğrulama) |
 | `validate` | `callable( $value ): string` — boş değilse hata iletisi |
@@ -281,6 +281,37 @@ kayıtlıysa sessizce döner (test/WP-CLI'de `boot()` iki kez koşabilir; `_doin
 kapsamı şema/yol/temizleme + depolamadır; `Ui` çizim kodu **hiç değişmedi** → önce/sonra HTML birebir aynı (20
 ekran/282 alan, bayt ve md5 dahil). Ortak form yardımcıları ayrı bir iş olarak duruyor.
 
+### 10.4 AdminKit kendi modül ayarları (`adminkit_settings`, iç içe — Kademe 4)
+
+`AdminKit\Settings` artık yalnız **şema bildirimi + ince adaptör**; `clean_field()` ve `absent()` silindi. Şema
+elle yazılmaz, **kayıtlı modüllerden türetilir** (`Registry::all()` + `Module::settings_schema()`):
+
+| Eski modül alanı | Motor satırı |
+|---|---|
+| `enabled` (her modül için) | `array( 'type' => 'bool', 'default' => $module->default_enabled() )` |
+| `checkbox` | `bool` (varsayılan `! empty(...)`) |
+| `number` | `int` + `min`/`max` + **`invalid => 'default'`** (eski `clean_field`: sayı değilse alanın varsayılanı) |
+| `select` | `enum`, `values` = `array_keys( options )` (geçersiz değer varsayılana düşer) |
+| `color` | `color` + `clean` → `Color::hex()` (küçük harf, `#abc` → `#aabbcc`) `?: default` (geçersiz/boş → varsayılan) |
+| `checklist` | `list`, `key => 'raw'` (büyük harf korunur), `max_entries 1000` + `clean` → `/^[A-Za-z0-9_\-]{1,100}$/`, tekilleştir |
+| `custom` / `locked` | **satır yok** — `custom` yalnız arayüz, `locked` forma hiç basılmaz (hep varsayılan) |
+
+Yol: `modules.{modül kimliği}.{anahtar}` (motor `modules.veri` gibi iç içe dizileri noktalı yola açar — ek düzleştirme
+gerekmedi). Kayıt `Settings::ensure()` içinde, `register()` de onu çağırır: `option => adminkit_settings`,
+`autoload => false` (satır yoksa `add_option(..., '', false)`), `read_clean => true` (kaldırılan modülün kalıntısı
+okurken de düşer), `capability => ''` (kayıt `options.php`'den gelir; orada `manage_options` denetlenir),
+`forms => array( 'adminkit' )`. `ensure()` ön yüzde de koşar çünkü `Plugin::init()` her modül için `for_module()` çağırır.
+
+Okuma `for_module( Module )`: `Engine::all( 'adminkit' )[modules][id]` — depolanan değer, yoksa `default_of()`.
+Yazma `sanitize( $input )`: gövde `modules` dizisi taşımıyorsa `array()` (etkinleştirmedeki boş satır varsayılanı
+bozmaz), aksi hâlde `Engine::preview( 'adminkit', $input, array( 'form' => 'adminkit' ) )` — **saf hesap**; tek yazmayı
+`options.php` yapar. FORM modu eski "toptan yeniden kur" davranışını birebir verir: gönderilmeyen modül/işaret kutusu
+kapalı, gönderilmeyen liste boş, bilinmeyen modül/alan yazılmaz.
+
+**Bu kademede YAPILMAYAN (bilerek):** `SettingsPage` çizimi (form adları `adminkit_settings[modules][id][key]`,
+kilitli kutunun `name`'siz `checked disabled` basılması, `select`'in callable `options`'ı çözmemesi) **hiç
+değişmedi** → ayar sayfası önce/sonra **21291 bayt, md5 aynı, 46 alan (ad/sıra/tür) birebir**.
+
 ## 11. HTML değişmezliği (kabul)
 
 Ayar ekranlarının **alan adı / alan sırası / tür listesi birebir aynı** kalır; önce/sonra HTML özeti her eklenti
@@ -294,7 +325,7 @@ Baran DOM/HTML çıktısı ve sayısal ölçümle kanıtlar.
 | **1** | motor (`Settings` + `Form` + `Handler`) + motor birim testi + **CookieKit** geçişi (en küçük) |
 | **2** | **ContentHealth** geçişi (kural şeması türetimi, ayar formu, REST `onboarding` PATCH) |
 | **3** | **WPSeoKit** geçişi (en büyük, en olgun; şema biçim değişimi + `Ui` delege) |
-| **4** | **AdminKit kendi modül ayarları** geçişi — böylece AdminKit içinde de tek motor kalır (`Settings::clean_field/absent/default_of` silinir) |
+| **4** | **AdminKit kendi modül ayarları** geçişi (uygulandı) — böylece AdminKit içinde de tek motor kalır (`Settings::clean_field/absent` silindi) |
 
 Kademe 4 kartta adı geçmeyen dördüncü motordu; "AdminKit içinde tek motor" ilkesi gereği aynı karta dâhil edildi.
 Kademe 1–3 bitmeden 4'e geçilmez.
@@ -320,6 +351,7 @@ Kademe 1–3 bitmeden 4'e geçilmez.
 | `cookiekit/tests/ayar-motoru-test.php` (yeni) | sekme izolasyonu, işaretsiz kutu = 0, renk/adres geçersizse eski korunur, `days` kırpılır, **textarea satır sonu**, boş metin → varsayılan, `1/0` şekli korunur, **gerçek yerel veriden fixture** ile okuma aynı |
 | `contenthealth/tests/ayar-motoru-test.php` (yeni) | kural şeması, desen doğrulama/ret, **gönderilmeyen işaret kutusu = kapalı** (WPRJ-670 regresyonu), REST PATCH, fixture aynı |
 | `wpseokit/tests/ayar-motoru-test.php` (yeni) | **gerçek `wpseokit_settings`** ile `all()` birebir (SQL + kademe yedeği), bölüm/anahtar sırası, PATCH, on türün temizliği (tpl/url/type haritaları dahil), `validate` iletileri, gerçek yazma + SQL'den geri alma |
+| `adminkit/tests/modul-ayar-test.php` (yeni) | şemanın modüllerden türemesi (`custom`/`locked` saklanmaz), `for_module()` depolanan-değer-yoksa-varsayılan, **gerçek `adminkit_settings`** ile `all()` 1:1, FORM modu (gönderilmeyen kutu/modül kapalı, bilinmeyen anahtar yazılmaz), tür temizliği (sayı `invalid=>default`/kırpma, select, renk `Color::hex`, checklist), gerçek yazma + SQL'den geri alma |
 | mevcut paket | `schema`, `a-paketi`, `report`, `redirect`, `meta`, `llms`, `score`, `ayar-yol`, `metin-tek-satir`, `settings-rules`, `wpseokit-entegrasyon`, `metinler`, `uninstall`, `core-*`, `guard`, `toast`, `menu-sirasi`, `yukleme`, `uninstall-kapi`, `db-imza` — kırmızı artmaz |
 | kapılar | `kopya-tara.py --calisma-agaci --sinir 0` = 0 izinsiz · `guvenlik-kapisi.py … = 0 kırmızı` · `ceviri-eksik.py = 0` · `debug.log` yeni satır 0 |
 

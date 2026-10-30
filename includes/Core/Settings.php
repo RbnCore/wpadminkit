@@ -671,7 +671,7 @@ final class Settings {
 			'filter'      => is_callable( $f['filter'] ?? null ) ? $f['filter'] : null,
 			'forms'       => array_values( array_map( 'strval', (array) ( $f['forms'] ?? array() ) ) ),
 			'internal'    => (bool) ( $f['internal'] ?? false ),
-			'invalid'     => 'keep' === ( $f['invalid'] ?? '' ) ? 'keep' : 'clamp',
+			'invalid'     => in_array( (string) ( $f['invalid'] ?? '' ), array( 'keep', 'default' ), true ) ? (string) $f['invalid'] : 'clamp',
 			'empty'       => in_array( $f['empty'] ?? 'keep', array( 'keep', 'default', 'old' ), true ) ? (string) ( $f['empty'] ?? 'keep' ) : 'keep',
 			'clean'       => is_callable( $f['clean'] ?? null ) ? $f['clean'] : null,
 			'validate'    => is_callable( $f['validate'] ?? null ) ? $f['validate'] : null,
@@ -910,6 +910,8 @@ final class Settings {
 					} else {
 						$num    = 0;
 						$notice = true;
+						// `invalid => default`: sayı olmayan girdi alanın varsayılanına döner (AdminKit modül sayıları).
+						$failed = ( 'default' === $row['invalid'] );
 					}
 				}
 				$value = $num;

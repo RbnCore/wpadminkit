@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace AdminKit\Core\Driver;
 
+use AdminKit\Helpers\Db;
+
 defined( 'ABSPATH' ) || exit;
 
 final class TransientDriver implements CacheDriver {

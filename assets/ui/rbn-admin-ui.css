@@ -323,4 +323,5 @@ html[dir=rtl] .rbn-toast__close,body.rtl .rbn-toast__close{margin:-.25rem 0 0 -.
 @media (forced-colors:active){.rbn-tabs__tab[aria-selected=true],.rbn-tabs__tab[aria-current=page]{outline:2px solid Highlight}.rbn-btn--pri{border:2px solid ButtonText}}
 
 /* ═══ FORM EYLEMLERİ ═══ formu bitiren blok: ana kaydet düğmesi `.rbn-btn--pri[type=submit]` burada durur; yapışkan kaydet çubuğu (AdminKit) bunu arar. */
-.rbn-form-actions{display:flex;flex-wrap:wrap;align-items:center;gap:var(--rbn-s3);margin:var(--rbn-s4) 0 0}
+.rbn-form-actions{display:flex;flex-wrap:wrap;align-items:center;gap:var(--rbn-s3);margin:var(--rbn-s4) 0 var(--rbn-s5)}   /* alt 20: kartla aynı dikey aralık; kardeş kart yapışmaz */
+.rbn-card__b>.rbn-form-actions:last-child{margin-bottom:0}   /* kart gövdesinde alt boşluğu gövde verir */

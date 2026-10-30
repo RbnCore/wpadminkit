@@ -16,14 +16,17 @@
 			! el.classList.contains( 'notice-warning' ) && ! el.classList.contains( 'no-toast' ) &&
 			( el.classList.contains( 'updated' ) || el.classList.contains( 'notice-success' ) || el.classList.contains( 'notice-info' ) );
 	}
+	// Metin DOM'u kopyalamadan okunur: `cloneNode` içindeki `<img onerror>` işleyicisini ikinci kez tetikler.
 	function text( el ) {
-		var copy = el.cloneNode( true );
-		var dismiss = copy.querySelectorAll( '.notice-dismiss' );
-		var i;
-		for ( i = 0; i < dismiss.length; i++ ) {
-			dismiss[ i ].parentNode.removeChild( dismiss[ i ] );
+		var walker = document.createTreeWalker( el, NodeFilter.SHOW_TEXT );
+		var out = '';
+		var node;
+		while ( ( node = walker.nextNode() ) ) {
+			if ( ! node.parentNode.closest( '.notice-dismiss' ) ) {
+				out += node.nodeValue;
+			}
 		}
-		return ( copy.textContent || '' ).replace( /\s+/g, ' ' ).trim();
+		return out.replace( /\s+/g, ' ' ).trim();
 	}
 	function isCore( el, msg ) {
 		if ( 'setting-error-settings_updated' === el.id ) {
@@ -38,8 +41,9 @@
 		var i;
 		for ( i = 0; i < list.length; i++ ) {
 			var el = list[ i ];
-			var msg = text( el );
-			if ( '' !== msg && plain( el ) && isCore( el, msg ) && window.RbnUi && window.RbnUi.toast ) {
+			// Metin yalnız dönüştürülecek (uygun) kutu için okunur.
+			var msg = plain( el ) ? text( el ) : '';
+			if ( '' !== msg && isCore( el, msg ) && window.RbnUi && window.RbnUi.toast ) {
 				if ( ! seen[ msg ] ) {
 					seen[ msg ] = true;
 					window.RbnUi.toast( { type: el.classList.contains( 'notice-info' ) ? 'info' : 'success', message: msg } );

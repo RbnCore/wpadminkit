@@ -27,6 +27,9 @@ final class ToastNotices implements Module {
 	/** Çekirdeğin yönlendirmeden sonra eklediği sonuç bayrakları. */
 	private const FLAGS = array( 'updated', 'message', 'settings-updated', 'update', 'deleted', 'trashed', 'untrashed', 'added', 'removed', 'spammed', 'unspammed', 'approved', 'unapproved', 'activate', 'deactivate', 'activate-multi', 'deactivate-multi' );
 
+	/** Modülün açtığı tamponların seviyesi (en sonuncusu üstte): yalnız kendi tamponu kapatılır. @var int[] */
+	private static array $levels = array();
+
 	/** @var array<string, mixed> */
 	private array $settings = array(
 		'convert'  => 'off',
@@ -94,17 +97,29 @@ final class ToastNotices implements Module {
 			add_action( 'admin_head', array( $this, 'print_guard' ), 1 );
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
 			foreach ( array( 'admin_notices', 'all_admin_notices', 'user_admin_notices', 'network_admin_notices' ) as $hook ) {
-				add_action( $hook, 'ob_start', 0 );
+				add_action( $hook, array( self::class, 'start_buffer' ), 0 );
 				add_action( $hook, array( $this, 'notices_end' ), PHP_INT_MAX );
 			}
+		}
+	}
+
+	/** Bildirim kancasının çıktısını toplamak için kendi tamponunu açar ve seviyesini kaydeder. */
+	public static function start_buffer(): void {
+		if ( ob_start() ) {
+			self::$levels[] = ob_get_level();
 		}
 	}
 
 	/**
 	 * Çekirdeğin ekran içi `#message` kutusu `admin_notices` ile basılmaz; o kancadan `#message` çıktıysa kutunun kaynağı
 	 * belirsizdir (başka eklenti olabilir): işaret konur, çevirici hiçbir `#message`'a dokunmaz.
+	 * Yalnız kendi tamponu kapatılır: başka bir eklenti tampon açıp açık bıraktıysa (ya da kapattıysa) ona dokunulmaz.
 	 */
 	public function notices_end(): void {
+		$level = array_pop( self::$levels );
+		if ( null === $level || ob_get_level() !== $level ) {
+			return;
+		}
 		$html = (string) ob_get_clean();
 		echo $html; // phpcs:ignore WordPress.Security.EscapeOutput -- kancaların kendi çıktısı aynen geri verilir.
 		if ( preg_match( '/\bid\s*=\s*(["\'])message\1/i', $html ) ) {

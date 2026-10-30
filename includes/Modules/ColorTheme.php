@@ -19,6 +19,7 @@ use AdminKit\Settings;
 use AdminKit\SettingsPage;
 
 use AdminKit\Core\Security\Guard;
+use AdminKit\Helpers\Toast;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -258,8 +259,12 @@ final class ColorTheme implements Module {
 					<div class="rbn-form-actions">
 						<button type="submit" class="rbn-btn rbn-btn--pri"><?php esc_html_e( 'Save', 'adminkit' ); ?></button>
 						<button type="button" class="rbn-btn" data-ck-cancel><?php esc_html_e( 'Cancel preview', 'adminkit' ); ?></button>
-						<button type="submit" class="rbn-btn" name="action" value="adminkit_color_reset" formnovalidate><?php esc_html_e( 'Back to default', 'adminkit' ); ?></button>
+						<button type="submit" form="adminkit-user-color-reset-form" class="rbn-btn rbn-btn--danger" data-rbn-confirm="<?php esc_attr_e( 'Reset colors to default? Your custom color settings will be deleted; this action cannot be undone.', 'adminkit' ); ?>" data-rbn-confirm-title="<?php esc_attr_e( 'Back to default', 'adminkit' ); ?>" data-rbn-confirm-ok="<?php esc_attr_e( 'Back to default', 'adminkit' ); ?>"><?php esc_html_e( 'Back to default', 'adminkit' ); ?></button>
 					</div>
+				</form>
+				<form id="adminkit-user-color-reset-form" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php?scope=user' ) ); ?>" style="display:none">
+					<input type="hidden" name="action" value="adminkit_color_reset" />
+					<?php wp_nonce_field( self::NONCE, 'adminkit_ct_nonce' ); ?>
 				</form>
 			<?php endif; ?>
 		</div>
@@ -328,14 +333,6 @@ final class ColorTheme implements Module {
 				<ul data-ck-report aria-live="polite"></ul>
 				<p class="rbn-help ak-ct__st" data-ck-status role="status"></p>
 			</div>
-			<?php if ( 'default' === $ctx ) : ?>
-				<p>
-					<button type="button" class="rbn-btn" data-ck-cancel><?php esc_html_e( 'Cancel preview', 'adminkit' ); ?></button>
-					<?php wp_nonce_field( self::NONCE, 'adminkit_ct_nonce', false ); ?>
-					<?php // Ayar formunun gizli "action=update" alanını, sonra gelen düğme değeri ezer. ?>
-					<button type="submit" class="rbn-btn" name="action" value="adminkit_color_reset" formaction="<?php echo esc_url( admin_url( 'admin-post.php?scope=default' ) ); ?>" formnovalidate><?php esc_html_e( 'Back to default', 'adminkit' ); ?></button>
-				</p>
-			<?php endif; ?>
 		</div>
 		<?php
 	}
@@ -379,10 +376,12 @@ final class ColorTheme implements Module {
 				}
 				update_option( Settings::OPTION, $stored );
 			}
-			wp_safe_redirect( SettingsPage::url() );
+			Toast::flash( 'success', __( 'Default colors were reset.', 'adminkit' ) );
+			wp_safe_redirect( add_query_arg( 'tab', 'color_theme', SettingsPage::url() ) );
 			exit;
 		}
 		delete_user_meta( get_current_user_id(), self::META );
+		Toast::flash( 'success', __( 'Your colors were reset.', 'adminkit' ) );
 		wp_safe_redirect( add_query_arg( 'reset', '1', admin_url( 'users.php?page=' . self::PAGE ) ) );
 		exit;
 	}

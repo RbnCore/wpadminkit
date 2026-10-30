@@ -135,9 +135,19 @@ final class SettingsPage {
 								<?php self::card( $module ); ?>
 							<?php endforeach; ?>
 						</ul>
-						<div class="rbn-form-actions"><button type="submit" class="rbn-btn rbn-btn--pri"><?php esc_html_e( 'Save changes', 'adminkit' ); ?></button></div>
+						<div class="rbn-form-actions">
+							<button type="submit" class="rbn-btn rbn-btn--pri"><?php esc_html_e( 'Save changes', 'adminkit' ); ?></button>
+							<?php if ( 'color_theme' === $key ) : ?>
+								<button type="button" class="rbn-btn" data-ck-cancel><?php esc_html_e( 'Cancel preview', 'adminkit' ); ?></button>
+								<button type="submit" form="adminkit-color-reset-default" class="rbn-btn rbn-btn--danger" data-rbn-confirm="<?php esc_attr_e( 'Reset colors to default? Your custom color settings will be deleted; this action cannot be undone.', 'adminkit' ); ?>" data-rbn-confirm-title="<?php esc_attr_e( 'Back to default', 'adminkit' ); ?>" data-rbn-confirm-ok="<?php esc_attr_e( 'Back to default', 'adminkit' ); ?>"><?php esc_html_e( 'Back to default', 'adminkit' ); ?></button>
+							<?php endif; ?>
+						</div>
 					</div>
 				<?php endforeach; ?>
+			</form>
+			<form id="adminkit-color-reset-default" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php?scope=default' ) ); ?>" style="display:none">
+				<input type="hidden" name="action" value="adminkit_color_reset" />
+				<?php wp_nonce_field( Modules\ColorTheme::NONCE, 'adminkit_ct_nonce' ); ?>
 			</form>
 			<div role="tabpanel" id="adminkit-panel-general" class="rbn-tabpanel" aria-labelledby="adminkit-tab-general" tabindex="0"<?php echo $tab === 'general' ? '' : ' hidden'; ?>>
 				<?php self::network_section(); ?>

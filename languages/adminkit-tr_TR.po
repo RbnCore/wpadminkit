@@ -804,3 +804,11 @@ msgstr "Bağlantının süresi dolmuş."
 #: includes/Core/Security/Guard.php
 msgid "The request could not be verified. Reload the page and try again."
 msgstr "İstek doğrulanamadı. Sayfayı yenileyip tekrar deneyin."
+#: includes/Modules/ColorTheme.php
+#: includes/SettingsPage.php
+msgid "Reset colors to default? Your custom color settings will be deleted; this action cannot be undone."
+msgstr "Renkler varsayılana dönsün mü? Özel renk ayarlarınız silinir; bu işlem geri alınamaz."
+
+#: includes/Modules/ColorTheme.php
+msgid "Default colors were reset."
+msgstr "Varsayılan renkler sıfırlandı."

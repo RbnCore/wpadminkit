@@ -963,3 +963,11 @@ msgstr ""
 #: includes/Core/Security/Guard.php
 msgid "The request could not be verified. Reload the page and try again."
 msgstr ""
+#: includes/Modules/ColorTheme.php
+#: includes/SettingsPage.php
+msgid "Reset colors to default? Your custom color settings will be deleted; this action cannot be undone."
+msgstr ""
+
+#: includes/Modules/ColorTheme.php
+msgid "Default colors were reset."
+msgstr ""

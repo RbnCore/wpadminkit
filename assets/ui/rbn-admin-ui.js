@@ -594,7 +594,10 @@
 			e.preventDefault();
 			confirm({
 				message: msg,
-				tone: 'danger'
+				title: form.getAttribute('data-rbn-confirm-title') || null,
+				confirmLabel: form.getAttribute('data-rbn-confirm-ok') || null,
+				cancelLabel: form.getAttribute('data-rbn-confirm-cancel') || null,
+				tone: form.getAttribute('data-rbn-confirm-tone') || 'danger'
 			}).then(function (ok) {
 				if (ok) {
 					form.__rbnConfirmed = true;
@@ -617,11 +620,53 @@
 				e.preventDefault();
 				confirm({
 					message: msg,
-					tone: 'danger'
+					title: link.getAttribute('data-rbn-confirm-title') || null,
+					confirmLabel: link.getAttribute('data-rbn-confirm-ok') || null,
+					cancelLabel: link.getAttribute('data-rbn-confirm-cancel') || null,
+					tone: link.getAttribute('data-rbn-confirm-tone') || 'danger'
 				}).then(function (ok) {
 					if (ok && link.href) {
 						link.__rbnConfirmed = true;
 						location.href = link.href;
+					}
+				});
+			}
+			return;
+		}
+
+		var btn = e.target.closest ? e.target.closest('button[data-rbn-confirm], input[type="submit"][data-rbn-confirm], input[type="button"][data-rbn-confirm]') : null;
+		if (btn && !btn.__rbnConfirmed) {
+			var bMsg = btn.getAttribute('data-rbn-confirm');
+			if (bMsg) {
+				e.preventDefault();
+				e.stopPropagation();
+				confirm({
+					message: bMsg,
+					title: btn.getAttribute('data-rbn-confirm-title') || null,
+					confirmLabel: btn.getAttribute('data-rbn-confirm-ok') || null,
+					cancelLabel: btn.getAttribute('data-rbn-confirm-cancel') || null,
+					tone: btn.getAttribute('data-rbn-confirm-tone') || 'danger'
+				}).then(function (ok) {
+					if (ok) {
+						btn.__rbnConfirmed = true;
+						var f = btn.form;
+						if (f) {
+							f.__rbnConfirmed = true;
+							if (typeof f.requestSubmit === 'function') {
+								f.requestSubmit(btn);
+							} else {
+								btn.click();
+							}
+							setTimeout(function () {
+								if (f) { f.__rbnConfirmed = false; }
+								btn.__rbnConfirmed = false;
+							}, 500);
+						} else {
+							btn.click();
+							setTimeout(function () {
+								btn.__rbnConfirmed = false;
+							}, 500);
+						}
 					}
 				});
 			}

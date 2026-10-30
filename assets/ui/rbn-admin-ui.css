@@ -327,6 +327,19 @@ html[dir=rtl] .rbn-toast__close,body.rtl .rbn-toast__close{margin:-.25rem 0 0 -.
   .rbn-confirm-dlg .rbn-dlg__f{flex-direction:column-reverse}
   .rbn-confirm-dlg .rbn-dlg__f .rbn-btn{width:100%}
 }
+/* Toast konumu (AdminKit › Toast bildirimleri): body sınıfı `rbn-toast-<konum>`; varsayılan sağ alt sınıfsızdır. İç yön (inline) RTL'de kendiliğinden aynalanır. */
+body.rbn-toast-bottom-left .rbn-toasts,body.rbn-toast-top-right .rbn-toasts,body.rbn-toast-top-left .rbn-toasts{left:auto;right:auto}
+body.rbn-toast-top-right .rbn-toasts,body.rbn-toast-top-left .rbn-toasts{bottom:auto;top:calc(var(--wp-admin--admin-bar--height,0px) + var(--rbn-s5,1.5rem) + 1rem);flex-direction:column}  /* +1rem: WP "Yardım/Ekran seçenekleri" sekmelerinin altında kalır */
+body.rbn-toast-top-right .rbn-toasts{inset-inline-end:var(--rbn-s5,1.5rem)}
+body.rbn-toast-bottom-left .rbn-toasts,body.rbn-toast-top-left .rbn-toasts{inset-inline-start:var(--rbn-s5,1.5rem)}
+body.rbn-toast-top-right .rbn-toast,body.rbn-toast-top-left .rbn-toast{animation-name:rbn-toast-in-top}
+body.rbn-toast-top-right .rbn-toast.is-leaving,body.rbn-toast-top-left .rbn-toast.is-leaving{animation-name:rbn-toast-out-top}
+@keyframes rbn-toast-in-top{from{opacity:0;transform:translateY(-12px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes rbn-toast-out-top{from{opacity:1;transform:translateY(0) scale(1)}to{opacity:0;transform:translateY(-8px) scale(.95)}}
+@media (max-width:48.875rem){
+  body[class*=rbn-toast-] .rbn-toasts{left:var(--rbn-s3,.75rem);right:var(--rbn-s3,.75rem)}
+  body.rbn-toast-top-right .rbn-toasts,body.rbn-toast-top-left .rbn-toasts{top:calc(var(--wp-admin--admin-bar--height,0px) + var(--rbn-s3,.75rem) + 1rem)}
+}
 @media (forced-colors:active){.rbn-tabs__tab[aria-selected=true],.rbn-tabs__tab[aria-current=page]{outline:2px solid Highlight}.rbn-btn--pri{border:2px solid ButtonText}}
 
 /* ═══ FORM EYLEMLERİ ═══ formu bitiren blok: ana kaydet düğmesi `.rbn-btn--pri[type=submit]` burada durur; yapışkan kaydet çubuğu (AdminKit) bunu arar. */

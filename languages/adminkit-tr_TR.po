@@ -824,3 +824,51 @@ msgstr "Sayfa gezintisi"
 #: includes/catalog.php
 msgid "Closes the doors a WordPress site leaves open: security headers, XML-RPC, user enumeration, version details, the file editor and login attempts."
 msgstr "Bir WordPress sitesinin açık bıraktığı kapıları kapatır: güvenlik başlıkları, XML-RPC, kullanıcı adı sayımı, sürüm bilgileri, dosya düzenleyici ve giriş denemeleri."
+
+#: includes/Modules/ToastNotices.php
+msgid "Toast notifications"
+msgstr "Toast bildirimleri"
+
+#: includes/Modules/ToastNotices.php
+msgid "Shows WordPress core confirmations as toasts and lets you choose where toasts appear. Notices from other plugins are never touched."
+msgstr "WordPress çekirdeğinin onay bildirimlerini toast olarak gösterir ve toast'ların nerede çıkacağını seçtirir. Diğer eklentilerin bildirimlerine hiç dokunulmaz."
+
+#: includes/Modules/ToastNotices.php
+msgid "Notices to show as toasts"
+msgstr "Toast olarak gösterilecek bildirimler"
+
+#: includes/Modules/ToastNotices.php
+msgid "Off (notices stay where WordPress puts them)"
+msgstr "Kapalı (bildirimler WordPress'in koyduğu yerde kalır)"
+
+#: includes/Modules/ToastNotices.php
+msgid "WordPress core confirmations and RBN kit messages"
+msgstr "WordPress çekirdek onayları ve RBN kit iletileri"
+
+#: includes/Modules/ToastNotices.php
+msgid "Only plain success and info confirmations are converted. Errors, warnings, notices with buttons or links, and notices from other plugins always stay in place."
+msgstr "Yalnız düz başarı ve bilgi onayları çevrilir. Hatalar, uyarılar, düğmeli ya da bağlantılı bildirimler ve diğer eklentilerin bildirimleri her zaman yerinde kalır."
+
+#: includes/Modules/ToastNotices.php
+msgid "Toast position"
+msgstr "Toast konumu"
+
+#: includes/Modules/ToastNotices.php
+msgid "Applies to every RBN kit toast. Each user can pick their own on their profile page."
+msgstr "Her RBN kit toast'ına uygulanır. Her kullanıcı kendi profil sayfasında kendi konumunu seçebilir."
+
+#: includes/Modules/ToastNotices.php
+msgid "Top right"
+msgstr "Sağ üst"
+
+#: includes/Modules/ToastNotices.php
+msgid "Top left"
+msgstr "Sol üst"
+
+#: includes/Modules/ToastNotices.php
+msgid "Site default"
+msgstr "Site varsayılanı"
+
+#: includes/Modules/ToastNotices.php
+msgid "Where AdminKit toasts appear for you. Overrides the site setting."
+msgstr "AdminKit toast'larının sizin için çıkacağı yer. Site ayarını geçersiz kılar."

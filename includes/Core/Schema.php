@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace AdminKit\Core;
 
+use AdminKit\Helpers\Db;
+
 defined( 'ABSPATH' ) || exit;
 
 final class Schema {
@@ -53,6 +55,6 @@ final class Schema {
 
 	public static function table_exists(): bool {
 		global $wpdb;
-		return self::table() === $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( self::table() ) ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		return self::table() === Db::get_var( 'SHOW TABLES LIKE %s', array( $wpdb->esc_like( self::table() ) ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 	}
 }

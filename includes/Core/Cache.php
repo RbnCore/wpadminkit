@@ -17,6 +17,8 @@ declare(strict_types=1);
 
 namespace AdminKit\Core;
 
+use AdminKit\Helpers\Db;
+
 use AdminKit\Core\Driver\CacheDriver;
 use AdminKit\Core\Driver\MemoryDriver;
 use AdminKit\Core\Driver\TransientDriver;
@@ -354,12 +356,7 @@ final class Cache {
 		}
 		// Stored key shape: `_transient_rbnkit_<plugin>.<name>.<version>.<md5>` (the md5 has no dot).
 		$like = $wpdb->esc_like( '_transient_rbnkit_' . $m[1] . '.' . $m[2] . '.' ) . '%';
-		$max  = $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
-			$wpdb->prepare(
-				"SELECT MAX(CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(option_name, '.', 3), '.', -1) AS UNSIGNED)) FROM {$wpdb->options} WHERE option_name LIKE %s",
-				$like
-			)
-		);
+		$max  = Db::get_var( "SELECT MAX(CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(option_name, '.', 3), '.', -1) AS UNSIGNED)) FROM {$wpdb->options} WHERE option_name LIKE %s", array( $like ) );
 		return (int) $max;
 	}
 
@@ -369,20 +366,8 @@ final class Cache {
 	 */
 	private static function create_row( string $option, int $value ): void {
 		global $wpdb;
-		$wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
-			$wpdb->prepare(
-				"INSERT INTO {$wpdb->options} (option_name, option_value, autoload) VALUES (%s, %s, 'on') ON DUPLICATE KEY UPDATE option_value = GREATEST(CAST(option_value AS UNSIGNED), CAST(VALUES(option_value) AS UNSIGNED)), option_id = option_id",
-				$option,
-				(string) $value
-			)
-		);
-		$raised = $wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
-			$wpdb->prepare(
-				"UPDATE {$wpdb->options} SET option_value = GREATEST(CAST(option_value AS UNSIGNED), %d) WHERE option_name = %s",
-				$value,
-				$option
-			)
-		);
+		Db::query( "INSERT INTO {$wpdb->options} (option_name, option_value, autoload) VALUES (%s, %s, 'on') ON DUPLICATE KEY UPDATE option_value = GREATEST(CAST(option_value AS UNSIGNED), CAST(VALUES(option_value) AS UNSIGNED)), option_id = option_id", array( $option, (string) $value ) );
+		$raised = Db::query( "UPDATE {$wpdb->options} SET option_value = GREATEST(CAST(option_value AS UNSIGNED), %d) WHERE option_name = %s", array( $value, $option ) );
 		if ( false === $raised ) {
 			$stored = get_option( $option, false );
 			if ( ! is_numeric( $stored ) || (int) $stored < $value ) {
@@ -394,12 +379,7 @@ final class Cache {
 	/** Raises one counter by one. One atomic UPDATE: two processes can never lower it and never skip a step. */
 	private static function bump_row( string $option ): void {
 		global $wpdb;
-		$ok = $wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
-			$wpdb->prepare(
-				"UPDATE {$wpdb->options} SET option_value = CAST(option_value AS UNSIGNED) + 1 WHERE option_name = %s",
-				$option
-			)
-		);
+		$ok = Db::query( "UPDATE {$wpdb->options} SET option_value = CAST(option_value AS UNSIGNED) + 1 WHERE option_name = %s", array( $option ) );
 		if ( false === $ok ) {
 			$stored = get_option( $option, false );
 			update_option( $option, (string) ( is_numeric( $stored ) ? (int) $stored + 1 : 1 ), true );
@@ -409,18 +389,14 @@ final class Cache {
 	/** The value of one counter row (0 when the row is gone). */
 	private static function row_value( string $option ): int {
 		global $wpdb;
-		return (int) $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
-			$wpdb->prepare( "SELECT CAST(option_value AS UNSIGNED) FROM {$wpdb->options} WHERE option_name = %s", $option )
-		);
+		return (int) Db::get_var( "SELECT CAST(option_value AS UNSIGNED) FROM {$wpdb->options} WHERE option_name = %s", array( $option ) );
 	}
 
 	/** The counter rows of one plugin (groups of deactivated plugins included). @return string[] */
 	private static function plugin_group_options( string $plugin ): array {
 		global $wpdb;
 		$like = $wpdb->esc_like( self::OPT_GROUP_PREFIX . $plugin . '.' ) . '%';
-		$rows = $wpdb->get_col( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
-			$wpdb->prepare( "SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s", $like )
-		);
+		$rows = Db::get_col( "SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s", array( $like ) );
 		return array_values( array_filter( (array) $rows, static fn( $n ): bool => is_string( $n ) && str_starts_with( $n, self::OPT_GROUP_PREFIX . $plugin . '.' ) ) );
 	}
 

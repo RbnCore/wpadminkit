@@ -38,6 +38,6 @@ final class TransientDriver implements CacheDriver {
 		global $wpdb;
 		$like = $wpdb->esc_like( '_transient_' . $prefix ) . '%';
 		$time = $wpdb->esc_like( '_transient_timeout_' . $prefix ) . '%';
-		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s", $like, $time ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		Db::query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s", array( $like, $time ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 	}
 }

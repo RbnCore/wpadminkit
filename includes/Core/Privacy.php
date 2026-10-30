@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace AdminKit\Core;
 
+use AdminKit\Core\Security\Host;
+
 defined( 'ABSPATH' ) || exit;
 
 final class Privacy {
@@ -101,7 +103,7 @@ final class Privacy {
 	}
 
 	private static function is_ipv6( string $candidate ): bool {
-		return substr_count( $candidate, ':' ) >= 2 && false !== filter_var( $candidate, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 );
+		return Host::is_ipv6( $candidate );
 	}
 
 	/** Splits a key name into lower-case segments (`apiKey`, `API-KEY`, `api_key` -> api, key) and checks them against the secret list. */

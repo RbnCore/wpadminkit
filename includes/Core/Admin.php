@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace AdminKit\Core;
 
+use AdminKit\Core\Security\Guard;
+
 defined( 'ABSPATH' ) || exit;
 
 final class Admin {
@@ -77,12 +79,9 @@ final class Admin {
 		);
 	}
 
-	/** admin-post handler: clears one group (`group` = id) or all groups (`group` empty). */
+	/** admin-post handler: clears one group (`group` = id) or all groups (`group` empty). Guard verifies nonce + capability. */
 	public static function clear(): void {
-		if ( ! self::can_manage() ) {
-			wp_die( esc_html__( 'You are not allowed to clear the cache.', 'adminkit' ), '', array( 'response' => 403 ) );
-		}
-		check_admin_referer( self::ACTION );
+		Guard::admin_action( self::ACTION, 'manage_options', '_wpnonce', 'die', 'rbnkit_core_can_manage' );
 		$group = isset( $_POST['group'] ) ? sanitize_text_field( wp_unslash( (string) $_POST['group'] ) ) : '';
 		$done  = '' === $group ? Cache::flush_all() : ( Cache::flush_group( $group ) ? 1 : 0 );
 		if ( $done > 0 ) {

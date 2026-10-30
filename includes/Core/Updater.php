@@ -22,6 +22,8 @@ use AdminKit\Kit\Catalog;
 use AdminKit\Kit\Download;
 use AdminKit\Kit\Installer;
 
+use AdminKit\Core\Security\Guard;
+
 defined( 'ABSPATH' ) || exit;
 
 final class Updater {
@@ -643,10 +645,7 @@ final class Updater {
 	// ───────────────────────── "Check now" ─────────────────────────
 
 	public static function action_check(): void {
-		if ( ! current_user_can( 'update_plugins' ) ) {
-			wp_die( esc_html__( 'You do not have permission for this action.', 'adminkit' ), '', array( 'response' => 403 ) );
-		}
-		check_admin_referer( self::ACTION );
+		Guard::admin_action( self::ACTION, 'update_plugins' );
 		$slug   = isset( $_POST['slug'] ) ? sanitize_key( wp_unslash( (string) $_POST['slug'] ) ) : '';
 		$return = isset( $_POST['return'] ) ? esc_url_raw( wp_unslash( (string) $_POST['return'] ) ) : '';
 		$to     = '' !== $return ? $return : admin_url( 'plugins.php' );

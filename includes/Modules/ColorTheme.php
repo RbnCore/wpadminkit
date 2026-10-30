@@ -18,6 +18,8 @@ use AdminKit\Module;
 use AdminKit\Settings;
 use AdminKit\SettingsPage;
 
+use AdminKit\Core\Security\Guard;
+
 defined( 'ABSPATH' ) || exit;
 
 final class ColorTheme implements Module {
@@ -352,10 +354,7 @@ final class ColorTheme implements Module {
 	}
 
 	public static function handle_save(): void {
-		if ( ! current_user_can( 'read' ) ) {
-			wp_die( esc_html__( 'You are not allowed to change these colors.', 'adminkit' ), '', array( 'response' => 403 ) );
-		}
-		check_admin_referer( self::NONCE, 'adminkit_ct_nonce' );
+		Guard::admin_action( self::NONCE, 'read', 'adminkit_ct_nonce' );
 		if ( empty( self::settings()['allow_users'] ) ) {
 			wp_die( esc_html__( 'The site administrator chose the admin colors. You cannot change them.', 'adminkit' ), '', array( 'response' => 403 ) );
 		}
@@ -366,10 +365,7 @@ final class ColorTheme implements Module {
 	}
 
 	public static function handle_reset(): void {
-		if ( ! current_user_can( 'read' ) ) {
-			wp_die( esc_html__( 'You are not allowed to change these colors.', 'adminkit' ), '', array( 'response' => 403 ) );
-		}
-		check_admin_referer( self::NONCE, 'adminkit_ct_nonce' );
+		Guard::admin_action( self::NONCE, 'read', 'adminkit_ct_nonce' );
 		// phpcs:ignore WordPress.Security.NonceVerification -- doğrulandı.
 		$scope = isset( $_GET['scope'] ) ? sanitize_key( wp_unslash( $_GET['scope'] ) ) : 'user';
 		if ( 'default' === $scope ) {

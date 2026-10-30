@@ -955,3 +955,11 @@ msgstr ""
 #: includes/Core/Updater.php
 msgid "Update rejected: the package was not installed. The old version was kept."
 msgstr ""
+
+#: includes/Core/Security/Guard.php
+msgid "The link you followed has expired."
+msgstr ""
+
+#: includes/Core/Security/Guard.php
+msgid "The request could not be verified. Reload the page and try again."
+msgstr ""

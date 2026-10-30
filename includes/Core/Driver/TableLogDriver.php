@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace AdminKit\Core\Driver;
 
 use AdminKit\Core\Schema;
+use AdminKit\Helpers\Db;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -19,7 +20,7 @@ final class TableLogDriver implements LogDriver {
 
 	public function insert( array $row ): int {
 		global $wpdb;
-		$ok = $wpdb->insert( Schema::table(), $row, array( '%s', '%s', '%s', '%s', '%s', '%s' ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		$ok = Db::insert( Schema::table(), $row, array( '%s', '%s', '%s', '%s', '%s', '%s' ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 		return false === $ok ? 0 : (int) $wpdb->insert_id;
 	}
 
@@ -47,8 +48,8 @@ final class TableLogDriver implements LogDriver {
 		$clause   = implode( ' AND ', $where );
 		$per_page = max( 1, (int) ( $filters['per_page'] ?? 8 ) );
 		$offset   = ( max( 1, (int) ( $filters['page'] ?? 1 ) ) - 1 ) * $per_page;
-		$total    = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$table} WHERE {$clause}", $args ) ); // phpcs:ignore WordPress.DB
-		$rows     = $wpdb->get_results( $wpdb->prepare( "SELECT id, level, event, message, context, created_at FROM {$table} WHERE {$clause} ORDER BY id DESC LIMIT %d OFFSET %d", array_merge( $args, array( $per_page, $offset ) ) ), ARRAY_A ); // phpcs:ignore WordPress.DB
+		$total    = (int) Db::get_var( "SELECT COUNT(*) FROM {$table} WHERE {$clause}", $args ); // phpcs:ignore WordPress.DB
+		$rows     = Db::get_results( "SELECT id, level, event, message, context, created_at FROM {$table} WHERE {$clause} ORDER BY id DESC LIMIT %d OFFSET %d", array_merge( $args, array( $per_page, $offset ) ), ARRAY_A ); // phpcs:ignore WordPress.DB
 		$items    = array();
 		foreach ( is_array( $rows ) ? $rows : array() as $row ) {
 			$context = json_decode( (string) $row['context'], true );
@@ -69,7 +70,7 @@ final class TableLogDriver implements LogDriver {
 
 	public function count( string $channel ): int {
 		global $wpdb;
-		return (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM ' . Schema::table() . ' WHERE channel = %s', $channel ) ); // phpcs:ignore WordPress.DB
+		return (int) Db::get_var( 'SELECT COUNT(*) FROM ' . Schema::table() . ' WHERE channel = %s', array( $channel ) ); // phpcs:ignore WordPress.DB
 	}
 
 	public function prune( string $channel, string $cutoff, int $max_rows ): int {
@@ -77,16 +78,16 @@ final class TableLogDriver implements LogDriver {
 		$table   = Schema::table();
 		$deleted = 0;
 		for ( $i = 0; $i < 20; $i++ ) {
-			$n        = (int) $wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE channel = %s AND created_at < %s LIMIT %d", $channel, $cutoff, self::CHUNK ) ); // phpcs:ignore WordPress.DB
+			$n        = (int) Db::query( "DELETE FROM {$table} WHERE channel = %s AND created_at < %s LIMIT %d", array( $channel, $cutoff, self::CHUNK ) ); // phpcs:ignore WordPress.DB
 			$deleted += $n;
 			if ( $n < self::CHUNK ) {
 				break;
 			}
 		}
-		$edge = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$table} WHERE channel = %s ORDER BY id DESC LIMIT 1 OFFSET %d", $channel, $max_rows ) ); // phpcs:ignore WordPress.DB
+		$edge = Db::get_var( "SELECT id FROM {$table} WHERE channel = %s ORDER BY id DESC LIMIT 1 OFFSET %d", array( $channel, $max_rows ) ); // phpcs:ignore WordPress.DB
 		if ( null !== $edge ) {
 			for ( $i = 0; $i < 20; $i++ ) {
-				$n        = (int) $wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE channel = %s AND id <= %d LIMIT %d", $channel, (int) $edge, self::CHUNK ) ); // phpcs:ignore WordPress.DB
+				$n        = (int) Db::query( "DELETE FROM {$table} WHERE channel = %s AND id <= %d LIMIT %d", array( $channel, (int) $edge, self::CHUNK ) ); // phpcs:ignore WordPress.DB
 				$deleted += $n;
 				if ( $n < self::CHUNK ) {
 					break;
@@ -100,8 +101,8 @@ final class TableLogDriver implements LogDriver {
 		global $wpdb;
 		$table = Schema::table();
 		if ( '.' === substr( $channel_or_prefix, -1 ) ) {
-			return (int) $wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE channel LIKE %s", $wpdb->esc_like( $channel_or_prefix ) . '%' ) ); // phpcs:ignore WordPress.DB
+			return (int) Db::query( "DELETE FROM {$table} WHERE channel LIKE %s", array( $wpdb->esc_like( $channel_or_prefix ) . '%' ) ); // phpcs:ignore WordPress.DB
 		}
-		return (int) $wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE channel = %s", $channel_or_prefix ) ); // phpcs:ignore WordPress.DB
+		return (int) Db::query( "DELETE FROM {$table} WHERE channel = %s", array( $channel_or_prefix ) ); // phpcs:ignore WordPress.DB
 	}
 }

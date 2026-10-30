@@ -12,6 +12,8 @@ namespace AdminKit\Modules;
 use AdminKit\Assets;
 use AdminKit\Module;
 
+use AdminKit\Core\Security\Guard;
+
 defined( 'ABSPATH' ) || exit;
 
 final class NoticeTidy implements Module {
@@ -79,10 +81,7 @@ final class NoticeTidy implements Module {
 
 	/** Kutunun açık/kapalı tercihini kullanıcı metasına yazar; hiçbir bildirim silinmez. */
 	public static function ajax_state(): void {
-		check_ajax_referer( 'adminkit_notices', 'nonce' );
-		if ( ! current_user_can( 'read' ) ) {
-			wp_send_json_error( null, 403 );
-		}
+		Guard::admin_action( 'adminkit_notices', 'read', 'nonce', 'json' );
 		$open = isset( $_POST['open'] ) && '1' === sanitize_text_field( wp_unslash( $_POST['open'] ) ) ? '1' : '0';
 		update_user_meta( get_current_user_id(), self::META, $open );
 		wp_send_json_success( array( 'open' => $open ) );

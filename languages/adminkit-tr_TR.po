@@ -796,3 +796,11 @@ msgstr "Ayarlar kaydedildi."
 #: includes/Core/Updater.php
 msgid "Update rejected: the package was not installed. The old version was kept."
 msgstr "Güncelleme reddedildi: paket kurulmadı. Eski sürüm korundu."
+
+#: includes/Core/Security/Guard.php
+msgid "The link you followed has expired."
+msgstr "Bağlantının süresi dolmuş."
+
+#: includes/Core/Security/Guard.php
+msgid "The request could not be verified. Reload the page and try again."
+msgstr "İstek doğrulanamadı. Sayfayı yenileyip tekrar deneyin."

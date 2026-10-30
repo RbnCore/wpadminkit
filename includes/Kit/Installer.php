@@ -18,6 +18,8 @@ namespace AdminKit\Kit;
 
 use AdminKit\Core\Network;
 
+use AdminKit\Core\Security\Guard;
+
 defined( 'ABSPATH' ) || exit;
 
 final class Installer {
@@ -349,11 +351,8 @@ final class Installer {
 	}
 
 	public static function action_install(): void {
-		if ( ! current_user_can( 'install_plugins' ) ) {
-			self::cap_fail();
-		}
 		$id = self::posted_id();
-		check_admin_referer( self::ACT_INSTAL . '_' . $id );
+		Guard::admin_action( self::ACT_INSTAL . '_' . $id, 'install_plugins' );
 		$res = self::install( $id );
 		if ( is_wp_error( $res ) ) {
 			self::done( 'hata', $res->get_error_message() );
@@ -362,11 +361,8 @@ final class Installer {
 	}
 
 	public static function action_activate(): void {
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-			self::cap_fail();
-		}
 		$id = self::posted_id();
-		check_admin_referer( self::ACT_ACTIVE . '_' . $id );
+		Guard::admin_action( self::ACT_ACTIVE . '_' . $id, 'activate_plugins' );
 		$item = Catalog::find( $id );
 		if ( null === $item || ! Catalog::state( $item )['installed'] ) {
 			self::done( 'hata', __( 'The plugin to activate was not found.', 'adminkit' ) );

@@ -1,6 +1,15 @@
 <?php
 /**
- * AdminKit Helpers: Idempotent database schema installer and upgrade scaffold.
+ * AdminKit Helpers: the ONE database gateway of every RBN plugin.
+ *
+ * Two jobs, one file:
+ *
+ * - schema helpers (`install`, `maybe_upgrade`, `drop_tables`) — idempotent, additive;
+ * - query helpers (`query`, `get_var`, `get_row`, `get_results`, `get_col`, `insert`, `update`, `delete`, `in`).
+ *
+ * A plugin never writes `$wpdb->…` itself: every call goes through these thin wrappers, which prepare the SQL with
+ * the given arguments first. Placeholders are WordPress' own (`%s`, `%d`, `%i`, `%f`); a value is never pasted into
+ * an SQL string.
  *
  * @package AdminKit
  */
@@ -74,5 +83,147 @@ final class Db {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.NotPrepared -- fixed table names.
 			$wpdb->query( 'DROP TABLE IF EXISTS `' . esc_sql( $tbl ) . '`' );
 		}
+	}
+
+	/* ------------------------------------------------------------------ queries */
+
+	/**
+	 * Runs a write statement (INSERT / UPDATE / DELETE / DDL).
+	 *
+	 * @param string              $sql  SQL with placeholders.
+	 * @param array<int, mixed>   $args Values for the placeholders.
+	 * @return int|bool Rows affected, or false when the query failed.
+	 */
+	public static function query( string $sql, array $args = array() ) {
+		global $wpdb;
+		return $wpdb->query( self::prepare( $sql, $args ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+	}
+
+	/**
+	 * One value of the first row.
+	 *
+	 * @param string            $sql    SQL with placeholders.
+	 * @param array<int, mixed> $args   Values for the placeholders.
+	 * @param int               $column Column offset.
+	 * @return string|null
+	 */
+	public static function get_var( string $sql, array $args = array(), int $column = 0 ): ?string {
+		global $wpdb;
+		$value = $wpdb->get_var( self::prepare( $sql, $args ), $column ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		return null === $value ? null : (string) $value;
+	}
+
+	/**
+	 * One row.
+	 *
+	 * @param string            $sql    SQL with placeholders.
+	 * @param array<int, mixed> $args   Values for the placeholders.
+	 * @param string            $output OBJECT | ARRAY_A | ARRAY_N.
+	 * @return array<string,mixed>|object|null
+	 */
+	public static function get_row( string $sql, array $args = array(), string $output = OBJECT ) {
+		global $wpdb;
+		return $wpdb->get_row( self::prepare( $sql, $args ), $output ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+	}
+
+	/**
+	 * Every row of a result set.
+	 *
+	 * @param string            $sql    SQL with placeholders.
+	 * @param array<int, mixed> $args   Values for the placeholders.
+	 * @param string            $output OBJECT | ARRAY_A | ARRAY_N.
+	 * @return array<int, mixed>
+	 */
+	public static function get_results( string $sql, array $args = array(), string $output = OBJECT ): array {
+		global $wpdb;
+		$rows = $wpdb->get_results( self::prepare( $sql, $args ), $output ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		return is_array( $rows ) ? $rows : array();
+	}
+
+	/**
+	 * One column of a result set.
+	 *
+	 * @param string            $sql    SQL with placeholders.
+	 * @param array<int, mixed> $args   Values for the placeholders.
+	 * @param int               $column Column offset.
+	 * @return array<int, mixed>
+	 */
+	public static function get_col( string $sql, array $args = array(), int $column = 0 ): array {
+		global $wpdb;
+		$col = $wpdb->get_col( self::prepare( $sql, $args ), $column ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		return is_array( $col ) ? $col : array();
+	}
+
+	/**
+	 * Inserts one row.
+	 *
+	 * @param string               $table  Full table name (`self::table()` / `Db::table()`).
+	 * @param array<string, mixed> $data   Column => value.
+	 * @param array<int, string>   $format Placeholder per column (empty = let WordPress decide).
+	 * @return int|bool Insert id, or false on failure.
+	 */
+	public static function insert( string $table, array $data, array $format = array() ) {
+		global $wpdb;
+		return $wpdb->insert( $table, $data, $format ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+	}
+
+	/** The insert id of the last `insert()`. */
+	public static function insert_id(): int {
+		global $wpdb;
+		return (int) $wpdb->insert_id;
+	}
+
+	/**
+	 * Updates rows.
+	 *
+	 * @param string               $table        Full table name.
+	 * @param array<string, mixed> $data         Column => new value.
+	 * @param array<string, mixed> $where        Column => value of the WHERE clause.
+	 * @param array<int, string>   $format       Placeholder per data column.
+	 * @param array<int, string>   $where_format Placeholder per WHERE column.
+	 * @return int|bool Rows affected, or false on failure.
+	 */
+	public static function update( string $table, array $data, array $where, array $format = array(), array $where_format = array() ) {
+		global $wpdb;
+		return $wpdb->update( $table, $data, $where, $format, $where_format ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+	}
+
+	/**
+	 * Deletes rows.
+	 *
+	 * @param string               $table        Full table name.
+	 * @param array<string, mixed> $where        Column => value of the WHERE clause.
+	 * @param array<int, string>   $where_format Placeholder per WHERE column.
+	 * @return int|bool Rows affected, or false on failure.
+	 */
+	public static function delete( string $table, array $where, array $where_format = array() ) {
+		global $wpdb;
+		return $wpdb->delete( $table, $where, $where_format ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+	}
+
+	/**
+	 * Placeholder list for `IN ( … )`: `Db::in( $ids )` gives `%d, %d, %d`.
+	 *
+	 * The values are passed to the query as arguments in the SAME order; an empty list becomes NULL, which matches
+	 * no row (`IN (NULL)`), so the query stays valid.
+	 *
+	 * @param array<int, mixed> $values Values that will be passed as query arguments.
+	 * @param string            $format Placeholder per value.
+	 */
+	public static function in( array $values, string $format = '%d' ): string {
+		if ( array() === $values ) {
+			return 'NULL';
+		}
+		return implode( ', ', array_fill( 0, count( $values ), $format ) );
+	}
+
+	/** Prepares the SQL when there are arguments; an empty argument list is returned unchanged. */
+	private static function prepare( string $sql, array $args ): string {
+		global $wpdb;
+		if ( array() === $args ) {
+			return $sql;
+		}
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- the query is prepared right here.
+		return (string) $wpdb->prepare( $sql, $args );
 	}
 }

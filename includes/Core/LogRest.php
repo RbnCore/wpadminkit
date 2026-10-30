@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace AdminKit\Core;
 
+use AdminKit\Core\Security\Guard;
+
 defined( 'ABSPATH' ) || exit;
 
 final class LogRest {
@@ -22,7 +24,7 @@ final class LogRest {
 			array(
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => array( self::class, 'handle' ),
-				'permission_callback' => array( self::class, 'permission' ),
+				'permission_callback' => Guard::rest( 'manage_options', filter: 'rbnkit_core_can_read_logs', context_param: 'channel' ),
 				'args'                => array(
 					'level'    => array(
 						'type' => 'string',
@@ -54,20 +56,6 @@ final class LogRest {
 				),
 			)
 		);
-	}
-
-	/** @return true|\WP_Error */
-	public static function permission( \WP_REST_Request $request ) {
-		/**
-		 * Who may read a log channel through REST.
-		 *
-		 * @param bool   $allowed Default: the user can `manage_options`.
-		 * @param string $channel Channel id.
-		 */
-		if ( apply_filters( 'rbnkit_core_can_read_logs', current_user_can( 'manage_options' ), (string) $request['channel'] ) ) {
-			return true;
-		}
-		return new \WP_Error( 'rbnkit_forbidden', __( 'You are not allowed to read this log.', 'adminkit' ), array( 'status' => rest_authorization_required_code() ) );
 	}
 
 	/** @return \WP_REST_Response|\WP_Error */

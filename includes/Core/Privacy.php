@@ -55,7 +55,13 @@ final class Privacy {
 		$text = (string) preg_replace( self::IPV4, '[ip]', $text );
 		$user = function_exists( 'wp_get_current_user' ) ? wp_get_current_user() : null;
 		if ( $user instanceof \WP_User && $user->exists() && strlen( $user->user_login ) >= 3 ) {
-			$text = str_ireplace( $user->user_login, '[user]', $text );
+			// Whole-token match only: a login that is a mere fragment of another word (`admin` inside
+			// `administrator`) leaks no identity, and replacing it garbles readable values such as role names.
+			$text = (string) preg_replace(
+				'/(?<![A-Za-z0-9_.\-])' . preg_quote( $user->user_login, '/' ) . '(?![A-Za-z0-9_.\-])/i',
+				'[user]',
+				$text
+			);
 		}
 		return $text;
 	}

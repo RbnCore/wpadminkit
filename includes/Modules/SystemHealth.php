@@ -175,7 +175,7 @@ final class SystemHealth implements Module {
 			}
 		}
 		if ( '' === $db_server ) {
-			$db_server = (string) $wpdb->get_var( 'SELECT VERSION()' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- salt okuma sürüm sorgusu.
+			$db_server = (string) \AdminKit\Helpers\Db::get_var( 'SELECT VERSION()', array() );
 		}
 
 		$memory   = self::to_bytes( (string) ini_get( 'memory_limit' ) );
@@ -795,6 +795,7 @@ final class SystemHealth implements Module {
 							<td data-label="<?php esc_attr_e( 'Value', 'adminkit' ); ?>"><?php echo esc_html( $row['value'] ); ?></td>
 							<td data-label="<?php esc_attr_e( 'Status', 'adminkit' ); ?>"><?php echo self::chip( $row['status'] ); // phpcs:ignore WordPress.Security.EscapeOutput -- chip() kaçışlar. ?></td>
 							<td data-label="<?php esc_attr_e( 'What it means', 'adminkit' ); ?>">
+								<div>
 								<?php echo esc_html( $row['means'] ); ?>
 								<span class="rbn-help">
 									<?php
@@ -805,6 +806,7 @@ final class SystemHealth implements Module {
 									}
 									?>
 								</span>
+								</div>
 							</td>
 						</tr>
 					<?php endforeach; ?>

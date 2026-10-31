@@ -202,7 +202,7 @@ body:has(.rbn-wrap[data-tone=koyu]) #wpfooter a{color:var(--rbn-ac)}
   .rbn-table--stack,.rbn-table--stack tbody,.rbn-table--stack tr,.rbn-table--stack td,.rbn-table--stack th{display:block}
   .rbn-table--stack tr{padding:var(--rbn-s3) var(--rbn-s4);border-bottom:var(--rbn-bw) solid var(--rbn-line)}
   .rbn-table--stack tbody tr:last-child{border-bottom:0}
-  .rbn-table--stack td,.rbn-table--stack th{display:grid;grid-template-columns:7rem minmax(0,1fr);gap:var(--rbn-s2);padding:var(--rbn-s1) 0;border:0}
+  .rbn-table--stack td,.rbn-table--stack th{display:grid;grid-template-columns:7rem minmax(0,1fr);gap:var(--rbn-s2);padding:var(--rbn-s1) 0;border:0;overflow-wrap:anywhere}
   .rbn-table--stack td::before{content:attr(data-label);color:var(--rbn-muted);font-size:var(--rbn-fs-sm);font-weight:var(--rbn-fw-m)}
   .rbn-table--stack .rbn-acts{justify-content:flex-start;flex-wrap:wrap}
 }

@@ -105,6 +105,7 @@ body:has(.rbn-wrap[data-tone=koyu]) #wpfooter a{color:var(--rbn-ac)}
 .rbn-btn--icon{width:var(--rbn-ctl);padding:0}
 .rbn-btn[disabled],.rbn-btn[aria-disabled=true]{opacity:1;color:var(--rbn-muted);background:var(--rbn-surface-2);border-color:var(--rbn-line);cursor:not-allowed}
 .rbn-btn[aria-busy=true]{cursor:progress}
+.rbn-switch.is-busy,.rbn-switch:has(input[aria-busy=true]){opacity:.6;cursor:progress}   /* anında anahtar uçuşta (WPRJ-718) */
 
 /* ═══ SEKMELER: üst (alt çizgili) + alt (hap) — TEK bileşen ═══ */
 .rbn-tabs{display:flex;gap:var(--rbn-s1);margin:0 0 var(--rbn-s5);padding:0;list-style:none;border-bottom:var(--rbn-bw) solid var(--rbn-line);overflow-x:auto;overflow-y:hidden;scrollbar-width:thin}   /* alt çizgi 1 px taşmasın: dikey kaydırma çubuğu çıkmaz */

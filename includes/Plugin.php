@@ -18,6 +18,8 @@ final class Plugin {
 		add_filter( 'plugin_action_links_' . plugin_basename( ADMINKIT_FILE ), array( SettingsPage::class, 'action_links' ) );
 		Kit\Overview::hooks();
 		add_action( 'admin_init', array( Settings::class, 'register' ) );
+		// Anında uygulanan anahtar ucu: admin-ajax.php istekleri de `is_admin()` sayılır, kayıt yerinde.
+		add_action( 'wp_ajax_' . Core\Settings\ToggleEndpoint::ACTION, array( Core\Settings\ToggleEndpoint::class, 'handle' ) );
 	}
 
 	public static function init(): void {

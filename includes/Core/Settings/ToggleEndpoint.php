@@ -2,9 +2,8 @@
 /**
  * AJAX entry point of the instant switches: nonce + capability + rate limit + input whitelist, then `Toggle::apply()`.
  *
- * Phase 1 (WPRJ-716): the class exists but is NOT registered on any hook. Phase 2 wires it with
- * `add_action( 'wp_ajax_adminkit_toggle', array( ToggleEndpoint::class, 'handle' ) )` and hands the nonce/URL to the
- * screen through `Assets::load()` (see docs/aninda-anahtar.md, "Faz 2 bağlama noktaları").
+ * Phase 2 (WPRJ-718): registered in `Plugin::boot()` as `wp_ajax_adminkit_toggle`; the screen receives `ajaxUrl`,
+ * `ajaxAction` and `toggleNonce` through the `RbnUiI18n` localization (see docs/aninda-anahtar.md).
  *
  * Request (POST, admin-ajax): action=adminkit_toggle, _wpnonce, slug, path, value (1|0|true|false).
  * Success: HTTP 200 `{ok:true, slug, path, value, changed, label, module?}`.

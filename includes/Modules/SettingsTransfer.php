@@ -20,6 +20,7 @@ use AdminKit\Core\Cache;
 use AdminKit\Core\Log;
 use AdminKit\Core\Security\Guard;
 use AdminKit\Core\Settings as Engine;
+use AdminKit\Core\Settings\Form;
 use AdminKit\Core\Settings\Transfer;
 use AdminKit\Helpers\Toast;
 use AdminKit\Module;
@@ -64,7 +65,7 @@ final class SettingsTransfer implements Module {
 	}
 
 	public function off_hint(): string {
-		return __( 'Turn it on and press Save to export or import settings.', 'adminkit' );
+		return __( 'Turn it on and the export and import tools appear.', 'adminkit' );
 	}
 
 	/** Bu modülün alanları ana ayar formunun dışında, kendi admin-post formunda kaydedilir. */
@@ -77,17 +78,22 @@ final class SettingsTransfer implements Module {
 		return 'settings_transfer';
 	}
 
+	/**
+	 * One stored key survives for compatibility (the engine keeps the value that is already in `adminkit_settings`);
+	 * nothing writes it any more: the personal-data choice belongs to ONE export/check request, and the module
+	 * switch is an instant setting (`modules.settings_transfer.enabled`).
+	 */
 	public function settings_schema(): array {
 		return array(
 			array(
-				'key'        => 'include_personal',
-				'type'       => 'checkbox',
-				'label'      => __( 'Include e-mail recipients and similar personal data', 'adminkit' ),
-				'default'    => false,
-				'help'       => __( 'Off: alert recipients and other personal values stay on this site.', 'adminkit' ),
-				'hidden'     => true,
-				'portable'   => false,
-				'personal'   => false,
+				'key'      => 'include_personal',
+				'type'     => 'checkbox',
+				'label'    => __( 'Include e-mail recipients and similar personal data', 'adminkit' ),
+				'default'  => false,
+				'help'     => __( 'Off: alert recipients and other personal values stay on this site.', 'adminkit' ),
+				'hidden'   => true,
+				'portable' => false,
+				'personal' => false,
 			),
 		);
 	}
@@ -113,18 +119,15 @@ final class SettingsTransfer implements Module {
 		Guard::admin_action( self::NONCE, 'manage_options', '_wpnonce', 'die' );
 
 		$do = isset( $_POST['do'] ) ? sanitize_key( (string) wp_unslash( $_POST['do'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification -- Guard doğruladı.
-		$on = ! empty( $_POST['transfer_enabled'] ); // phpcs:ignore WordPress.Security.NonceVerification
 		$personal = ! empty( $_POST['include_personal'] ); // phpcs:ignore WordPress.Security.NonceVerification
 		$risky    = ! empty( $_POST['include_risky'] ); // phpcs:ignore WordPress.Security.NonceVerification
 
-		if ( ! in_array( $do, array( 'save', 'export', 'preview', 'apply' ), true ) ) {
+		// The module switch is an instant setting now (adminkit_toggle); this form only exports/checks/applies.
+		if ( ! in_array( $do, array( 'export', 'preview', 'apply' ), true ) ) {
 			self::back( 'error', __( 'Unknown action; nothing was done.', 'adminkit' ) );
 		}
-		if ( 'save' !== $do && ! self::enabled() ) {
+		if ( ! self::enabled() ) {
 			self::back( 'error', __( 'The settings transfer module is off; nothing was done.', 'adminkit' ) );
-		}
-		if ( in_array( $do, array( 'save', 'export', 'preview' ), true ) ) {
-			self::save_options( $on, $personal );
 		}
 
 		if ( 'export' === $do ) {
@@ -137,22 +140,6 @@ final class SettingsTransfer implements Module {
 			self::apply();
 		}
 		self::back( 'success', __( 'Settings saved.', 'adminkit' ) );
-	}
-
-	/** Aç/kapa ve kişisel veri tercihi: ana ayar formunun dışında yaşadıkları için buradan yazılır. */
-	private static function save_options( bool $enabled, bool $personal ): void {
-		Engine::update(
-			Settings::SLUG,
-			array(
-				'modules' => array(
-					'settings_transfer' => array(
-						'enabled'          => $enabled ? 1 : 0,
-						'include_personal' => $personal ? 1 : 0,
-					),
-				),
-			),
-			array()
-		);
 	}
 
 	/** Dışa aktarma: dosya indirilir, sayfa kapanır (yönlendirme yok). */
@@ -282,7 +269,6 @@ final class SettingsTransfer implements Module {
 	public function panel_html(): string {
 		$settings = Settings::for_module( $this );
 		$on       = ! empty( $settings['enabled'] );
-		$personal = ! empty( $settings['include_personal'] );
 		$plan     = self::plan_row( isset( $_GET['plan'] ) ? sanitize_key( (string) wp_unslash( $_GET['plan'] ) ) : '' ); // phpcs:ignore WordPress.Security.NonceVerification -- Yalnız gösterim; plan sahibi doğrulanır.
 
 		ob_start();
@@ -297,20 +283,16 @@ final class SettingsTransfer implements Module {
 						<p><?php echo esc_html( $this->description() ); ?></p>
 					</div>
 					<label class="rbn-switch">
-						<input type="checkbox" role="switch" name="transfer_enabled" value="1" <?php checked( $on ); ?> />
+						<?php // Ad YOK: anahtar anında uygulanır (adminkit_toggle), bu form onu göndermez. ?>
+						<input type="checkbox" role="switch" value="1" <?php checked( $on ); ?> <?php echo Form::attrs( array_merge( Form::instant( Settings::SLUG, 'modules.' . $this->id() . '.enabled', $this->switch_label() ), array( 'data-rbn-module' => $this->id() ) ) ); // phpcs:ignore WordPress.Security.EscapeOutput -- Form::attrs() kaçışlar. ?> />
 						<span class="rbn-switch__x" aria-hidden="true"></span>
 						<span class="ak-switch-txt"><?php echo esc_html( $this->switch_label() ); ?></span>
 					</label>
 				</div>
-				<?php if ( ! $on ) : ?>
-					<div class="rbn-card__b">
-						<?php echo Assets::note( 'info', $this->off_hint() ); // phpcs:ignore WordPress.Security.EscapeOutput -- Assets::note() kaçışlar. ?>
-						<div class="rbn-form-actions">
-							<button type="submit" name="do" value="save" class="rbn-btn rbn-btn--pri"><?php esc_html_e( 'Save changes', 'adminkit' ); ?></button>
-						</div>
-					</div>
-				<?php else : ?>
-					<div class="rbn-card__b">
+				<div class="rbn-card__b" data-rbn-when-off<?php echo $on ? ' hidden' : ''; ?>>
+					<?php echo Assets::note( 'info', $this->off_hint() ); // phpcs:ignore WordPress.Security.EscapeOutput -- Assets::note() kaçışlar. ?>
+				</div>
+				<div class="rbn-card__b" data-rbn-when-on<?php echo $on ? '' : ' hidden'; ?>>
 						<fieldset class="rbn-field">
 							<legend><?php esc_html_e( 'Export', 'adminkit' ); ?></legend>
 							<p class="rbn-help"><?php esc_html_e( 'The file carries settings only: no passwords, keys, licences, e-mail addresses or site addresses. Redirects, 404 records and page content are not settings and do not travel.', 'adminkit' ); ?></p>
@@ -321,7 +303,8 @@ final class SettingsTransfer implements Module {
 								</label>
 							<?php endforeach; ?>
 							<label class="rbn-check">
-								<input type="checkbox" name="include_personal" value="1" <?php checked( $personal ); ?> />
+								<?php // Yalnız bu istek için: değer saklanmaz, Export/Check ile birlikte gönderilir. ?>
+								<input type="checkbox" name="include_personal" value="1" />
 								<span><?php esc_html_e( 'Include e-mail recipients and similar personal data', 'adminkit' ); ?></span>
 							</label>
 							<span class="rbn-help"><?php esc_html_e( 'Off by default. When included, the addresses are written into the file in plain text, so keep the file private.', 'adminkit' ); ?></span>
@@ -345,10 +328,8 @@ final class SettingsTransfer implements Module {
 						</fieldset>
 						<div class="rbn-form-actions">
 							<button type="submit" name="do" value="preview" class="rbn-btn rbn-btn--pri"><?php esc_html_e( 'Check the file', 'adminkit' ); ?></button>
-							<button type="submit" name="do" value="save" class="rbn-btn"><?php esc_html_e( 'Save changes', 'adminkit' ); ?></button>
 						</div>
 					</div>
-				<?php endif; ?>
 			</form>
 			<?php
 			if ( null !== $plan && $on ) {

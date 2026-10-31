@@ -27,7 +27,7 @@ final class Header {
 	 * Returns the page head markup.
 	 *
 	 * @param array<string, mixed> $args {
-	 *     name:string (required), version:string (shown as "v{version}"), status:array{label:string,tone?:string} (required),
+	 *     name:string (required), version:string (shown as "v{version}"), status:array{label:string,tone?:string,attrs?:array<string,string>} (required),
 	 *     back?:array{label:string,url:string,icon?:string}, menu?:array{label:string,items:array<int,array{label:string,url:string,icon?:string,current?:bool}>,icon?:string},
 	 *     actions?:array<int,array{label:string,url?:string,icon?:string,kind?:string,data?:array<string,string>}>,
 	 *     chips?:array<int,array{label:string,tone?:string}>, title?:string, title_hidden?:bool,
@@ -43,7 +43,7 @@ final class Header {
 		$tag   = '' === $title ? 'h1' : 'p';
 		$ident = '<' . $tag . ' class="rbn-brand">' . esc_html( $name ) . '</' . $tag . '>'
 			. '<span class="rbn-chip">' . esc_html( 'v' . (string) ( $args['version'] ?? '' ) ) . '</span>'
-			. self::chip( (string) ( $status['label'] ?? '' ), (string) ( $status['tone'] ?? 'ok' ), true );
+			. self::chip( (string) ( $status['label'] ?? '' ), (string) ( $status['tone'] ?? 'ok' ), true, (array) ( $status['attrs'] ?? array() ) );
 		foreach ( (array) ( $args['chips'] ?? array() ) as $chip ) {
 			$ident .= self::chip( (string) ( $chip['label'] ?? '' ), (string) ( $chip['tone'] ?? '' ), false );
 		}
@@ -61,13 +61,27 @@ final class Header {
 		return $out . self::note( $args['note'] ?? null ) . '<hr class="wp-header-end rbn-sr">';
 	}
 
-	/** One chip; the status chip carries the leading dot. */
-	private static function chip( string $label, string $tone, bool $dot ): string {
+	/**
+	 * One chip; the status chip carries the leading dot.
+	 *
+	 * @param array<string,string> $attrs Extra data attributes the page script may update (status chip only).
+	 */
+	private static function chip( string $label, string $tone, bool $dot, array $attrs = array() ): string {
 		if ( '' === $label ) {
 			return '';
 		}
 		$tone = in_array( $tone, self::TONES, true ) ? ' rbn-chip--' . $tone : '';
-		return '<span class="rbn-chip' . $tone . '">' . ( $dot ? '<span class="rbn-dot" aria-hidden="true"></span>' : '' ) . esc_html( $label ) . '</span>';
+		$data = '';
+		foreach ( $attrs as $key => $value ) {
+			if ( 1 === preg_match( '/^data-[a-z0-9\-]+$/', (string) $key ) ) {
+				$data .= ' ' . $key . '="' . esc_attr( (string) $value ) . '"';
+			}
+		}
+		// Only the live-updatable chip (extra data attrs) wraps its label: the page script can replace that one node.
+		$text = '' !== $data
+			? '<span class="rbn-chip__t">' . esc_html( $label ) . '</span>'
+			: esc_html( $label );
+		return '<span class="rbn-chip' . $tone . '"' . $data . '>' . ( $dot ? '<span class="rbn-dot" aria-hidden="true"></span>' : '' ) . $text . '</span>';
 	}
 
 	/** Back button and menu, grouped in one labelled `nav`. */

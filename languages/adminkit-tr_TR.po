@@ -1661,3 +1661,71 @@ msgstr "bilinmeyen ayar, düşürüldü"
 
 msgid "No run yet"
 msgstr "Henüz çalışmadı"
+
+msgid "Turn on %s?"
+msgstr "%s açılsın mı?"
+
+msgid "Turn off %s?"
+msgstr "%s kapatılsın mı?"
+
+msgid "%s is on."
+msgstr "%s açıldı."
+
+msgid "%s is off."
+msgstr "%s kapatıldı."
+
+msgid "The change could not be saved: the switch went back to its old position."
+msgstr "Değişiklik kaydedilemedi: anahtar eski konumuna döndü."
+
+msgid "Reload the page and try again."
+msgstr "Sayfayı yenileyip yeniden deneyin."
+
+msgid "You are not allowed to change this setting."
+msgstr "Bu ayarı değiştirme izniniz yok."
+
+msgid "The setting could not be changed."
+msgstr "Ayar değiştirilemedi."
+
+msgid "Unknown settings kit."
+msgstr "Bilinmeyen ayar kiti."
+
+msgid "The setting path is not valid."
+msgstr "Ayar yolu geçerli değil."
+
+msgid "Unknown setting."
+msgstr "Bilinmeyen ayar."
+
+msgid "This setting is not an on/off switch."
+msgstr "Bu ayar aç/kapat anahtarı değil."
+
+msgid "This setting cannot be switched from here."
+msgstr "Bu ayar buradan değiştirilemez."
+
+msgid "The request must be a POST."
+msgstr "İstek POST olmalı."
+
+msgid "Too many changes; wait a minute and try again."
+msgstr "Çok fazla değişiklik; bir dakika bekleyip yeniden deneyin."
+
+msgid "The value must be true or false."
+msgstr "Değer true ya da false olmalı."
+
+msgid "Turn it on and the export and import tools appear."
+msgstr "Açınca dışa ve içe aktarma araçları görünür."
+
+msgid "WP-Cron"
+msgstr "WP-Cron"
+
+msgid "System health sections"
+msgstr "Sistem sağlığı bölümleri"
+
+msgid "All checks are good"
+msgstr "Tüm denetimler iyi"
+
+msgid "Go to Database maintenance"
+msgstr "Veritabanı bakımına git"
+
+msgid "%d check needs attention"
+msgid_plural "%d checks need attention"
+msgstr[0] "%d denetim ilgi bekliyor"
+msgstr[1] "%d denetim ilgi bekliyor"

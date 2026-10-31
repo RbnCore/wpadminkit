@@ -119,8 +119,18 @@ final class SettingsPage {
 				array(
 					'name'    => 'AdminKit',
 					'version' => ADMINKIT_VERSION,
-					/* translators: 1: open module count, 2: total module count */
-					'status'  => array( 'label' => sprintf( __( '%1$d of %2$d modules on', 'adminkit' ), $open, count( $modules ) ), 'tone' => 'ok' ),
+					'status'  => array(
+						/* translators: 1: open module count, 2: total module count */
+						'label' => sprintf( __( '%1$d of %2$d modules on', 'adminkit' ), $open, count( $modules ) ),
+						'tone'  => 'ok',
+						// Anında anahtar sayaç güncellemesi: betik biçimi ve iki sayıyı buradan okur.
+						'attrs' => array(
+							'data-rbn-open-count' => (string) $open,
+							'data-rbn-total'      => (string) count( $modules ),
+							/* translators: 1: open module count, 2: total module count */
+							'data-rbn-count-fmt'  => __( '%1$d of %2$d modules on', 'adminkit' ),
+						),
+					),
 				)
 			);
 			?>
@@ -212,7 +222,7 @@ final class SettingsPage {
 					<p><?php echo esc_html( $module->description() ); ?></p>
 				</div>
 				<label class="rbn-switch">
-					<input type="checkbox" role="switch" name="<?php echo esc_attr( $base . '[enabled]' ); ?>" value="1" <?php checked( $on ); ?> />
+					<input type="checkbox" role="switch" name="<?php echo esc_attr( $base . '[enabled]' ); ?>" value="1" <?php checked( $on ); ?> <?php echo Core\Settings\Form::attrs( array_merge( Core\Settings\Form::instant( Settings::SLUG, 'modules.' . $id . '.enabled', $module->title() ), array( 'data-rbn-module' => $id, 'data-rbn-confirm' => $module->description() ) ) ); // phpcs:ignore WordPress.Security.EscapeOutput -- Form::attrs() kaçışlar. ?> />
 					<span class="rbn-switch__x" aria-hidden="true"></span>
 					<span class="ak-switch-txt">
 						<?php if ( $label ) : ?>

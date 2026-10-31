@@ -672,7 +672,8 @@
 			}
 		}
 
-		var chk = (e.target && e.target.matches && e.target.matches('input[type="checkbox"][data-rbn-confirm]')) ? e.target : null;
+		// Anında anahtarın kendi onay akışı var (aşağıda): burada ikinci kez sorulmaz.
+		var chk = (e.target && e.target.matches && e.target.matches('input[type="checkbox"][data-rbn-confirm]') && !e.target.hasAttribute('data-rbn-instant')) ? e.target : null;
 		if (chk && !chk.__rbnConfirmed) {
 			var when = chk.getAttribute('data-rbn-confirm-when') || 'on';
 			var shouldPrompt = ('on' === when && chk.checked) || ('off' === when && !chk.checked) || ('both' === when);
@@ -706,6 +707,208 @@
 			return;
 		}
 	}, true);
+
+	/* ═══ ANINDA UYGULANAN ANAHTARLAR (WPRJ-718) ═══
+	 * Sunucu işareti: input[type=checkbox][data-rbn-instant] + data-kit + data-path (+ data-label, data-risk).
+	 * Akış: onay → POST admin-ajax (adminkit_toggle) → toast → rozet/sayaç/açık-kapalı bölge güncellemesi.
+	 * Vazgeç/hata: `checked` eski hâline döner, `change` YENİDEN YAYINLANMAZ (döngü olmaz). */
+	function instantFormat(key, fallback, label) {
+		return i18n(key, fallback).replace('%s', label);
+	}
+
+	function instantLabel(input) {
+		var attr = input.getAttribute('data-label');
+		if (attr) {
+			return attr;
+		}
+		var box = input.closest ? input.closest('.rbn-switch') : null;
+		var text = box ? box.querySelector('b, .ak-switch-txt, .rbn-switch__st') : null;
+		return text ? text.textContent.trim() : '';
+	}
+
+	function instantHelp(input) {
+		var box = input.closest ? input.closest('label') : null;
+		var help = box ? box.querySelector('.rbn-help') : null;
+		return help ? help.textContent.trim() : '';
+	}
+
+	function instantBusy(input, on) {
+		if (on) {
+			input.setAttribute('aria-busy', 'true');
+			input.disabled = true;
+		} else {
+			input.removeAttribute('aria-busy');
+			input.disabled = false;
+		}
+		var box = input.closest ? input.closest('.rbn-switch') : null;
+		if (box) {
+			box.classList.toggle('is-busy', !!on);
+		}
+	}
+
+	/** Bir modül kartının rozetini (Active/Off) ve açık/kapalı bölgelerini yeni duruma çeker. */
+	function paintBadge(badge, on) {
+		var text = on ? badge.getAttribute('data-on') : badge.getAttribute('data-off');
+		badge.classList.toggle('rbn-badge--ok', !!on);
+		badge.textContent = '';
+		if (on) {
+			badge.appendChild(icon('check'));
+		}
+		badge.appendChild(document.createTextNode((on ? ' ' : '') + (text || '')));
+	}
+
+	function countText(chip, n) {
+		var fmt;
+		if (0 === n && chip.hasAttribute('data-rbn-count-none')) {
+			fmt = chip.getAttribute('data-rbn-count-none');
+		} else if (chip.hasAttribute('data-rbn-count-one') || chip.hasAttribute('data-rbn-count-many')) {
+			fmt = chip.getAttribute(1 === n ? 'data-rbn-count-one' : 'data-rbn-count-many');
+		} else {
+			fmt = chip.getAttribute('data-rbn-count-fmt');
+		}
+		if (!fmt) {
+			return null;
+		}
+		return fmt.replace(/%1\$d/g, String(n))
+			.replace(/%2\$d/g, String(chip.getAttribute('data-rbn-total') || ''))
+			.replace(/%d/g, String(n));
+	}
+
+	function paintModule(input, module, changed) {
+		if (!module || !module.id) {
+			return;
+		}
+		var card = input.closest ? input.closest('.rbn-card') : null;
+		var scope = card || document;
+		var on = !!module.enabled;
+		scope.querySelectorAll('[data-rbn-when-on]').forEach(function (el) { el.hidden = !on; });
+		scope.querySelectorAll('[data-rbn-when-off]').forEach(function (el) { el.hidden = on; });
+		scope.querySelectorAll('[data-rbn-module-badge]').forEach(function (badge) { paintBadge(badge, on); });
+		if (!changed) {
+			return; // Değer zaten istenen değerdeydi: sayaç oynamaz.
+		}
+
+		document.querySelectorAll('[data-rbn-open-count]').forEach(function (chip) {
+			var n = parseInt(chip.getAttribute('data-rbn-open-count'), 10) || 0;
+			n = Math.max(0, n + (on ? 1 : -1));
+			chip.setAttribute('data-rbn-open-count', String(n));
+			var text = countText(chip, n);
+			var target = chip.querySelector('.rbn-chip__t');
+			if (null !== text && target) {
+				target.textContent = text;
+			}
+			if (chip.hasAttribute('data-rbn-count-none')) {
+				chip.classList.toggle('rbn-chip--warn', 0 === n);
+				chip.classList.toggle('rbn-chip--ok', n > 0);
+			}
+		});
+	}
+
+	/** Ucun yanıtı: başarı → anahtarı sunucunun değerine sabitle; hata → eski hâle dön + toast. */
+	function instantSettle(input, want, label, status, json) {
+		input.__rbnInstantBusy = false;
+		instantBusy(input, false);
+		if (!json || true !== json.ok) {
+			input.checked = !want;
+			syncSwitch(input);
+			var message = (json && 'string' === typeof json.message && json.message) || i18n('instantFailed', 'The change could not be saved: the switch went back to its old position.');
+			if (403 === status) {
+				message += ' ' + i18n('reloadHint', 'Reload the page and try again.');
+			}
+			toast({ message: message, type: 'error' });
+			return;
+		}
+		var now = !!json.value;
+		input.checked = now;
+		syncSwitch(input);
+		if (json.module) {
+			paintModule(input, json.module, true === json.changed);
+		}
+		toast({
+			message: instantFormat(now ? 'instantOnDone' : 'instantOffDone', now ? '%s is on.' : '%s is off.', json.label || label),
+			type: 'success'
+		});
+	}
+
+	function instantSend(input, want, label) {
+		var url = i18n('ajaxUrl', '');
+		var nonce = i18n('toggleNonce', '');
+		if (!url || !nonce) {
+			instantSettle(input, want, label, 0, null);
+			return;
+		}
+		var body = new URLSearchParams();
+		body.append('action', i18n('ajaxAction', 'adminkit_toggle'));
+		body.append('_wpnonce', nonce);
+		body.append('slug', input.getAttribute('data-kit') || '');
+		body.append('path', input.getAttribute('data-path') || '');
+		body.append('value', want ? '1' : '0');
+
+		fetch(url, {
+			method: 'POST',
+			credentials: 'same-origin',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+				'X-Requested-With': 'XMLHttpRequest'
+			},
+			body: body.toString()
+		}).then(function (res) {
+			return res.json().then(function (json) {
+				return { status: res.status, json: json };
+			}, function () {
+				return { status: res.status, json: null };
+			});
+		}).then(function (out) {
+			instantSettle(input, want, label, out.status, out.json);
+		}, function () {
+			instantSettle(input, want, label, 0, null);
+		});
+	}
+
+	function instantApply(input) {
+		if (input.__rbnInstantBusy) {
+			return;
+		}
+		var want = input.checked;
+		var label = instantLabel(input);
+		var own = input.getAttribute('data-rbn-confirm');
+		var when = input.getAttribute('data-rbn-confirm-when') || 'both';
+		var skip = ('on' === when && !want) || ('off' === when && want);
+
+		if (skip) {
+			input.__rbnInstantBusy = true;
+			instantBusy(input, true);
+			instantSend(input, want, label);
+			return;
+		}
+
+		var danger = input.hasAttribute('data-risk') || 'danger' === input.getAttribute('data-rbn-confirm-tone');
+		confirm({
+			message: own || instantHelp(input) || '',
+			title: input.getAttribute('data-rbn-confirm-title') ||
+				instantFormat(want ? 'instantOn' : 'instantOff', want ? 'Turn on %s?' : 'Turn off %s?', label),
+			confirmLabel: input.getAttribute('data-rbn-confirm-ok') || i18n('instantYes', 'Yes'),
+			cancelLabel: input.getAttribute('data-rbn-confirm-cancel') || i18n('cancel', 'Cancel'),
+			tone: danger ? 'danger' : 'info'
+		}).then(function (yes) {
+			if (!yes) {
+				// Vazgeç: görünümü geri al, `change` YAYINLAMA (yoksa döngü olur).
+				input.checked = !want;
+				syncSwitch(input);
+				return;
+			}
+			input.__rbnInstantBusy = true;
+			instantBusy(input, true);
+			instantSend(input, want, label);
+		});
+	}
+
+	document.addEventListener('change', function (e) {
+		var input = e.target;
+		if (input && input.matches && input.matches('input[type="checkbox"][data-rbn-instant]')) {
+			instantApply(input);
+		}
+	});
 
 	/* Sayfa başlığı menüsü (Helpers\Header): tıkla aç/kapa, Esc kapatır ve düğmeye döner, dışarı tık/odak kapatır. */
 	function setMenu(btn, open) {

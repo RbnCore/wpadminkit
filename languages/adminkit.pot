@@ -2024,3 +2024,71 @@ msgstr ""
 #: includes/Modules/SystemHealth.php
 msgid "No run yet"
 msgstr ""
+
+msgid "Turn on %s?"
+msgstr ""
+
+msgid "Turn off %s?"
+msgstr ""
+
+msgid "%s is on."
+msgstr ""
+
+msgid "%s is off."
+msgstr ""
+
+msgid "The change could not be saved: the switch went back to its old position."
+msgstr ""
+
+msgid "Reload the page and try again."
+msgstr ""
+
+msgid "You are not allowed to change this setting."
+msgstr ""
+
+msgid "The setting could not be changed."
+msgstr ""
+
+msgid "Unknown settings kit."
+msgstr ""
+
+msgid "The setting path is not valid."
+msgstr ""
+
+msgid "Unknown setting."
+msgstr ""
+
+msgid "This setting is not an on/off switch."
+msgstr ""
+
+msgid "This setting cannot be switched from here."
+msgstr ""
+
+msgid "The request must be a POST."
+msgstr ""
+
+msgid "Too many changes; wait a minute and try again."
+msgstr ""
+
+msgid "The value must be true or false."
+msgstr ""
+
+msgid "Turn it on and the export and import tools appear."
+msgstr ""
+
+msgid "WP-Cron"
+msgstr ""
+
+msgid "System health sections"
+msgstr ""
+
+msgid "All checks are good"
+msgstr ""
+
+msgid "Go to Database maintenance"
+msgstr ""
+
+msgid "%d check needs attention"
+msgid_plural "%d checks need attention"
+msgstr[0] ""
+msgstr[1] ""

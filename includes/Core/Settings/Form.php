@@ -134,14 +134,58 @@ final class Form {
 	}
 
 	/**
+	 * Attributes that make a checkbox an INSTANT switch (WPRJ-718): ONE rule for every kit screen.
+	 *
+	 * The screen passes the kit slug and the engine path; the attributes are emitted only when `Toggle::switchable()`
+	 * accepts the path (registered, `bool`/`flag`, and not `internal`/`secret`/`site_specific`). A switch that stays
+	 * a normal form switch simply gets no attributes — no screen has to decide on its own.
+	 *
+	 * `data-label` carries what the confirmation question names; the script falls back to the visible switch title.
+	 *
+	 * @param string $kit   Engine slug (`adminkit`, `wpseokit`, `securitykit`, …).
+	 * @param string $path  Dotted schema path (`modules.toast_notices.enabled`, `headers.hsts`, …).
+	 * @param string $label Visible label, already translated.
+	 * @return array<string, string>
+	 */
+	public static function instant( string $kit, string $path, string $label = '' ): array {
+		if ( '' === $kit || '' === $path || ! class_exists( Toggle::class ) ) {
+			return array();
+		}
+		$row = Toggle::switchable( $kit, $path );
+		if ( null === $row ) {
+			return array();
+		}
+		$attrs = array(
+			'data-rbn-instant' => '1',
+			'data-kit'         => $kit,
+			'data-path'        => $path,
+		);
+		if ( '' === $label ) {
+			$label = trim( (string) ( $row['label'] ?? '' ) );
+		}
+		if ( '' !== $label ) {
+			$attrs['data-label'] = $label;
+		}
+		if ( ! empty( $row['risky'] ) ) {
+			$attrs['data-risk'] = '1';
+		}
+		return $attrs;
+	}
+
+	/**
 	 * A checkbox with a `role="switch"` label (kit pattern). Optional hidden `0` twin.
+	 *
+	 * Pass `kit` + `path` to make it instant; `data-rbn-instant` (and the label/risk flags) then come from
+	 * `Form::instant()`, never hand-written by a screen.
 	 *
 	 * @param array<string,mixed> $o name, value (default '1'), on, title, help, help_id, twin, disabled,
 	 *                               label_class (default 'rbn-switch'), box_class (default 'rbn-switch__x'),
-	 *                               text_class (default 'rbn-switch__t'), wrap (default true), attrs.
+	 *                               text_class (default 'rbn-switch__t'), wrap (default true), kit, path,
+	 *                               instant_label (name used by the confirmation question), attrs.
 	 */
 	public static function switch( array $o ): string {
 		$name  = (string) ( $o['name'] ?? '' );
+		$title = (string) ( $o['title'] ?? '' );
 		$attrs = array(
 			'type'             => 'checkbox',
 			'role'             => $o['role'] ?? 'switch',
@@ -152,11 +196,15 @@ final class Form {
 			'aria-describedby' => $o['help_id'] ?? null,
 			'aria-label'       => $o['aria_label'] ?? null,
 		);
+		if ( isset( $o['kit'], $o['path'] ) ) {
+			$label = (string) ( $o['instant_label'] ?? $title );
+			$attrs = array_merge( $attrs, self::instant( (string) $o['kit'], (string) $o['path'], $label ) );
+		}
 		$html  = ! empty( $o['twin'] ) ? self::twin( $name, (string) ( $o['twin_value'] ?? '0' ) ) : '';
 		$html .= '<input' . self::attrs( array_merge( $attrs, (array) ( $o['attrs'] ?? array() ) ) ) . '>'
 			. '<span class="' . esc_attr( (string) ( $o['box_class'] ?? 'rbn-switch__x' ) ) . '" aria-hidden="true"></span>'
 			. '<span class="' . esc_attr( (string) ( $o['text_class'] ?? 'rbn-switch__t' ) ) . '">'
-			. '<b>' . esc_html( (string) ( $o['title'] ?? '' ) ) . '</b>';
+			. '<b>' . esc_html( $title ) . '</b>';
 		if ( '' !== (string) ( $o['help'] ?? '' ) ) {
 			$html .= '<span class="rbn-help"' . ( isset( $o['help_id'] ) ? ' id="' . esc_attr( (string) $o['help_id'] ) . '"' : '' ) . '>' . esc_html( (string) $o['help'] ) . '</span>';
 		}

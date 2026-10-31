@@ -59,11 +59,22 @@
 	var submitting = false;
 	var offscreen = false;
 
+	/** Anında uygulanan anahtarlar kendi ucundan yazılır: "Kaydet" çubuğunu kirli saymazlar (WPRJ-718). */
+	function instantNames() {
+		var names = {};
+		form.querySelectorAll( 'input[data-rbn-instant]' ).forEach( function ( el ) {
+			if ( el.name ) {
+				names[ el.name ] = true;
+			}
+		} );
+		return names;
+	}
 	function snapshot() {
 		var parts = [];
+		var skip = instantNames();
 		var data = new FormData( form );
 		data.forEach( function ( v, k ) {
-			if ( 'string' === typeof v && '_wpnonce' !== k ) {
+			if ( 'string' === typeof v && '_wpnonce' !== k && ! skip[ k ] ) {
 				parts.push( k + '=' + v );
 			}
 		} );

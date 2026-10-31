@@ -38,6 +38,17 @@ final class Assets {
 				'ok'            => __( 'OK', 'adminkit' ),
 				'cancel'        => __( 'Cancel', 'adminkit' ),
 				'typeToConfirm' => __( 'Type %s to confirm', 'adminkit' ),
+				// Anında uygulanan anahtarlar: uç adresi + nonce + onay/sonuç metinleri.
+				'ajaxUrl'       => admin_url( 'admin-ajax.php' ),
+				'ajaxAction'    => Core\Settings\ToggleEndpoint::ACTION,
+				'toggleNonce'   => wp_create_nonce( Core\Settings\ToggleEndpoint::NONCE ),
+				'instantOn'     => __( 'Turn on %s?', 'adminkit' ),
+				'instantOff'    => __( 'Turn off %s?', 'adminkit' ),
+				'instantYes'    => __( 'Yes', 'adminkit' ),
+				'instantOnDone' => __( '%s is on.', 'adminkit' ),
+				'instantOffDone' => __( '%s is off.', 'adminkit' ),
+				'instantFailed' => __( 'The change could not be saved: the switch went back to its old position.', 'adminkit' ),
+				'reloadHint'    => __( 'Reload the page and try again.', 'adminkit' ),
 			)
 		);
 	}

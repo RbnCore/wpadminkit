@@ -11,7 +11,8 @@
  * "the form was not recognised"; the engine's rule is not bypassed — the same field is then written in FORM mode with
  * every current value of that form posted back, so no other field of the form can be reset.
  *
- * Phase 1 (WPRJ-716): new file, NOT registered anywhere. The AJAX entry point (`ToggleEndpoint`) is wired in Phase 2.
+ * Phase 2 (WPRJ-718): `ToggleEndpoint` is wired on `wp_ajax_adminkit_toggle`; screens mark their switches with the
+ * attributes `Form::instant()` derives from `switchable()` — one rule for what may be switched from here.
  *
  * @package AdminKit
  */
@@ -45,25 +46,26 @@ final class Toggle {
 	 * @param bool   $value Wanted value.
 	 * @return array{ok:bool,slug:string,path:string,value:bool,changed:bool,label:string,module?:array{id:string,enabled:bool,title:string}}|\WP_Error
 	 */
+	/**
+	 * The schema row when a path is an instant-switchable boolean, else null.
+	 *
+	 * Screens use this to mark an input: the same rule that `apply()` enforces decides whether the switch may go
+	 * instant, so a screen can pass every switch through it and only the valid ones light up.
+	 *
+	 * @return array<string, mixed>|null
+	 */
+	public static function switchable( string $slug, string $path ): ?array {
+		$checked = self::check( $slug, $path );
+		return is_wp_error( $checked ) ? null : $checked['row'];
+	}
+
 	public static function apply( string $slug, string $path, bool $value ): array|\WP_Error {
-		$slug = strtolower( trim( $slug ) );
-		if ( 1 !== preg_match( '/^[a-z0-9_]{1,40}$/', $slug ) || ! Engine::registered( $slug ) ) {
-			return self::error( 'rbnkit_toggle_unknown_slug', __( 'Unknown settings kit.', 'adminkit' ), 404 );
+		$checked = self::check( $slug, $path );
+		if ( is_wp_error( $checked ) ) {
+			return $checked;
 		}
-		if ( ! self::path_shape( $path ) ) {
-			return self::error( 'rbnkit_toggle_bad_path', __( 'The setting path is not valid.', 'adminkit' ), 400 );
-		}
-		$fields = Engine::fields( $slug );
-		if ( ! isset( $fields[ $path ] ) ) {
-			return self::error( 'rbnkit_toggle_unknown_field', __( 'Unknown setting.', 'adminkit' ), 400 );
-		}
-		$row = (array) $fields[ $path ];
-		if ( ! in_array( (string) $row['type'], array( 'bool', 'flag' ), true ) ) {
-			return self::error( 'rbnkit_toggle_not_switchable', __( 'This setting is not an on/off switch.', 'adminkit' ), 400 );
-		}
-		if ( in_array( Engine::travel( $row ), self::BLOCKED_TRAVEL, true ) ) {
-			return self::error( 'rbnkit_toggle_not_switchable', __( 'This setting cannot be switched from here.', 'adminkit' ), 400 );
-		}
+		$slug = $checked['slug'];
+		$row  = $checked['row'];
 
 		// Permission: the kit schema states it at slug level; a field/section level never existed. `update()` checks
 		// the schema's own capability again, so this gate can only be stricter, never weaker.
@@ -107,6 +109,36 @@ final class Toggle {
 	}
 
 	/* ------------------------------------------------------------------ internals */
+
+	/**
+	 * Slug + path + schema row, or the precise error the request is refused with.
+	 *
+	 * @return array{slug:string,row:array<string,mixed>}|\WP_Error
+	 */
+	private static function check( string $slug, string $path ): array|\WP_Error {
+		$slug = strtolower( trim( $slug ) );
+		if ( 1 !== preg_match( '/^[a-z0-9_]{1,40}$/', $slug ) || ! Engine::registered( $slug ) ) {
+			return self::error( 'rbnkit_toggle_unknown_slug', __( 'Unknown settings kit.', 'adminkit' ), 404 );
+		}
+		if ( ! self::path_shape( $path ) ) {
+			return self::error( 'rbnkit_toggle_bad_path', __( 'The setting path is not valid.', 'adminkit' ), 400 );
+		}
+		$fields = Engine::fields( $slug );
+		if ( ! isset( $fields[ $path ] ) ) {
+			return self::error( 'rbnkit_toggle_unknown_field', __( 'Unknown setting.', 'adminkit' ), 400 );
+		}
+		$row = (array) $fields[ $path ];
+		if ( ! in_array( (string) $row['type'], array( 'bool', 'flag' ), true ) ) {
+			return self::error( 'rbnkit_toggle_not_switchable', __( 'This setting is not an on/off switch.', 'adminkit' ), 400 );
+		}
+		if ( in_array( Engine::travel( $row ), self::BLOCKED_TRAVEL, true ) ) {
+			return self::error( 'rbnkit_toggle_not_switchable', __( 'This setting cannot be switched from here.', 'adminkit' ), 400 );
+		}
+		return array(
+			'slug' => $slug,
+			'row'  => $row,
+		);
+	}
 
 	/** Path shape: lower-case dotted schema keys only, bounded. */
 	private static function path_shape( string $path ): bool {

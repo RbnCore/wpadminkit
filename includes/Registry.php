@@ -30,6 +30,8 @@ final class Registry {
 			new Modules\MenuTrim(),
 			new Modules\ColorTheme(),
 			new Modules\ToastNotices(),
+			new Modules\DbMaintenance(),
+			new Modules\SystemHealth(),
 			new Modules\SettingsTransfer(),
 		);
 		/**

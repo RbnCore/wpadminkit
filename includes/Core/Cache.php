@@ -2,8 +2,10 @@
 /**
  * Central cache: named groups registered by plugins, versioned keys, stampede lock, pluggable driver.
  *
- * A thin layer over the WordPress object cache / transients. Clearing a group raises its version number
- * (old entries become unreachable and expire by TTL); no rows are scanned or deleted.
+ * A thin layer over the WordPress object cache / transients. Clearing a group raises its version number and then
+ * DELETES the entries the raise made unreachable (their rows would otherwise pile up in `wp_options` until the TTL
+ * runs out — on a shared host a frequently cleared group could bloat the table). The delete is batched and limited to
+ * the flushed group's own key prefix (WPRJ-719).
  *
  * Every group keeps its version counter in its OWN option row (`rbnkit_core_gv_<plugin>.<name>`). One row per
  * group means a flush can never drop another group's counter, and the counter is raised with a single atomic
@@ -39,6 +41,12 @@ final class Cache {
 	private const LOCK_TTL  = 30;
 	private const WAIT_STEP = 100000;  // 100 ms.
 	private const WAIT_MAX  = 5;       // 5 steps = 500 ms at most.
+
+	/** Rows removed per DELETE when a flush sweeps the old versions of a group (WPRJ-719). */
+	private const SWEEP_BATCH = 1000;
+
+	/** Most batches one flush deletes (50 x 1000 rows); a bigger leftover is finished by the next flush. */
+	private const SWEEP_ROUNDS = 50;
 
 	/** @var array<string, array{plugin:string,name:string,id:string,ttl:int,persistent:bool}> */
 	private static array $groups = array();
@@ -168,7 +176,7 @@ final class Cache {
 		}
 	}
 
-	/** Clears a group by raising its version. */
+	/** Clears a group by raising its version and removes the entries the raise made unreachable. */
 	public static function flush_group( string $group ): bool {
 		$def = self::def( $group );
 		if ( null === $def ) {
@@ -179,6 +187,10 @@ final class Cache {
 		self::bump_row( $option );
 		self::$versions[ $def['id'] ] = self::row_value( $option );
 		self::sync_option_cache( $option, self::$versions[ $def['id'] ] );
+		// The raise alone only makes the old entries unreachable; without this sweep their rows stay in `wp_options`
+		// until the TTL runs out (WPRJ-719). Delete first, then report: a crash in between leaves dead rows that the
+		// next flush of the same group removes, never a reachable entry.
+		self::sweep_old( $def, self::$versions[ $def['id'] ] );
 		$stats                = self::stats_raw();
 		$stats[ $def['id'] ]  = array(
 			'sets'       => 0,
@@ -358,6 +370,48 @@ final class Cache {
 		$like = $wpdb->esc_like( '_transient_rbnkit_' . $m[1] . '.' . $m[2] . '.' ) . '%';
 		$max  = Db::get_var( "SELECT MAX(CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(option_name, '.', 3), '.', -1) AS UNSIGNED)) FROM {$wpdb->options} WHERE option_name LIKE %s", array( $like ) );
 		return (int) $max;
+	}
+
+	/**
+	 * Deletes the rows of ONE group that a version raise made unreachable: every stored entry of the group whose
+	 * version is below the current one (value, timeout and stampede-lock rows alike). Rows of other groups, of other
+	 * plugins and the group's own counter row (`rbnkit_core_gv_…`) do not carry the key prefix and are never touched.
+	 *
+	 * Batched, so a group that already carries thousands of dead rows cannot hit the request time limit; whatever is
+	 * left after the last batch is removed by the next flush of the same group.
+	 *
+	 * @param array{plugin:string,name:string,persistent:bool} $def     Group definition.
+	 * @param int                                              $current The version the group was just raised to.
+	 * @return int Rows deleted.
+	 */
+	private static function sweep_old( array $def, int $current ): int {
+		global $wpdb;
+		if ( empty( $def['persistent'] ) ) {
+			return 0; // A request-local group never writes a row.
+		}
+		// Stored key shape: `_transient_rbnkit_<plugin>.<name>.<version>.<md5>` — plus its `_transient_timeout_`
+		// twin and the `.lock` suffix of the stampede lock. Plugin and name carry no dot, so the third dot-separated
+		// part is the version.
+		$prefix  = 'rbnkit_' . $def['plugin'] . '.' . $def['name'] . '.';
+		$sql     = "DELETE FROM {$wpdb->options} WHERE ( option_name LIKE %s OR option_name LIKE %s ) AND CAST( SUBSTRING_INDEX( SUBSTRING_INDEX( option_name, '.', 3 ), '.', -1 ) AS UNSIGNED ) < %d LIMIT %d";
+		$args    = array(
+			$wpdb->esc_like( '_transient_' . $prefix ) . '%',
+			$wpdb->esc_like( '_transient_timeout_' . $prefix ) . '%',
+			$current,
+			self::SWEEP_BATCH,
+		);
+		$deleted = 0;
+		for ( $round = 0; $round < self::SWEEP_ROUNDS; $round++ ) {
+			$rows = Db::query( $sql, $args );
+			if ( false === $rows || (int) $rows < 1 ) {
+				break;
+			}
+			$deleted += (int) $rows;
+			if ( (int) $rows < self::SWEEP_BATCH ) {
+				break;
+			}
+		}
+		return $deleted;
 	}
 
 	/**

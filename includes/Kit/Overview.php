@@ -135,7 +135,7 @@ final class Overview {
 		$icons = array( 'kurulu' => 'home', 'katalog' => 'down', 'cache' => 'refresh', 'logs' => 'list' );
 		?>
 		<div class="wrap rbn-wrap"<?php echo Assets::tone_attr(); // phpcs:ignore WordPress.Security.EscapeOutput ?>>
-			<?php echo Header::render( array( 'name' => 'RBN Kit', 'version' => ADMINKIT_VERSION, 'status' => array( 'label' => __( 'Active', 'adminkit' ), 'tone' => 'ok' ) ) ); // phpcs:ignore WordPress.Security.EscapeOutput -- Header::render() kaçışlar. ?>
+			<?php echo Header::render( array( 'name' => 'RBN Kit', 'title' => (string) ( $tabs[ $tab ] ?? '' ), 'title_hidden' => true, 'version' => ADMINKIT_VERSION, 'status' => array( 'label' => __( 'Active', 'adminkit' ), 'tone' => 'ok' ) ) ); // phpcs:ignore WordPress.Security.EscapeOutput -- Header::render() kaçışlar. ?>
 			<?php
 			if ( null !== $note ) {
 				$ok   = 'hata' !== $note['code'];

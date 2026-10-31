@@ -39,7 +39,8 @@ final class Header {
 		$title  = (string) ( $args['title'] ?? '' );
 		$status = (array) ( $args['status'] ?? array() );
 
-		// The brand row owns the page `h1` only when there is no page title under it.
+		// One shape in every kit: the brand row is a `p`; the page title is the page's only `h1` (visible or screen-reader only).
+		// A call without any title keeps the brand as `h1`, so a page never ends up without one.
 		$tag   = '' === $title ? 'h1' : 'p';
 		$ident = '<' . $tag . ' class="rbn-brand">' . esc_html( $name ) . '</' . $tag . '>'
 			. '<span class="rbn-chip">' . esc_html( 'v' . (string) ( $args['version'] ?? '' ) ) . '</span>'

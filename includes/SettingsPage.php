@@ -117,8 +117,10 @@ final class SettingsPage {
 			<?php
 			echo Header::render( // phpcs:ignore WordPress.Security.EscapeOutput -- Header::render() kaçışlar.
 				array(
-					'name'    => 'AdminKit',
-					'version' => ADMINKIT_VERSION,
+					'name'         => 'AdminKit',
+					'title'        => (string) ( $tabs[ $tab ] ?? '' ),
+					'title_hidden' => true,
+					'version'      => ADMINKIT_VERSION,
 					'status'  => array(
 						/* translators: 1: open module count, 2: total module count */
 						'label' => sprintf( __( '%1$d of %2$d modules on', 'adminkit' ), $open, count( $modules ) ),

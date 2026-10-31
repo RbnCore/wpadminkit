@@ -2,7 +2,7 @@
  * İki kullanım:
  *  1) Panel sekmesi: <ul class="rbn-tabs" data-rbn-tabs role="tablist"> içinde <button role="tab" aria-controls="panel-id" data-key="x">.
  *  2) Sunucu gezintisi: aynı kök, içinde <a class="rbn-tabs__tab" href="?page=..&tab=x" aria-current="page"> — JS yoksa düz bağlantı çalışır.
- * Üst sekme `tab`, alt sekme (`rbn-tabs--sub`) `sub` parametresini yazar; URL history.replaceState ile eşitlenir. Ok/Home/End: roving tabindex.
+ * Üst sekme `tab`, alt sekme (`rbn-tabs--sub`) `sub` parametresini yazar; URL history.pushState ile eşitlenir (aynı sekmeye tekrar tıklama girdi eklemez); popstate önceki sekmeyi gösterir. Ok/Home/End: roving tabindex.
  */
 (function () {
 	'use strict';
@@ -47,14 +47,20 @@
 			tab.addEventListener('keydown', function (e) { self.key(e, i); });
 		});
 		this.start();
+		/* Geri/ileri tuşu: adres çubuğundaki parametreye göre sekmeyi göster (girdi eklemez, odağı çalmaz). */
+		if (this.panels) {
+			window.addEventListener('popstate', function () { self.start(); });
+		}
 	}
 
 	Tabs.prototype.start = function () {
 		var self = this;
 		var want = new URLSearchParams(location.search).get(this.name);
-		var current = this.tabs.filter(function (t) { return keyOf(t, self.name) === want; })[0] ||
-			this.tabs.filter(function (t) { return t.getAttribute('aria-selected') === 'true' || t.getAttribute('aria-current') === 'page'; })[0] ||
-			this.tabs[0];
+		if (!this.initial) {
+			/* Sunucunun seçtiği sekme = parametresiz adresin varsayılanı (geri tuşu ilk girdiye dönünce buna düşer). */
+			this.initial = this.tabs.filter(function (t) { return t.getAttribute('aria-selected') === 'true' || t.getAttribute('aria-current') === 'page'; })[0] || this.tabs[0];
+		}
+		var current = this.tabs.filter(function (t) { return keyOf(t, self.name) === want; })[0] || this.initial;
 		if (this.panels) {
 			this.show(current, false);
 		} else {
@@ -82,10 +88,12 @@
 				p.hidden = t !== active;
 			}
 		});
-		if (sync && window.history && history.replaceState) {
+		if (sync && window.history && history.pushState) {
 			var url = new URL(location.href);
-			url.searchParams.set(this.name, keyOf(active, this.name));
-			history.replaceState(null, '', url.toString());
+			if (url.searchParams.get(this.name) !== keyOf(active, this.name)) {
+				url.searchParams.set(this.name, keyOf(active, this.name));
+				history.pushState(null, '', url.toString());
+			}
 		}
 	};
 

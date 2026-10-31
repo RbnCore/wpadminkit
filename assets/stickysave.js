@@ -54,10 +54,12 @@
 	var bar = document.createElement( 'div' );
 	var status = document.createElement( 'span' );
 	var btn = document.createElement( 'button' );
-	var baseline = '';
+	var baseline = {};
+	var visibleDirty = false;
 	var dirty = false;
 	var submitting = false;
-	var offscreen = false;
+	var live = document.createElement( 'span' );
+	var wasDirty = false;
 
 	/** Anında uygulanan anahtarlar kendi ucundan yazılır: "Kaydet" çubuğunu kirli saymazlar (WPRJ-718). */
 	function instantNames() {
@@ -69,30 +71,73 @@
 		} );
 		return names;
 	}
+	/** Alan adı -> değer birleşimi. Anında anahtarlar, `_wpnonce` ve dosya alanları dışarıda kalır. */
 	function snapshot() {
-		var parts = [];
+		var map = {};
 		var skip = instantNames();
 		var data = new FormData( form );
 		data.forEach( function ( v, k ) {
 			if ( 'string' === typeof v && '_wpnonce' !== k && ! skip[ k ] ) {
-				parts.push( k + '=' + v );
+				map[ k ] = ( map[ k ] || '' ) + '' + v;
 			}
 		} );
-		return parts.join( '&' );
+		return map;
 	}
 	function tall() {
 		return root.scrollHeight >= cfg.minHeight;
 	}
+	/** Kaydedilmemiş değişiklik var mı (tüm sekmelerde) ve değişen alan şu an görünen bir sekmede mi? */
+	function compare() {
+		var now = snapshot();
+		var seen = {};
+		var changed = {};
+		var k;
+		var any = false;
+		for ( k in now ) {
+			seen[ k ] = true;
+			if ( now[ k ] !== baseline[ k ] ) {
+				changed[ k ] = true;
+				any = true;
+			}
+		}
+		for ( k in baseline ) {
+			if ( ! seen[ k ] ) {
+				changed[ k ] = true;
+				any = true;
+			}
+		}
+		var visible = false;
+		if ( any ) {
+			Array.prototype.forEach.call( form.elements, function ( el ) {
+				if ( el.name && changed[ el.name ] && ! el.closest( '[hidden]' ) ) {
+					visible = true;
+				}
+			} );
+		}
+		return { any: any, visible: visible };
+	}
+	/** Çubuk YALNIZ görünen sekmede kaydedilmemiş değişiklik varken çıkar; yalnız-anahtar sekmelerde dirty hiç oluşmaz. */
 	function render() {
-		var show = tall() && ( dirty || offscreen );
+		var show = tall() && visibleDirty;
 		bar.hidden = ! show;
 		document.body.classList.toggle( 'adminkit-has-bar', show );
 		root.style.setProperty( '--adminkit-bar-h', show ? bar.offsetHeight + 'px' : '0px' );
-		status.textContent = dirty ? cfg.i18n.dirty : ( show ? cfg.i18n.clean : '' );
-		bar.classList.toggle( 'is-dirty', dirty );
+		status.textContent = show ? cfg.i18n.dirty : '';
+		bar.classList.toggle( 'is-dirty', show );
+		/* Çubuk gizliyken içindeki canlı bölge duyurulmaz: duyuru ayrı, hep görünür bir `aria-live` kutusundan yapılır. */
+		if ( visibleDirty !== wasDirty ) {
+			wasDirty = visibleDirty;
+			if ( visibleDirty ) {
+				live.textContent = cfg.i18n.dirty;
+			} else if ( ! dirty ) {
+				live.textContent = cfg.i18n.clean;
+			}
+		}
 	}
 	function check() {
-		dirty = snapshot() !== baseline;
+		var c = compare();
+		dirty = c.any;
+		visibleDirty = c.visible;
 		render();
 	}
 
@@ -104,19 +149,28 @@
 	bar.setAttribute( 'aria-label', cfg.i18n.bar );
 	bar.hidden = true;
 	status.className = 'adminkit-sb__st';
-	status.setAttribute( 'role', 'status' );
+	live.className = 'screen-reader-text';
+	live.setAttribute( 'role', 'status' );
+	live.setAttribute( 'aria-live', 'polite' );
 	btn.type = 'button';
 	btn.className = 'rbn-btn rbn-btn--pri';
 	btn.textContent = cfg.i18n.save;
 	bar.appendChild( status );
 	bar.appendChild( btn );
 	document.body.appendChild( bar );
+	document.body.appendChild( live );
 
 	btn.addEventListener( 'click', function () {
 		origin.click();
 	} );
-	form.addEventListener( 'input', check );
-	form.addEventListener( 'change', check );
+	/* Alanlar `form="..."` ile forma bağlı olup form öğesinin DIŞINDA durabilir (örn. Genel sekmesi): olay forma kabarmaz, belgeden dinlenir. */
+	function mine( e ) {
+		if ( e.target && e.target.form === form ) {
+			check();
+		}
+	}
+	document.addEventListener( 'input', mine );
+	document.addEventListener( 'change', mine );
 	form.addEventListener( 'submit', function ( e ) {
 		submitting = true;
 		window.setTimeout( function () {
@@ -132,15 +186,13 @@
 		}
 	} );
 	window.addEventListener( 'resize', render );
-	if ( 'IntersectionObserver' in window ) {
-		new IntersectionObserver( function ( entries ) {
-			offscreen = ! entries[ entries.length - 1 ].isIntersecting;
-			render();
-		} ).observe( origin );
+	/* Sekme değişince (panel `hidden` özniteliği) çubuk o sekmeye göre yeniden hesaplanır. */
+	if ( 'MutationObserver' in window ) {
+		new MutationObserver( check ).observe( form.closest( '.wrap' ) || form, { subtree: true, attributes: true, attributeFilter: [ 'hidden' ] } );
 	}
 	window.addEventListener( 'load', function () {
 		baseline = snapshot();
-		render();
+		check();
 	} );
 	baseline = snapshot();
 }() );

@@ -1,6 +1,6 @@
 /* AdminKit — yeniden kullanılabilir günlük listesi (handle: adminkit-core-logs). Görünüm ortak kitin `.rbn-log*` sınıflarıdır (handle: rbn-admin-ui).
    Kullanım: <div data-rbnkit-logs data-channel="eklenti.ad"></div>
-   Ayarlar (data-*): channel · channels (JSON: [{id,plugin,name}], verilirse kanal seçici çıkar) · per-page (1-50, varsayılan 8) · filters (1 = süzgeç çubuğu) · root · nonce.
+   Ayarlar (data-*): channel · labels (JSON: {olay_kodu: "Okunur etiket"}; verilirse Olay sütununda etiket görünür, ham kod altında küçük yazı kalır) · channels (JSON: [{id,plugin,name}], verilirse kanal seçici çıkar) · per-page (1-50, varsayılan 8) · filters (1 = süzgeç çubuğu) · root · nonce.
    Betikle: window.RbnKitLogs.init(element, { channel, perPage, filters, channels, root, nonce }). Aynı öğeye ikinci init çağrısı bir şey yapmaz.
    Veri: GET rbnkit/v1/logs/<kanal>. Kanal/eklenti adı bilmez. Bağımlılıksız. */
 (function () {
@@ -67,10 +67,12 @@
 			channel: opts.channel || data.channel || (channels && channels[0] && channels[0].id) || '',
 			perPage: clamp(opts.perPage || data.perPage, 1, 50, 8),
 			filters: (opts.filters !== undefined ? opts.filters : data.filters === '1') ? true : false,
+			labels: opts.labels || null,
 			base: opts.root || data.root || cfg.root,
 			nonce: opts.nonce || data.nonce || cfg.nonce,
 			page: 1, level: '', type: '', from: '', to: '', total: 0
 		};
+		if (!state.labels && data.labels) { try { state.labels = JSON.parse(data.labels); } catch (e) { state.labels = null; } }
 		var ctrl = null;
 		var skelTimer = null;
 		root.textContent = '';
@@ -175,7 +177,12 @@
 			badge.appendChild(icon(lv[0]));
 			badge.appendChild(document.createTextNode(t[lv[1]] || item.level));
 			td.appendChild(badge); tr.appendChild(td);
-			td = el('td'); td.dataset.label = t.event; td.appendChild(el('code', '', item.event)); tr.appendChild(td);
+			td = el('td'); td.dataset.label = t.event;
+			var nice = state.labels && Object.prototype.hasOwnProperty.call(state.labels, item.event) ? state.labels[item.event] : '';
+			if (nice) { td.appendChild(el('span', 'rbn-log__ev', nice)); }
+			var code = el('code', nice ? 'rbn-log__code' : '');
+			String(item.event).split('_').forEach(function (part, i) { if (i) { code.appendChild(document.createTextNode('_')); code.appendChild(document.createElement('wbr')); } code.appendChild(document.createTextNode(part)); });
+			td.appendChild(code); tr.appendChild(td);
 			td = el('td', '', item.message); td.dataset.label = t.message; tr.appendChild(td);
 			td = el('td'); td.dataset.label = t.context;
 			if (!ctx.length) {

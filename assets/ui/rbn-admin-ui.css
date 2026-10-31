@@ -233,6 +233,9 @@ body:has(.rbn-wrap[data-tone=koyu]) #wpfooter a{color:var(--rbn-ac)}
 
 /* ═══ GÜNLÜK LİSTESİ (adminkit-core-logs ile aynı yapı; renkler yalnız --rbn-*) ═══ */
 .rbn-log{width:100%}
+.rbn-log code{overflow-wrap:anywhere}
+.rbn-log__ev{display:block;font-weight:var(--rbn-fw-m)}
+.rbn-log__code{display:block;margin-top:.125rem;font-size:var(--rbn-fs-sm);color:var(--rbn-muted)}
 .rbn-log__lvl{display:inline-flex;align-items:center;gap:.3rem;min-height:1.75rem;padding:0 var(--rbn-s2);border-radius:var(--rbn-r-pill);font-size:var(--rbn-fs-sm);font-weight:var(--rbn-fw-m);white-space:nowrap}
 .rbn-log__lvl.is-debug{color:var(--rbn-dbg);background:var(--rbn-dbg-bg)}
 .rbn-log__lvl.is-info{color:var(--rbn-info);background:var(--rbn-info-bg)}

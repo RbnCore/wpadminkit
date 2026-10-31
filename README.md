@@ -47,6 +47,7 @@ Defaults after activation: back to top, sticky save bar and notice organizer are
 | WPSeoKit | RBN Kit menu, admin kit, the shared log list, six cache groups (`wpseokit.probe`, `wpseokit.sitemap`, `wpseokit.llms`, `wpseokit.score`, `wpseokit.updates`, `wpseokit.maintenance`), four log channels (`wpseokit.activity`, `wpseokit.errors`, `wpseokit.updates`, `wpseokit.yoast`) and the network switch for its update check |
 | ContentHealth | RBN Kit menu, admin kit, cache group `contenthealth.scores`, log channel `contenthealth.errors` |
 | CookieKit | RBN Kit menu, admin kit, cache groups `cookiekit.rate` and `cookiekit.updates`, and the network switch for its update check |
+| SecurityKit | RBN Kit menu, admin kit, cache groups `securitykit.checks` and `securitykit.score`, log channels `securitykit.login` and `securitykit.activity`, and the network switch for its update check |
 
 ## Requirements
 
@@ -58,7 +59,7 @@ The `Requires Plugins` dependency check used by WPSeoKit, ContentHealth and Cook
 
 ## Installation
 
-1. Download `adminkit-0.1.0.zip` from [Releases](https://github.com/RbnCore/wpadminkit/releases). If you downloaded the package by hand, compare its SHA-256 with the `.sha256` asset next to it.
+1. Download `adminkit-0.1.2.zip` from [Releases](https://github.com/RbnCore/wpadminkit/releases). If you downloaded the package by hand, compare its SHA-256 with the `.sha256` asset next to it.
 2. In WordPress go to **Plugins → Add New → Upload Plugin**, choose the zip, install and activate.
 3. Open **RBN Kit → AdminKit** in the sidebar (just below Dashboard) and switch the modules you want. Save.
 
@@ -68,7 +69,7 @@ You can also copy the `adminkit` folder into `wp-content/plugins/`.
 
 ## Updating
 
-Version 0.1.0 has no automatic update channel of its own.
+AdminKit updates itself through the same central updater as the other RBN plugins: a new release appears on the Plugins page like any WordPress update while RBN Kit → AdminKit → General → Network allows GitHub access.
 
 - **RBN Kit → Overview** (Installed tab) shows an "Update available" label when GitHub has a newer release than the installed one.
 - To update, upload the new `adminkit-<version>.zip` over the installed copy (Plugins → Add New → Upload Plugin → *Replace current*). Your settings live in the database and are not touched by a file update.
@@ -92,7 +93,7 @@ All RBN plugins appear under one **RBN Kit** top-level menu just below Dashboard
 
 ## Version and license
 
-- Version 0.1.0
+- Version 0.1.2
 - License: GPL-2.0-or-later (see [LICENSE](LICENSE))
 - Text domain: `adminkit`
 

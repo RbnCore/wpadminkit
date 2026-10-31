@@ -134,7 +134,10 @@ final class SystemHealth implements Module {
 	}
 
 	private static function back(): void {
-		wp_safe_redirect( self::tab_url() );
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- nonce refresh() başında doğrulandı; değer beyaz listeden.
+		$sub = isset( $_GET['sub'] ) ? sanitize_key( wp_unslash( $_GET['sub'] ) ) : '';
+		$url = self::tab_url();
+		wp_safe_redirect( in_array( $sub, array( 'overview', 'server', 'db', 'cron', 'report' ), true ) ? add_query_arg( 'sub', $sub, $url ) : $url );
 		exit;
 	}
 
@@ -717,13 +720,55 @@ final class SystemHealth implements Module {
 		$cron   = self::cron_rows( $snapshot );
 		$db     = (array) ( $snapshot['db'] ?? array() );
 		$since  = human_time_diff( (int) ( $snapshot['generated'] ?? time() ) );
+
+		$autoload_status = self::autoload_status( (int) ( $db['autoload']['total_size'] ?? 0 ) );
+		$attention       = array(
+			'server' => self::attention_count( $server ),
+			'db'     => 'ok' === self::normalize_status( $autoload_status ) ? 0 : 1,
+			'cron'   => self::attention_count( $cron ),
+		);
+		$attention['overview'] = $attention['server'] + $attention['db'] + $attention['cron'];
+		$tabs                  = array(
+			'overview' => __( 'Overview', 'adminkit' ),
+			'server'   => __( 'Server and PHP', 'adminkit' ),
+			'db'       => __( 'Database', 'adminkit' ),
+			'cron'     => __( 'WP-Cron', 'adminkit' ),
+			'report'   => __( 'Support report', 'adminkit' ),
+		);
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- salt okuma: yalnız beyaz listedeki sekme anahtarı.
+		$sub = isset( $_GET['sub'] ) ? sanitize_key( wp_unslash( $_GET['sub'] ) ) : '';
+		$sub = isset( $tabs[ $sub ] ) ? $sub : 'overview';
 		?>
 		<div class="ak-health" data-health>
+			<ul class="rbn-tabs rbn-tabs--sub ak-health__tabs" role="tablist" aria-label="<?php esc_attr_e( 'System health sections', 'adminkit' ); ?>" data-rbn-tabs>
+				<?php foreach ( $tabs as $key => $label ) : ?>
+					<li role="presentation">
+						<button type="button" role="tab" id="ak-health-tab-<?php echo esc_attr( $key ); ?>" class="rbn-tabs__tab" data-key="<?php echo esc_attr( $key ); ?>" aria-controls="ak-health-panel-<?php echo esc_attr( $key ); ?>" aria-selected="<?php echo $sub === $key ? 'true' : 'false'; ?>" tabindex="<?php echo $sub === $key ? '0' : '-1'; ?>">
+							<?php echo esc_html( $label ); ?>
+							<?php if ( ! empty( $attention[ $key ] ) ) : ?>
+								<span class="rbn-count" aria-hidden="true"><?php echo esc_html( (string) $attention[ $key ] ); ?></span>
+								<span class="rbn-sr"><?php echo esc_html( sprintf( /* translators: %d: number of checks that need attention */ _n( '%d check needs attention', '%d checks need attention', $attention[ $key ], 'adminkit' ), $attention[ $key ] ) ); ?></span>
+							<?php endif; ?>
+						</button>
+					</li>
+				<?php endforeach; ?>
+			</ul>
+
+			<section class="ak-health__panel" id="ak-health-panel-overview" role="tabpanel" aria-labelledby="ak-health-tab-overview" tabindex="0">
 			<?php echo Assets::note( 'info', __( 'Everything here is read-only and belongs to this site only: no external request is sent and nothing is deleted.', 'adminkit' ) ); // phpcs:ignore WordPress.Security.EscapeOutput -- Assets::note() kaçışlar. ?>
 			<p class="rbn-help">
 				<?php
 				/* translators: %s: how long ago the data was read */
 				printf( esc_html__( 'Read %s ago. Press Refresh to read it again.', 'adminkit' ), esc_html( $since ) );
+				?>
+			</p>
+			<p>
+				<?php
+				if ( $attention['overview'] > 0 ) {
+					echo '<span class="rbn-chip rbn-chip--warn">' . Assets::icon( 'alert' ) . esc_html( sprintf( /* translators: %d: number of checks that need attention */ _n( '%d check needs attention', '%d checks need attention', $attention['overview'], 'adminkit' ), $attention['overview'] ) ) . '</span>'; // phpcs:ignore WordPress.Security.EscapeOutput -- Assets::icon() kaçışlar.
+				} else {
+					echo '<span class="rbn-chip rbn-chip--ok">' . Assets::icon( 'check' ) . esc_html__( 'All checks are good', 'adminkit' ) . '</span>'; // phpcs:ignore WordPress.Security.EscapeOutput -- Assets::icon() kaçışlar.
+				}
 				?>
 			</p>
 
@@ -741,7 +786,7 @@ final class SystemHealth implements Module {
 				<li class="rbn-stat">
 					<p class="rbn-stat__k"><?php esc_html_e( 'Autoload', 'adminkit' ); ?></p>
 					<p class="rbn-stat__v"><?php echo esc_html( self::bytes_text( (int) ( $db['autoload']['total_size'] ?? 0 ) ) ); ?></p>
-					<p class="rbn-stat__s"><?php echo self::chip( self::autoload_status( (int) ( $db['autoload']['total_size'] ?? 0 ) ) ); // phpcs:ignore WordPress.Security.EscapeOutput ?></p>
+					<p class="rbn-stat__s"><?php echo self::chip( $autoload_status ); // phpcs:ignore WordPress.Security.EscapeOutput -- chip() kaçışlar. ?></p>
 				</li>
 				<li class="rbn-stat">
 					<p class="rbn-stat__k">WP-Cron</p>
@@ -750,28 +795,65 @@ final class SystemHealth implements Module {
 				</li>
 			</ul>
 
+			<div class="rbn-form-actions"><?php echo self::refresh_button( 'overview' ); // phpcs:ignore WordPress.Security.EscapeOutput -- refresh_button() kaçışlar. ?></div>
+			</section>
+
+			<section class="ak-health__panel" id="ak-health-panel-server" role="tabpanel" aria-labelledby="ak-health-tab-server" tabindex="0">
 			<h3><?php esc_html_e( 'Server and PHP', 'adminkit' ); ?></h3>
 			<?php self::rows_table( __( 'Server and PHP checks', 'adminkit' ), $server ); ?>
+			</section>
 
+			<section class="ak-health__panel" id="ak-health-panel-db" role="tabpanel" aria-labelledby="ak-health-tab-db" tabindex="0">
 			<h3><?php esc_html_e( 'Database', 'adminkit' ); ?></h3>
 			<p class="rbn-help"><?php esc_html_e( 'The database is read only here. Nothing is deleted on this screen; cleanup lives in the Database maintenance module.', 'adminkit' ); ?></p>
-			<?php self::db_section( $db ); ?>
+			<?php
+			if ( self::db_maintenance_enabled() ) {
+				echo '<p><a class="rbn-btn" href="' . esc_url( add_query_arg( 'tab', ( new DbMaintenance() )->id(), SettingsPage::url() ) ) . '">' . Assets::icon( 'broom' ) . esc_html__( 'Go to Database maintenance', 'adminkit' ) . '</a></p>'; // phpcs:ignore WordPress.Security.EscapeOutput -- Assets::icon() kaçışlar.
+			}
+			self::db_section( $db );
+			?>
+			</section>
 
+			<section class="ak-health__panel" id="ak-health-panel-cron" role="tabpanel" aria-labelledby="ak-health-tab-cron" tabindex="0">
 			<h3><?php esc_html_e( 'WP-Cron status', 'adminkit' ); ?></h3>
 			<p class="rbn-help"><?php esc_html_e( 'This screen never runs, lists or deletes cron events; it only reads the status.', 'adminkit' ); ?></p>
 			<?php self::rows_table( __( 'WP-Cron checks', 'adminkit' ), $cron ); ?>
+			</section>
 
+			<section class="ak-health__panel" id="ak-health-panel-report" role="tabpanel" aria-labelledby="ak-health-tab-report" tabindex="0">
 			<h3><?php esc_html_e( 'Support report', 'adminkit' ); ?></h3>
 			<p class="rbn-help"><?php esc_html_e( 'The report contains versions, limits and plugin names only: no site address, user name, e-mail address, password, key or salt.', 'adminkit' ); ?></p>
 			<label class="rbn-label" for="adminkit-health-report"><?php esc_html_e( 'Plain-text summary', 'adminkit' ); ?></label>
 			<textarea class="rbn-textarea rbn-input--mono" id="adminkit-health-report" rows="14" readonly><?php echo esc_textarea( self::support_report( $snapshot ) ); ?></textarea>
 			<div class="rbn-form-actions">
 				<button type="button" class="rbn-btn rbn-btn--pri" data-health-copy><?php echo Assets::icon( 'copy' ); // phpcs:ignore WordPress.Security.EscapeOutput -- sabit SVG. ?><?php esc_html_e( 'Copy support report', 'adminkit' ); ?></button>
-				<a class="rbn-btn" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=' . self::ACTION_REFRESH ), self::NONCE ) ); ?>"><?php echo Assets::icon( 'refresh' ); // phpcs:ignore WordPress.Security.EscapeOutput ?><?php esc_html_e( 'Refresh', 'adminkit' ); ?></a>
+				<?php echo self::refresh_button( 'report' ); // phpcs:ignore WordPress.Security.EscapeOutput -- refresh_button() kaçışlar. ?>
 			</div>
 			<p class="rbn-help" data-health-status role="status" aria-live="polite"></p>
+			</section>
 		</div>
 		<?php
+	}
+
+	/** Dikkat gerektiren (ok olmayan) denetim sayısı. @param array<int, array<string, string>> $rows Satırlar. */
+	private static function attention_count( array $rows ): int {
+		$n = 0;
+		foreach ( $rows as $row ) {
+			if ( 'ok' !== self::normalize_status( (string) ( $row['status'] ?? '' ) ) ) {
+				++$n;
+			}
+		}
+		return $n;
+	}
+
+	private static function db_maintenance_enabled(): bool {
+		$settings = Settings::for_module( new DbMaintenance() );
+		return ! empty( $settings['enabled'] );
+	}
+
+	/** Yenile bağlantısı; işlem bitince kullanıcı aynı iç sekmeye döner. */
+	private static function refresh_button( string $sub ): string {
+		return '<a class="rbn-btn" href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=' . self::ACTION_REFRESH . '&sub=' . $sub ), self::NONCE ) ) . '">' . Assets::icon( 'refresh' ) . esc_html__( 'Refresh', 'adminkit' ) . '</a>';
 	}
 
 	/** @param array<int, array<string, string>> $rows Satırlar. */

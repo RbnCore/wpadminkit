@@ -25,3 +25,7 @@
 	.ak-db__t th[scope=row]{grid-template-columns:minmax(0,1fr)}   /* istif görünümünde etiket ve yardım alt alta */
 }
 .ak-transfer__plan h4{margin:var(--rbn-s4) 0 var(--rbn-s1)}   /* kit blokları arasında nefes: başlıklar birbirine yapışmasın */
+.rbn-tabs.ak-health__tabs{flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;padding:var(--rbn-s1) var(--rbn-s1) var(--rbn-s2);margin-bottom:var(--rbn-s4)}   /* sistem sağlığı iç sekmeleri: tek satır, dar ekranda yatay kaydırılır (sarmaz, sayfayı taşırmaz) */
+.ak-health__tabs>li{flex:none}
+.ak-health__tabs .rbn-count{margin-inline-start:var(--rbn-s1)}
+.ak-health__panel:focus-visible{outline-offset:var(--rbn-s1)}

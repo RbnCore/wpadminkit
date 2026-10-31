@@ -30,6 +30,7 @@ final class Registry {
 			new Modules\MenuTrim(),
 			new Modules\ColorTheme(),
 			new Modules\ToastNotices(),
+			new Modules\SettingsTransfer(),
 		);
 		/**
 		 * Yeni modül ekleme noktası: `Module` uygulayan nesneleri diziye ekleyin.

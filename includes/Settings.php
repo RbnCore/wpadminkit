@@ -82,15 +82,19 @@ final class Settings {
 	public static function schema(): array {
 		$schema = array();
 		foreach ( Registry::all() as $id => $module ) {
-			$rows = array(
+			// Kendi formu olan modül (dosya yükleme ana forma sığmaz): alanları ana ayar formunu hiç ilgilendirmez,
+			// yoksa ana formu kaydetmek o modülün anahtarını varsayılana döndürürdü.
+			$forms = method_exists( $module, 'form_id' ) ? array( (string) $module->form_id() ) : array( self::FORM );
+			$rows  = array(
 				'enabled' => array(
-					'type'    => 'bool',
-					'default' => $module->default_enabled(),
-					'forms'   => array( self::FORM ),
+					'type'     => 'bool',
+					'default'  => $module->default_enabled(),
+					'forms'    => $forms,
+					'portable' => true,
 				),
 			);
 			foreach ( $module->settings_schema() as $field ) {
-				$row = self::row( $field );
+				$row = self::row( $field, $forms );
 				if ( null !== $row ) {
 					$rows[ (string) $field['key'] ] = $row;
 				}
@@ -104,15 +108,16 @@ final class Settings {
 	 * Bir modül alanını motor satırına çevirir; saklanmayan alanlarda null.
 	 *
 	 * @param array<string, mixed> $field Modül alan tanımı.
+	 * @param string[]             $forms Alanın ait olduğu ayar formu (boş: ana form).
 	 * @return array<string, mixed>|null
 	 */
-	private static function row( array $field ): ?array {
+	private static function row( array $field, array $forms = array() ): ?array {
 		$key = (string) ( $field['key'] ?? '' );
 		if ( '' === $key || ! empty( $field['locked'] ) || 'custom' === ( $field['type'] ?? '' ) ) {
 			return null;
 		}
 		$default = self::default_of( $field );
-		$row     = array( 'forms' => array( self::FORM ) );
+		$row     = array( 'forms' => $forms ? array_values( $forms ) : array( self::FORM ) );
 		switch ( $field['type'] ?? '' ) {
 			case 'checkbox':
 				$row += array(
@@ -163,6 +168,14 @@ final class Settings {
 			default:
 				return null;
 		}
+		// Settings transfer: a module setting describes UI behaviour, not the site, so it travels by default; a
+		// module may opt out (`portable => false`) or mark its field (`site_specific`, `secret`, `personal`, `risky`).
+		$row['portable'] = array_key_exists( 'portable', $field ) ? (bool) $field['portable'] : true;
+		foreach ( array( 'site_specific', 'secret', 'personal', 'risky' ) as $flag ) {
+			if ( array_key_exists( $flag, $field ) ) {
+				$row[ $flag ] = (bool) $field[ $flag ];
+			}
+		}
 		return $row;
 	}
 
@@ -211,6 +224,11 @@ final class Settings {
 	 */
 	public static function sanitize( $input ): array {
 		self::ensure();
+		// Motor kendi sonucunu yazıyor (ayar aktarımı, kod içi yazma): aynı değeri ikinci kez temizleme/yeniden
+		// şekillendirme — eski önbellekle okunan değer yeni yazımı ezerdi.
+		if ( Engine::writing( self::SLUG ) ) {
+			return is_array( $input ) ? $input : array();
+		}
 		if ( ! is_array( $input ) || empty( $input['modules'] ) || ! is_array( $input['modules'] ) ) {
 			return array(); // Form verisi değil (ör. etkinleştirmede boş satır): varsayılanlar geçerli kalır.
 		}

@@ -93,6 +93,7 @@ final class SettingsPage {
 		$open    = 0;
 		$small   = array();
 		$big     = array();
+		$outside = array();
 		// Büyük ayar arayüzü olan modül (tab_label() tanımlı) kendi sekmesini alır; küçükler "Modules" sekmesinde kalır.
 		$tabs = array( 'modules' => __( 'Modules', 'adminkit' ) );
 		foreach ( $modules as $module ) {
@@ -100,6 +101,10 @@ final class SettingsPage {
 			if ( method_exists( $module, 'tab_label' ) ) {
 				$big[]                 = $module;
 				$tabs[ $module->id() ] = (string) $module->tab_label();
+				// Kendi formu olan modül (dosya yükleme): paneli ana ayar formunun DIŞINDA çizilir.
+				if ( method_exists( $module, 'outside_form' ) && $module->outside_form() ) {
+					$outside[ $module->id() ] = $module;
+				}
 			} else {
 				$small[] = $module;
 			}
@@ -128,7 +133,7 @@ final class SettingsPage {
 			<form id="adminkit-settings-form" method="post" action="options.php">
 				<?php settings_fields( Settings::GROUP ); ?>
 				<?php foreach ( $tabs as $key => $label ) : ?>
-					<?php if ( 'general' === $key ) { continue; } ?>
+					<?php if ( 'general' === $key || isset( $outside[ $key ] ) ) { continue; } ?>
 					<div role="tabpanel" id="adminkit-panel-<?php echo esc_attr( $key ); ?>" class="rbn-tabpanel" aria-labelledby="adminkit-tab-<?php echo esc_attr( $key ); ?>" tabindex="0"<?php echo $tab === $key ? '' : ' hidden'; ?>>
 						<ul class="rbn-cards ak-cards<?php echo 'modules' === $key ? '' : ' ak-cards--one'; ?>">
 							<?php foreach ( 'modules' === $key ? $small : array_filter( $big, static fn( Module $m ): bool => $m->id() === $key ) as $module ) : ?>
@@ -149,6 +154,11 @@ final class SettingsPage {
 				<input type="hidden" name="action" value="adminkit_color_reset" />
 				<?php wp_nonce_field( Modules\ColorTheme::NONCE, 'adminkit_ct_nonce' ); ?>
 			</form>
+			<?php foreach ( $outside as $key => $module ) : ?>
+				<div role="tabpanel" id="adminkit-panel-<?php echo esc_attr( $key ); ?>" class="rbn-tabpanel" aria-labelledby="adminkit-tab-<?php echo esc_attr( $key ); ?>" tabindex="0"<?php echo $tab === $key ? '' : ' hidden'; ?>>
+					<?php echo $module->panel_html(); // phpcs:ignore WordPress.Security.EscapeOutput -- panel_html() kendi çıktısını kaçışlar. ?>
+				</div>
+			<?php endforeach; ?>
 			<div role="tabpanel" id="adminkit-panel-general" class="rbn-tabpanel" aria-labelledby="adminkit-tab-general" tabindex="0"<?php echo $tab === 'general' ? '' : ' hidden'; ?>>
 				<?php self::network_section(); ?>
 				<?php self::updates_card(); ?>

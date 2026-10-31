@@ -96,6 +96,24 @@ anahtarların nokta ile birleşimidir: `templates.sep`, `social.profiles`, `rule
 | `empty` | `text`/`text_multi`: `keep` (varsayılan) \| `default` (boş gönderim varsayılana döner) \| `clear` |
 | `clean` | `callable( $raw, $old ): mixed` — tür temizliğinin üstüne eklenti kuralı (ör. desen doğrulama) |
 | `validate` | `callable( $value ): string` — boş değilse hata iletisi |
+| `portable` / `personal` / `risky` / `site_specific` / `secret` | ayarları taşıma bayrağı (§3.3; kurallar `adminkit/docs/ayar-tasima.md`) |
+
+### 3.3 Taşıma bayrakları (dışa/içe aktarma)
+
+Alanın başka siteye **nasıl** gideceğini şema söyler; saklanan değerin biçimi değişmez. Bölüm düğümüne yazılırsa
+altındaki alanlara miras kalır; alan kendi bayrağıyla mirası ezer.
+
+| Bayrak | Dışa aktarılır | İçe aktarılır |
+|---|---|---|
+| `portable` | evet | evet |
+| `personal` (e-posta/alıcı) | yalnız kullanıcı seçerse | aynı koşulla |
+| `risky` (kilitlenme riski) | evet | yalnız ayrı onay kutusu işaretliyse |
+| `site_specific` (site adresi, medya/sayfa kimliği) | **hayır** | **hayır** |
+| `secret` (anahtar, tuz) | **hayır** | **hayır** |
+| *(yok)* | **hayır** | **hayır** (varsayılan ret) |
+
+`internal` alanlar hiç taşınmaz. Motor API: `export_values()`, `import_preview()` (kuru koşu, `preview(['base'=>…])`
+üzerine kurulu), `import_write()` (yazım; atomiklik çağıranın işi), `travel()` (satırın kararı), `slugs()`.
 
 ### 3.2 Tür listesi (üç eklentinin birleşimi)
 

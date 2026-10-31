@@ -25,6 +25,8 @@ final class Plugin {
 		SettingsPage::hooks(); // Menü başlıkları çevrilir; çeviri yüklendikten sonra kaydedilir.
 		Assets::hooks();
 		Helpers\Toast::hooks();
+		// Ayarlar aktarımı kancaları modül KAPALIYKEN de kayıtlı olmalı: açma anahtarı bu uçtan geçer.
+		Modules\SettingsTransfer::hooks();
 		Core\Admin::hooks();
 		foreach ( Registry::all() as $module ) {
 			$settings = Settings::for_module( $module );

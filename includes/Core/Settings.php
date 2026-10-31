@@ -35,6 +35,12 @@ final class Settings {
 	/** Guards against a schema that nests forever. */
 	private const MAX_DEPTH = 8;
 
+	/**
+	 * Travel flags a field (or a whole section, inherited by its fields) may carry — settings transfer, see
+	 * docs/ayar-tasima.md. They describe the schema only: the stored value never changes shape.
+	 */
+	private const TRAVEL_FLAGS = array( 'portable', 'site_specific', 'secret', 'personal', 'risky' );
+
 	/** Marker for "the path is not in the input" (a stored null is a real value). */
 	private const MISSING = "\0__adminkit_missing__\0";
 
@@ -118,6 +124,40 @@ final class Settings {
 	public static function fields( string $slug ): array {
 		$def = self::def( $slug );
 		return null === $def ? array() : (array) $def['flat'];
+	}
+
+	/**
+	 * Every registered slug (alphabetical). The settings transfer lists the kits from here.
+	 *
+	 * @return string[]
+	 */
+	public static function slugs(): array {
+		$slugs = array_map( 'strval', array_keys( self::$schemas ) );
+		sort( $slugs, SORT_STRING );
+		return $slugs;
+	}
+
+	/**
+	 * How one field travels to another site (`docs/ayar-tasima.md`): internal | secret | site_specific | personal |
+	 * portable | off. Default-deny: a field without a flag is neither exported nor imported. `risky` is a second
+	 * dimension — a portable field whose import needs an explicit opt-in (lock-out risk).
+	 *
+	 * @param array<string,mixed> $row Flat field row.
+	 */
+	public static function travel( array $row ): string {
+		if ( ! empty( $row['internal'] ) ) {
+			return 'internal';
+		}
+		if ( ! empty( $row['secret'] ) ) {
+			return 'secret';
+		}
+		if ( ! empty( $row['site_specific'] ) ) {
+			return 'site_specific';
+		}
+		if ( ! empty( $row['personal'] ) ) {
+			return 'personal';
+		}
+		return ! empty( $row['portable'] ) ? 'portable' : 'off';
 	}
 
 	/**
@@ -390,6 +430,145 @@ final class Settings {
 		return true;
 	}
 
+	/* ------------------------------------------------------------ settings transfer (docs/ayar-tasima.md) */
+
+	/**
+	 * The values that may leave the site, nested exactly like the stored option. Only `portable` fields, plus
+	 * `personal` ones when the user asked for them; `site_specific`, `secret`, `internal` and unflagged rows never.
+	 *
+	 * @return array<string,mixed>
+	 */
+	public static function export_values( string $slug, bool $include_personal = false ): array {
+		$def = self::def( $slug );
+		if ( null === $def ) {
+			return array();
+		}
+		$all = self::all( $slug );
+		$out = array();
+		foreach ( (array) $def['flat'] as $path => $row ) {
+			$travel = self::travel( (array) $row );
+			if ( 'portable' !== $travel && ! ( $include_personal && 'personal' === $travel ) ) {
+				continue;
+			}
+			$out = self::put( $out, (string) $path, self::value_at( $all, (string) $path, $row['default'] ) );
+		}
+		return $out;
+	}
+
+	/**
+	 * Dry run of an import: the file's values are cleaned by THIS schema over the stored values; nothing is written.
+	 * A field the schema does not own is dropped; a `site_specific`/`secret`/`internal` field is skipped; `risky`
+	 * fields (lock-out risk) only with `$include_risky`; `personal` fields only with `$include_personal`.
+	 *
+	 * @param array<string,mixed> $input Raw settings of one kit, as read from the file.
+	 * @return array{settings:array<string,mixed>,changes:array<int,array<string,mixed>>,skipped:array<int,array<string,string>>,errors:array<string,string>}
+	 */
+	public static function import_preview( string $slug, array $input, bool $include_personal = false, bool $include_risky = false ): array {
+		$def = self::def( $slug );
+		if ( null === $def ) {
+			return array(
+				'settings' => array(),
+				'changes'  => array(),
+				'skipped'  => array(),
+				'errors'   => array(),
+			);
+		}
+		$flat    = (array) $def['flat'];
+		$current = self::all( $slug );
+		$clean   = array();
+		$skipped = array();
+		foreach ( $flat as $path => $row ) {
+			$path = (string) $path;
+			$row  = (array) $row;
+			$raw  = self::lookup( $input, explode( '.', $path ), self::MISSING );
+			if ( self::MISSING === $raw ) {
+				continue;
+			}
+			$travel  = self::travel( $row );
+			$allowed = 'portable' === $travel || ( $include_personal && 'personal' === $travel );
+			if ( ! $allowed ) {
+				$skipped[] = array(
+					'path'   => $path,
+					'reason' => $travel,
+				);
+				continue;
+			}
+			if ( ! empty( $row['risky'] ) && ! $include_risky ) {
+				$skipped[] = array(
+					'path'   => $path,
+					'reason' => 'risky',
+				);
+				continue;
+			}
+			$clean = self::put( $clean, $path, $raw );
+		}
+
+		$res     = self::preview( $slug, $clean, array( 'base' => $current ) );
+		$after   = (array) $res['settings'];
+		$changes = array();
+		foreach ( $flat as $path => $row ) {
+			$path = (string) $path;
+			$row  = (array) $row;
+			if ( self::MISSING === self::lookup( $clean, explode( '.', $path ), self::MISSING ) ) {
+				continue;
+			}
+			$old = self::value_at( $current, $path, $row['default'] );
+			$new = self::value_at( $after, $path, $row['default'] );
+			if ( $old === $new ) {
+				continue;
+			}
+			$changes[] = array(
+				'path'     => $path,
+				'old'      => $old,
+				'new'      => $new,
+				'personal' => 'personal' === self::travel( $row ),
+				'risky'    => ! empty( $row['risky'] ),
+			);
+		}
+		$skipped = array_merge( $skipped, self::unknown_rows( $input, '', $flat ) );
+		if ( count( $skipped ) > 200 ) {
+			$skipped = array_slice( $skipped, 0, 200 );
+		}
+		return array(
+			'settings' => $after,
+			'changes'  => $changes,
+			'skipped'  => $skipped,
+			'errors'   => (array) $res['errors'],
+		);
+	}
+
+	/**
+	 * Writes a value set an import plan already produced (see `import_preview()`); the caller owns atomicity.
+	 *
+	 * @param array<string,mixed> $settings Full settings value, cleaned by `import_preview()`.
+	 */
+	public static function import_write( string $slug, array $settings ): bool {
+		$def = self::def( $slug );
+		if ( null === $def ) {
+			return false;
+		}
+		/**
+		 * Last word before one kit's imported value set is written; returning false cancels the write.
+		 *
+		 * @param bool                $allow    Default true.
+		 * @param string              $slug     Plugin slug.
+		 * @param array<string,mixed> $settings Cleaned value set.
+		 */
+		if ( ! (bool) apply_filters( 'rbnkit_core_settings_import_before_write', true, $slug, $settings ) ) {
+			return false;
+		}
+		self::write( $def, $settings );
+		self::reset_cache( $slug );
+		/**
+		 * Fires after one kit's imported value set was written.
+		 *
+		 * @param string              $slug     Plugin slug.
+		 * @param array<string,mixed> $settings Written value set.
+		 */
+		do_action( 'rbnkit_core_settings_imported', $slug, $settings );
+		return true;
+	}
+
 	/**
 	 * Registers the option with WordPress (`options.php` route). The sanitize callback is the engine itself.
 	 *
@@ -444,6 +623,16 @@ final class Settings {
 			return;
 		}
 		unset( self::$cache[ $slug ] );
+	}
+
+	/**
+	 * Is the engine writing this plugin's option right now? `update_option()` runs the option's sanitize filter even
+	 * for the engine's own value, so a plugin that installs its OWN callback (AdminKit does) asks this and returns the
+	 * input untouched instead of cleaning it a second time against a stale read.
+	 */
+	public static function writing( string $slug ): bool {
+		$def = self::def( $slug );
+		return null !== $def && isset( self::$writing[ (string) $def['option'] ] );
 	}
 
 	/** Test helper: forgets registrations, values and errors (stored options are not touched). */
@@ -670,21 +859,38 @@ final class Settings {
 	 * @param array<string,mixed>              $node   Schema node.
 	 * @param array<string, array<string,mixed>> $flat  Collected rows.
 	 */
-	private static function flatten( array $node, string $prefix, array &$flat, int $depth ): void {
+	private static function flatten( array $node, string $prefix, array &$flat, int $depth, array $flags = array() ): void {
 		if ( $depth > self::MAX_DEPTH ) {
 			return;
 		}
+		$flags = self::inherit_flags( $node, $flags );
 		foreach ( $node as $key => $child ) {
 			if ( ! is_string( $key ) || ! is_array( $child ) ) {
 				continue;
 			}
 			$path = '' === $prefix ? $key : $prefix . '.' . $key;
 			if ( array_key_exists( 'type', $child ) ) {
-				$flat[ $path ] = self::row( $path, $child );
+				$flat[ $path ] = self::row( $path, $child, $flags );
 				continue;
 			}
-			self::flatten( $child, $path, $flat, $depth + 1 );
+			self::flatten( $child, $path, $flat, $depth + 1, $flags );
 		}
+	}
+
+	/**
+	 * Section-level travel flags, inherited by every field under the section (keeps a kit schema short).
+	 *
+	 * @param array<string,mixed> $node      Section (or field) node.
+	 * @param array<string,bool>  $inherited Flags from the parent sections.
+	 * @return array<string,bool>
+	 */
+	private static function inherit_flags( array $node, array $inherited ): array {
+		foreach ( self::TRAVEL_FLAGS as $flag ) {
+			if ( isset( $node[ $flag ] ) && is_bool( $node[ $flag ] ) ) {
+				$inherited[ $flag ] = $node[ $flag ];
+			}
+		}
+		return $inherited;
 	}
 
 	/**
@@ -693,7 +899,7 @@ final class Settings {
 	 * @param array<string,mixed> $f Declared field.
 	 * @return array<string,mixed>
 	 */
-	private static function row( string $path, array $f ): array {
+	private static function row( string $path, array $f, array $flags = array() ): array {
 		$type = (string) ( $f['type'] ?? 'text' );
 		if ( ! in_array( $type, self::TYPES, true ) ) {
 			$type = 'text';
@@ -723,13 +929,16 @@ final class Settings {
 			'label'       => (string) ( $f['label'] ?? '' ),
 			'message'     => (string) ( $f['message'] ?? '' ),
 		);
+		foreach ( self::TRAVEL_FLAGS as $flag ) {
+			$row[ $flag ] = array_key_exists( $flag, $f ) ? (bool) $f[ $flag ] : (bool) ( $flags[ $flag ] ?? false );
+		}
 		if ( 'map' === $type ) {
 			if ( is_array( $f['value'] ?? null ) ) {
-				$row['value'] = self::row( $path . '.*', (array) $f['value'] );
+				$row['value'] = self::row( $path . '.*', (array) $f['value'], $flags );
 			}
 			foreach ( (array) ( $f['fields'] ?? array() ) as $name => $sub ) {
 				if ( is_string( $name ) && is_array( $sub ) ) {
-					$row['fields'][ $name ] = self::row( $path . '.*.' . $name, $sub );
+					$row['fields'][ $name ] = self::row( $path . '.*.' . $name, $sub, $flags );
 				}
 			}
 		}
@@ -806,6 +1015,50 @@ final class Settings {
 			$node = $node[ $part ];
 		}
 		return $node;
+	}
+
+	/**
+	 * Paths in an imported set that no field of the schema owns (they are dropped, and the screen says why).
+	 *
+	 * @param array<string,mixed>                $input Imported settings of one kit.
+	 * @param array<string, array<string,mixed>> $flat  Schema rows.
+	 * @return array<int, array<string,string>>
+	 */
+	private static function unknown_rows( array $input, string $prefix, array $flat, int $depth = 0 ): array {
+		$out = array();
+		if ( $depth > 16 ) {
+			return $out;
+		}
+		foreach ( $input as $key => $value ) {
+			$key  = (string) $key;
+			$path = '' === $prefix ? $key : $prefix . '.' . $key;
+			if ( in_array( $key, array( '__proto__', 'prototype', 'constructor' ), true ) ) {
+				$out[] = array(
+					'path'   => $path,
+					'reason' => 'prototype',
+				);
+				continue;
+			}
+			if ( 1 !== preg_match( '/^[A-Za-z0-9_-]{1,64}$/', $key ) ) {
+				$out[] = array(
+					'path'   => self::cut( $path, 120 ),
+					'reason' => 'key',
+				);
+				continue;
+			}
+			if ( isset( $flat[ $path ] ) ) {
+				continue;
+			}
+			if ( is_array( $value ) ) {
+				$out = array_merge( $out, self::unknown_rows( $value, $path, $flat, $depth + 1 ) );
+				continue;
+			}
+			$out[] = array(
+				'path'   => self::cut( $path, 120 ),
+				'reason' => 'unknown',
+			);
+		}
+		return $out;
 	}
 
 	/**

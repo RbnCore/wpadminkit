@@ -1040,3 +1040,987 @@ msgstr ""
 #: includes/Modules/ToastNotices.php
 msgid "Where AdminKit toasts appear for you. Overrides the site setting."
 msgstr ""
+#: includes/Modules/DbMaintenance.php
+msgid "Database maintenance"
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "Deletes old WordPress core leftovers: expired temporary data, old revisions, automatic drafts, trashed posts, spam comments and orphan meta rows. Preview first; deleting cannot be undone."
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "Use database maintenance"
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "Turn it on and press Save to open the cleanup tools."
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "Revisions to keep per post"
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "per post"
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "Only older revisions beyond this number are deleted. The published post itself is never touched."
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "Cleanup tools"
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "Select at least one cleanup type."
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "Counting…"
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "%1$d row(s) will be deleted (~%2$s)."
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "Nothing matches the selected types. Nothing will be deleted."
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "Delete database rows?"
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "This cannot be undone. Take a database backup first."
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "Deleting…"
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "%1$d of ~%2$d deleted (%3$s)"
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "Finished: %d row(s) deleted."
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "Another maintenance run is in progress. Try again in a moment."
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "The request failed. Nothing else was deleted."
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "Some rows could not be deleted; they may have changed meanwhile."
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "Turn the module on and press Save to use the cleanup tools."
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "There is no undo. Deleted rows are gone for good. Take a full database backup before you run this; this tool does not create or download backups."
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "The numbers below are live and read-only. Nothing is deleted until you preview the selection and confirm."
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "Cleanup types"
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "Type"
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "Records"
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "Size"
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "Preview selected"
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "Delete selected…"
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "Unknown cleanup type."
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "Type the confirmation word to delete. Nothing was deleted."
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "%1$d row(s) deleted (%2$s)."
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "DELETE"
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "Expired temporary data (transients)"
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "Old revisions"
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "Automatic drafts"
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "Trashed posts and pages"
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "Spam and trashed comments"
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "Orphan meta rows"
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "Only temporary entries whose expiry time has passed. Live temporary data is kept."
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "Keeps the newest %d revisions of each post. The published post itself is never touched."
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "Automatic drafts older than 7 days (the same rule WordPress uses on its daily cleanup)."
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "Posts and pages that have been in the trash for more than 30 days."
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "Spam and trashed comments older than 30 days."
+msgstr ""
+
+#: includes/Modules/DbMaintenance.php
+msgid "Meta rows whose post, comment or term no longer exists."
+msgstr ""
+
+
+#: includes/Modules/SettingsTransfer.php
+msgid "%1$d setting(s) across %2$d kit(s) were applied."
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "%d change"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "%d events"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "%d options"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "%d seconds"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "%d tables"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "%s ago"
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "%s is not active on this site; its settings were left out."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "A cache server (Redis or Memcached) stores repeated database results."
+msgstr ""
+
+#: includes/Core/Settings/Transfer.php
+msgid "A kit could not be written; the settings that had been written were put back. Nothing was changed."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Active plugins"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Active theme"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Admin"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Admin memory limit"
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "After"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "All present"
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "Also apply lock-out-risk settings (login limit, proxy trust, whitelist)"
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "Apply"
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "Apply %1$d change(s) to %2$d kit(s)…"
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "Apply the settings file?"
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "Applying overwrites the existing settings of this site. Export a copy of this site before you apply."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Ask the host to enable OPcache."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Ask the host to enable the missing extensions."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Ask the host to switch to PHP 8.2 or newer."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Ask the host to update the database server."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Autoload"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Autoload options are loaded on every request, so large ones slow the whole site. The warning threshold is 800 KB; above 1.5 MB every page load suffers."
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "Before"
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "Carries the settings of the RBN kits to another site in one JSON file: export, check the diff, apply. Secrets and site-specific values never leave the site."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Check"
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "Check the file"
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "Check the file first: nothing is written until you confirm on the next screen. Values this site cannot clean are rejected or reset to their default by the settings engine, and the diff shows every change before it happens."
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "Checked file"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Copy support report"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Could not copy. Select the report text and copy it yourself."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Data"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Database"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Database size"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Database version"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Disabled in wp-config"
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "Download settings file"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Events whose time has passed but that have not run yet."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Everything here is read-only and belongs to this site only: no external request is sent and nothing is deleted."
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "Existing settings of this site will be overwritten and this cannot be undone. Apply the file?"
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "Export"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Extensions that plugins commonly need: zip, image, text, network and encryption."
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "File exported: %s"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Fix the folder permissions on the host."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Free disk space"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Free space or ask the host for more; a full disk stops uploads and database writes."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Generated"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Good"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "HTTPS"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Health data refreshed."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Health report"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "How long one request may run before PHP stops it."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "How many fields one request may carry; large settings forms can hit this."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "How many timed events are waiting in the cron list."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "How much room is left on the disk that holds this site."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "If this is on, make sure the server cron calls wp-cron.php regularly."
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "Import"
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "Include e-mail recipients and similar personal data"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Index"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Largest autoload options"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Largest tables"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Last run"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Late events"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Late events mean WP-Cron is not running; check traffic or the server cron."
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "Left out:"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Maximum execution time"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Maximum form fields"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Memory"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Needs attention"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "No"
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "No file was uploaded."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "No run yet means cron has not started; visit the site or check the server cron."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "None"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Not measurable"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Not required; it helps busy sites. Ask the host if the site is slow."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Not writable"
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "Nothing changed: this site already matches the file."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Nothing to do."
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "Nothing would change: this site already matches the file."
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "Off by default. When included, the addresses are written into the file in plain text, so keep the file private."
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "Off by default: these settings can lock you out of the admin area if they do not match this server. Add your own address to the whitelist first."
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "Off: alert recipients and other personal values stay on this site."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Option"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Output buffering"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "PHP"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "PHP and WordPress agree on the time zone used for dates."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "PHP collects output before sending it, which avoids header errors."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "PHP keeps compiled files in memory, so pages load faster."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "PHP memory limit"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "PHP version"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Persistent object cache"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Plain-text summary"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Problem"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Raise WP_MAX_MEMORY_LIMIT to 256M or more."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Raise WP_MEMORY_LIMIT to 128M or more in wp-config.php."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Raise max_execution_time to 30 seconds or more."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Raise max_input_vars to 1000 or more."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Raise memory_limit to 256M or more."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Raise upload_max_filesize and post_max_size; post_max_size must be at least as large."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Read %s ago. Press Refresh to read it again."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Reads the server, PHP, WordPress, database and WP-Cron status of this site only. Nothing is changed, run or deleted, and no external request is sent."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Records waiting for cleanup"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Records waiting for cleanup (read only)"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Refresh"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Required PHP extensions"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Rows"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Scheduled events"
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "Select at least one kit to export."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Server and PHP"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Server and PHP checks"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Set the site time zone in Settings → General."
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "Setting"
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "Settings file (.json, up to 1 MB)"
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "Settings that would change"
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "Settings transfer"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Status"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Support report"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "System health"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Table"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "The MySQL or MariaDB server that stores the site."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "The PHP version that runs WordPress and its plugins."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "The WordPress core version this site runs."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "The admin area is served over an encrypted connection."
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "The checked file is no longer available. Upload it again."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "The database is read only here. Nothing is deleted on this screen; cleanup lives in the Database maintenance module."
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "The file came from version %1$s; this site runs %2$s. Settings this version does not know are dropped."
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "The file carries settings only: no passwords, keys, licences, e-mail addresses or site addresses. Redirects, 404 records and page content are not settings and do not travel."
+msgstr ""
+
+#: includes/Core/Settings/Transfer.php
+msgid "The file comes from a newer AdminKit; update AdminKit first."
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "The file does not look like a JSON settings file."
+msgstr ""
+
+#: includes/Core/Settings/Transfer.php
+msgid "The file has a value that this kit would reject; nothing was changed."
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "The file has no settings for a kit that is active here."
+msgstr ""
+
+#: includes/Core/Settings/Transfer.php
+msgid "The file has no settings in it."
+msgstr ""
+
+#: includes/Core/Settings/Transfer.php
+msgid "The file has no usable format version."
+msgstr ""
+
+#: includes/Core/Settings/Transfer.php
+msgid "The file is a PHP serialized value, not a settings file. Upload the JSON file the export produced."
+msgstr ""
+
+#: includes/Core/Settings/Transfer.php
+msgid "The file is damaged: one of its kits has no settings."
+msgstr ""
+
+#: includes/Core/Settings/Transfer.php
+msgid "The file is damaged: one of its kits is not readable."
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "The file is empty or larger than 1 MB."
+msgstr ""
+
+#: includes/Core/Settings/Transfer.php
+msgid "The file is empty."
+msgstr ""
+
+#: includes/Core/Settings/Transfer.php
+msgid "The file is larger than 1 MB; a settings file should be a few dozen KB."
+msgstr ""
+
+#: includes/Core/Settings/Transfer.php
+msgid "The file is not a settings file."
+msgstr ""
+
+#: includes/Core/Settings/Transfer.php
+msgid "The file is not valid JSON (or it nests deeper than a settings file can)."
+msgstr ""
+
+#: includes/Core/Settings/Transfer.php
+msgid "The file is not valid UTF-8."
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "The file must be a .json settings file."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "The health data could not be read. Press Refresh and try again."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "The largest single upload and the largest form post PHP accepts."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "The last time WP-Cron started a run on this site."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "The memory WordPress allows itself for normal requests."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "The memory WordPress may use in the admin area."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "The module is off; nothing was refreshed."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "The most memory one request may use."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "The report contains versions, limits and plugin names only: no site address, user name, e-mail address, password, key or salt."
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "The settings transfer module is off; nothing was done."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "The support report was copied to the clipboard."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "The web server software reported by PHP."
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "This file has a value a kit would reject. Nothing can be applied; fix the value in the file and check it again."
+msgstr ""
+
+#: includes/Core/Settings/Transfer.php
+msgid "This is not an RBN Kit settings file."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "This screen never runs, lists or deletes cron events; it only reads the status."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Timezone"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Total"
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "Turn it on and press Save to export or import settings."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Turn it on and press Save to see the health report."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Turn on SSL at the host and set the site address to https in Settings → General."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Unknown"
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "Unknown action; nothing was done."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Unlimited"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Update WordPress from Dashboard → Updates."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Upload"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Upload size"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Uploads folder"
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "Use settings transfer"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Use system health"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Value"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "WP-Cron checks"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "WP-Cron status"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Warnings"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Web server"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "What it means"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "What to do:"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "When it is on, WordPress does not start cron jobs on page visits; a real server cron must call wp-cron.php."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "WordPress can write files to wp-content/uploads."
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "WordPress memory limit"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "WordPress version"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Writable"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "Yes"
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "blocked key, dropped"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "disabled in wp-config"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "enabled"
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "internal value: not a setting"
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "invalid key name, dropped"
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "lock-out risk: tick the box to apply it"
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "not portable, dropped"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "oldest %s late"
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "personal data: include it in the export first"
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "secret: never leaves its site"
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "site-specific (address, media id): never applied from a file"
+msgstr ""
+
+#: includes/Modules/SettingsTransfer.php
+msgid "unknown setting, dropped"
+msgstr ""
+
+#: includes/Modules/SystemHealth.php
+msgid "No run yet"
+msgstr ""

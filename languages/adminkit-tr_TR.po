@@ -878,3 +878,786 @@ msgstr "Site varsayılanı"
 #: includes/Modules/ToastNotices.php
 msgid "Where AdminKit toasts appear for you. Overrides the site setting."
 msgstr "AdminKit toast'larının sizin için çıkacağı yer. Site ayarını geçersiz kılar."
+#: includes/Modules/DbMaintenance.php
+msgid "Database maintenance"
+msgstr "Veritabanı bakımı"
+
+#: includes/Modules/DbMaintenance.php
+msgid "Deletes old WordPress core leftovers: expired temporary data, old revisions, automatic drafts, trashed posts, spam comments and orphan meta rows. Preview first; deleting cannot be undone."
+msgstr "Eski WordPress çekirdek artıklarını siler: süresi dolmuş geçici veri, eski revizyonlar, otomatik taslaklar, çöp kutusundaki yazılar, spam yorumlar ve yetim meta satırları. Önce önizleyin; silme geri alınamaz."
+
+#: includes/Modules/DbMaintenance.php
+msgid "Use database maintenance"
+msgstr "Veritabanı bakımını kullan"
+
+#: includes/Modules/DbMaintenance.php
+msgid "Turn it on and press Save to open the cleanup tools."
+msgstr "Açın ve Kaydet'e basın; temizlik araçları görünür."
+
+#: includes/Modules/DbMaintenance.php
+msgid "Revisions to keep per post"
+msgstr "Yazı başına tutulacak revizyon"
+
+#: includes/Modules/DbMaintenance.php
+msgid "per post"
+msgstr "yazı başına"
+
+#: includes/Modules/DbMaintenance.php
+msgid "Only older revisions beyond this number are deleted. The published post itself is never touched."
+msgstr "Yalnız bu sayının ötesindeki eski revizyonlar silinir. Yayınlanmış yazının kendisine dokunulmaz."
+
+#: includes/Modules/DbMaintenance.php
+msgid "Cleanup tools"
+msgstr "Temizlik araçları"
+
+#: includes/Modules/DbMaintenance.php
+msgid "Select at least one cleanup type."
+msgstr "En az bir temizlik türü seçin."
+
+#: includes/Modules/DbMaintenance.php
+msgid "Counting…"
+msgstr "Sayılıyor…"
+
+#: includes/Modules/DbMaintenance.php
+msgid "%1$d row(s) will be deleted (~%2$s)."
+msgstr "%1$d satır silinecek (~%2$s)."
+
+#: includes/Modules/DbMaintenance.php
+msgid "Nothing matches the selected types. Nothing will be deleted."
+msgstr "Seçilen türlerde eşleşen satır yok. Hiçbir şey silinmeyecek."
+
+#: includes/Modules/DbMaintenance.php
+msgid "Delete database rows?"
+msgstr "Veritabanı satırları silinsin mi?"
+
+#: includes/Modules/DbMaintenance.php
+msgid "This cannot be undone. Take a database backup first."
+msgstr "Bu işlem geri alınamaz. Önce veritabanı yedeği alın."
+
+#: includes/Modules/DbMaintenance.php
+msgid "Deleting…"
+msgstr "Siliniyor…"
+
+#: includes/Modules/DbMaintenance.php
+msgid "%1$d of ~%2$d deleted (%3$s)"
+msgstr "~%2$d satırın %1$d kadarı silindi (%3$s)"
+
+#: includes/Modules/DbMaintenance.php
+msgid "Finished: %d row(s) deleted."
+msgstr "Bitti: %d satır silindi."
+
+#: includes/Modules/DbMaintenance.php
+msgid "Another maintenance run is in progress. Try again in a moment."
+msgstr "Başka bir bakım koşusu sürüyor. Biraz sonra tekrar deneyin."
+
+#: includes/Modules/DbMaintenance.php
+msgid "The request failed. Nothing else was deleted."
+msgstr "İstek başarısız oldu. Başka hiçbir satır silinmedi."
+
+#: includes/Modules/DbMaintenance.php
+msgid "Some rows could not be deleted; they may have changed meanwhile."
+msgstr "Bazı satırlar silinemedi; bu sırada değişmiş olabilirler."
+
+#: includes/Modules/DbMaintenance.php
+msgid "Turn the module on and press Save to use the cleanup tools."
+msgstr "Temizlik araçlarını kullanmak için modülü açın ve Kaydet'e basın."
+
+#: includes/Modules/DbMaintenance.php
+msgid "There is no undo. Deleted rows are gone for good. Take a full database backup before you run this; this tool does not create or download backups."
+msgstr "Geri alma yoktur. Silinen satırlar geri gelmez. Bu aracı çalıştırmadan önce tam veritabanı yedeği alın; bu araç yedek oluşturmaz ve indirmez."
+
+#: includes/Modules/DbMaintenance.php
+msgid "The numbers below are live and read-only. Nothing is deleted until you preview the selection and confirm."
+msgstr "Aşağıdaki sayılar canlıdır ve salt okunur. Siz önizleyip onaylamadan hiçbir şey silinmez."
+
+#: includes/Modules/DbMaintenance.php
+msgid "Cleanup types"
+msgstr "Temizlik türleri"
+
+#: includes/Modules/DbMaintenance.php
+msgid "Type"
+msgstr "Tür"
+
+#: includes/Modules/DbMaintenance.php
+msgid "Records"
+msgstr "Kayıt"
+
+#: includes/Modules/DbMaintenance.php
+msgid "Size"
+msgstr "Boyut"
+
+#: includes/Modules/DbMaintenance.php
+msgid "Preview selected"
+msgstr "Seçilenleri önizle"
+
+#: includes/Modules/DbMaintenance.php
+msgid "Delete selected…"
+msgstr "Seçilenleri sil…"
+
+#: includes/Modules/DbMaintenance.php
+msgid "Unknown cleanup type."
+msgstr "Bilinmeyen temizlik türü."
+
+#: includes/Modules/DbMaintenance.php
+msgid "Type the confirmation word to delete. Nothing was deleted."
+msgstr "Silmek için onay sözcüğünü yazın. Hiçbir şey silinmedi."
+
+#: includes/Modules/DbMaintenance.php
+msgid "%1$d row(s) deleted (%2$s)."
+msgstr "%1$d satır silindi (%2$s)."
+
+#: includes/Modules/DbMaintenance.php
+msgid "DELETE"
+msgstr "SİL"
+
+#: includes/Modules/DbMaintenance.php
+msgid "Expired temporary data (transients)"
+msgstr "Süresi dolmuş geçici veri (transient)"
+
+#: includes/Modules/DbMaintenance.php
+msgid "Old revisions"
+msgstr "Eski revizyonlar"
+
+#: includes/Modules/DbMaintenance.php
+msgid "Automatic drafts"
+msgstr "Otomatik taslaklar"
+
+#: includes/Modules/DbMaintenance.php
+msgid "Trashed posts and pages"
+msgstr "Çöp kutusundaki yazılar ve sayfalar"
+
+#: includes/Modules/DbMaintenance.php
+msgid "Spam and trashed comments"
+msgstr "Spam ve çöpteki yorumlar"
+
+#: includes/Modules/DbMaintenance.php
+msgid "Orphan meta rows"
+msgstr "Yetim meta satırları"
+
+#: includes/Modules/DbMaintenance.php
+msgid "Only temporary entries whose expiry time has passed. Live temporary data is kept."
+msgstr "Yalnız süresi geçmiş geçici kayıtlar. Canlı geçici veri korunur."
+
+#: includes/Modules/DbMaintenance.php
+msgid "Keeps the newest %d revisions of each post. The published post itself is never touched."
+msgstr "Her yazının en yeni %d revizyonu tutulur. Yayınlanmış yazının kendisine dokunulmaz."
+
+#: includes/Modules/DbMaintenance.php
+msgid "Automatic drafts older than 7 days (the same rule WordPress uses on its daily cleanup)."
+msgstr "7 günden eski otomatik taslaklar (WordPress'in günlük temizlikte kullandığı kuralın aynısı)."
+
+#: includes/Modules/DbMaintenance.php
+msgid "Posts and pages that have been in the trash for more than 30 days."
+msgstr "30 günden uzun süredir çöp kutusunda olan yazılar ve sayfalar."
+
+#: includes/Modules/DbMaintenance.php
+msgid "Spam and trashed comments older than 30 days."
+msgstr "30 günden eski spam ve çöpteki yorumlar."
+
+#: includes/Modules/DbMaintenance.php
+msgid "Meta rows whose post, comment or term no longer exists."
+msgstr "Yazısı, yorumu veya terimi artık var olmayan meta satırları."
+
+
+msgid "%1$d setting(s) across %2$d kit(s) were applied."
+msgstr "%2$d sette %1$d ayar uygulandı."
+
+msgid "%d change"
+msgstr "%d değişiklik"
+
+msgid "%d events"
+msgstr "%d olay"
+
+msgid "%d options"
+msgstr "%d seçenek"
+
+msgid "%d seconds"
+msgstr "%d saniye"
+
+msgid "%d tables"
+msgstr "%d tablo"
+
+msgid "%s ago"
+msgstr "%s önce"
+
+msgid "%s is not active on this site; its settings were left out."
+msgstr "%s bu sitede etkin değil; ayarları dışarıda bırakıldı."
+
+msgid "A cache server (Redis or Memcached) stores repeated database results."
+msgstr "Bir önbellek sunucusu (Redis veya Memcached) yinelenen veritabanı sonuçlarını saklar."
+
+msgid "A kit could not be written; the settings that had been written were put back. Nothing was changed."
+msgstr "Bir set yazılamadı; yazılan ayarlar geri alındı. Hiçbir şey değişmedi."
+
+msgid "Active plugins"
+msgstr "Etkin eklentiler"
+
+msgid "Active theme"
+msgstr "Etkin tema"
+
+msgid "Admin"
+msgstr "Yönetim"
+
+msgid "Admin memory limit"
+msgstr "Yönetim belleği sınırı"
+
+msgid "After"
+msgstr "Sonra"
+
+msgid "All present"
+msgstr "Hepsi var"
+
+msgid "Also apply lock-out-risk settings (login limit, proxy trust, whitelist)"
+msgstr "Kilitleme riski taşıyan ayarları da uygula (giriş sınırı, proxy güveni, beyaz liste)"
+
+msgid "Apply"
+msgstr "Uygula"
+
+msgid "Apply %1$d change(s) to %2$d kit(s)…"
+msgstr "%2$d sete %1$d değişiklik uygula…"
+
+msgid "Apply the settings file?"
+msgstr "Ayar dosyası uygulansın mı?"
+
+msgid "Applying overwrites the existing settings of this site. Export a copy of this site before you apply."
+msgstr "Uygulamak bu sitenin mevcut ayarlarının üzerine yazar. Uygulamadan önce bu sitenin bir kopyasını dışa aktarın."
+
+msgid "Ask the host to enable OPcache."
+msgstr "Barındırıcıdan OPcache'i açmasını isteyin."
+
+msgid "Ask the host to enable the missing extensions."
+msgstr "Barındırıcıdan eksik eklentileri açmasını isteyin."
+
+msgid "Ask the host to switch to PHP 8.2 or newer."
+msgstr "Barındırıcıdan PHP 8.2 veya daha yenisine geçmesini isteyin."
+
+msgid "Ask the host to update the database server."
+msgstr "Barındırıcıdan veritabanı sunucusunu güncellemesini isteyin."
+
+msgid "Autoload"
+msgstr "Autoload"
+
+msgid "Autoload options are loaded on every request, so large ones slow the whole site. The warning threshold is 800 KB; above 1.5 MB every page load suffers."
+msgstr "Autoload seçenekleri her istekte yüklenir; büyük olanlar tüm siteyi yavaşlatır. Uyarı eşiği 800 KB; 1,5 MB üzerinde her sayfa yüklemesi bundan etkilenir."
+
+msgid "Before"
+msgstr "Önce"
+
+msgid "Carries the settings of the RBN kits to another site in one JSON file: export, check the diff, apply. Secrets and site-specific values never leave the site."
+msgstr "RBN setlerinin ayarlarını tek JSON dosyasıyla başka bir siteye taşır: dışa aktar, farkı denetle, uygula. Sırlar ve siteye özgü değerler siteden hiç çıkmaz."
+
+msgid "Check"
+msgstr "Denetim"
+
+msgid "Check the file"
+msgstr "Dosyayı denetle"
+
+msgid "Check the file first: nothing is written until you confirm on the next screen. Values this site cannot clean are rejected or reset to their default by the settings engine, and the diff shows every change before it happens."
+msgstr "Önce dosyayı denetleyin: sonraki ekranda onaylayana kadar hiçbir şey yazılmaz. Bu sitenin temizleyemediği değerler ayar motoru tarafından reddedilir ya da varsayılana döner; fark tablosu her değişikliği olmadan önce gösterir."
+
+msgid "Checked file"
+msgstr "Denetlenen dosya"
+
+msgid "Copy support report"
+msgstr "Destek raporunu kopyala"
+
+msgid "Could not copy. Select the report text and copy it yourself."
+msgstr "Kopyalanamadı. Rapor metnini seçip kendiniz kopyalayın."
+
+msgid "Data"
+msgstr "Veri"
+
+msgid "Database"
+msgstr "Veritabanı"
+
+msgid "Database size"
+msgstr "Veritabanı boyutu"
+
+msgid "Database version"
+msgstr "Veritabanı sürümü"
+
+msgid "Disabled in wp-config"
+msgstr "wp-config'te kapalı"
+
+msgid "Download settings file"
+msgstr "Ayar dosyasını indir"
+
+msgid "Events whose time has passed but that have not run yet."
+msgstr "Zamanı geçmiş ama henüz çalışmamış olaylar."
+
+msgid "Everything here is read-only and belongs to this site only: no external request is sent and nothing is deleted."
+msgstr "Buradaki her şey salt okunurdur ve yalnız bu siteye aittir: dış istek gönderilmez, hiçbir şey silinmez."
+
+msgid "Existing settings of this site will be overwritten and this cannot be undone. Apply the file?"
+msgstr "Bu sitenin mevcut ayarlarının üzerine yazılacak ve bu geri alınamaz. Dosya uygulansın mı?"
+
+msgid "Export"
+msgstr "Dışa aktar"
+
+msgid "Extensions that plugins commonly need: zip, image, text, network and encryption."
+msgstr "Eklentilerin genellikle ihtiyaç duyduğu eklentiler: zip, görsel, metin, ağ ve şifreleme."
+
+msgid "File exported: %s"
+msgstr "Dosya dışa aktarıldı: %s"
+
+msgid "Fix the folder permissions on the host."
+msgstr "Barındırıcıda klasör izinlerini düzeltin."
+
+msgid "Free disk space"
+msgstr "Boş disk alanı"
+
+msgid "Free space or ask the host for more; a full disk stops uploads and database writes."
+msgstr "Yer açın ya da barındırıcıdan daha fazla alan isteyin; dolan disk yüklemeleri ve veritabanı yazımlarını durdurur."
+
+msgid "Generated"
+msgstr "Oluşturuldu"
+
+msgid "Good"
+msgstr "İyi"
+
+msgid "HTTPS"
+msgstr "HTTPS"
+
+msgid "Health data refreshed."
+msgstr "Sağlık verileri yenilendi."
+
+msgid "Health report"
+msgstr "Sağlık raporu"
+
+msgid "How long one request may run before PHP stops it."
+msgstr "PHP durdurmadan önce bir isteğin çalışabileceği süre."
+
+msgid "How many fields one request may carry; large settings forms can hit this."
+msgstr "Bir isteğin taşıyabileceği alan sayısı; büyük ayar formları buna takılabilir."
+
+msgid "How many timed events are waiting in the cron list."
+msgstr "Cron listesinde bekleyen zamanlanmış olay sayısı."
+
+msgid "How much room is left on the disk that holds this site."
+msgstr "Bu siteyi barındıran diskte kalan alan."
+
+msgid "If this is on, make sure the server cron calls wp-cron.php regularly."
+msgstr "Bu açıksa sunucu cron'unun düzenli olarak wp-cron.php'yi çağırdığından emin olun."
+
+msgid "Import"
+msgstr "İçe aktar"
+
+msgid "Include e-mail recipients and similar personal data"
+msgstr "E-posta alıcılarını ve benzeri kişisel verileri dahil et"
+
+msgid "Index"
+msgstr "İndeks"
+
+msgid "Largest autoload options"
+msgstr "En büyük autoload seçenekleri"
+
+msgid "Largest tables"
+msgstr "En büyük tablolar"
+
+msgid "Last run"
+msgstr "Son çalışma"
+
+msgid "Late events"
+msgstr "Geciken olaylar"
+
+msgid "Late events mean WP-Cron is not running; check traffic or the server cron."
+msgstr "Geciken olaylar WP-Cron'un çalışmadığını gösterir; site trafiğini veya sunucu cron'unu denetleyin."
+
+msgid "Left out:"
+msgstr "Dışarıda bırakılan:"
+
+msgid "Maximum execution time"
+msgstr "Azami çalışma süresi"
+
+msgid "Maximum form fields"
+msgstr "Azami form alanı"
+
+msgid "Memory"
+msgstr "Bellek"
+
+msgid "Needs attention"
+msgstr "Dikkat"
+
+msgid "No"
+msgstr "Hayır"
+
+msgid "No file was uploaded."
+msgstr "Hiçbir dosya yüklenmedi."
+
+msgid "No run yet means cron has not started; visit the site or check the server cron."
+msgstr "Hiç çalışmamış olması cron'un başlamadığını gösterir; siteyi ziyaret edin veya sunucu cron'unu denetleyin."
+
+msgid "None"
+msgstr "Yok"
+
+msgid "Not measurable"
+msgstr "Ölçülemiyor"
+
+msgid "Not required; it helps busy sites. Ask the host if the site is slow."
+msgstr "Zorunlu değil; yoğun sitelere yardımcı olur. Site yavaşsa barındırıcıya sorun."
+
+msgid "Not writable"
+msgstr "Yazılamıyor"
+
+msgid "Nothing changed: this site already matches the file."
+msgstr "Hiçbir şey değişmedi: bu site dosyayla zaten aynı."
+
+msgid "Nothing to do."
+msgstr "Yapılacak bir şey yok."
+
+msgid "Nothing would change: this site already matches the file."
+msgstr "Hiçbir şey değişmezdi: bu site dosyayla zaten aynı."
+
+msgid "Off by default. When included, the addresses are written into the file in plain text, so keep the file private."
+msgstr "Varsayılan olarak kapalı. Dahil edilirse adresler dosyaya düz metin olarak yazılır; dosyayı gizli tutun."
+
+msgid "Off by default: these settings can lock you out of the admin area if they do not match this server. Add your own address to the whitelist first."
+msgstr "Varsayılan olarak kapalı: bu sunucuyla uyuşmazlarsa bu ayarlar yönetim panelinden sizi kilitleyebilir. Önce kendi adresinizi beyaz listeye ekleyin."
+
+msgid "Off: alert recipients and other personal values stay on this site."
+msgstr "Kapalı: uyarı alıcıları ve diğer kişisel değerler bu sitede kalır."
+
+msgid "Option"
+msgstr "Seçenek"
+
+msgid "Output buffering"
+msgstr "Çıktı tamponu"
+
+msgid "PHP"
+msgstr "PHP"
+
+msgid "PHP and WordPress agree on the time zone used for dates."
+msgstr "PHP ve WordPress tarihler için aynı saat dilimini kullanıyor."
+
+msgid "PHP collects output before sending it, which avoids header errors."
+msgstr "PHP çıktıyı göndermeden önce toplar; bu başlık hatalarını önler."
+
+msgid "PHP keeps compiled files in memory, so pages load faster."
+msgstr "PHP derlenmiş dosyaları bellekte tutar; sayfalar daha hızlı açılır."
+
+msgid "PHP memory limit"
+msgstr "PHP bellek sınırı"
+
+msgid "PHP version"
+msgstr "PHP sürümü"
+
+msgid "Persistent object cache"
+msgstr "Kalıcı nesne önbelleği"
+
+msgid "Plain-text summary"
+msgstr "Düz metin özeti"
+
+msgid "Problem"
+msgstr "Sorun"
+
+msgid "Raise WP_MAX_MEMORY_LIMIT to 256M or more."
+msgstr "WP_MAX_MEMORY_LIMIT değerini 256M veya üstüne çıkarın."
+
+msgid "Raise WP_MEMORY_LIMIT to 128M or more in wp-config.php."
+msgstr "wp-config.php içinde WP_MEMORY_LIMIT değerini 128M veya üstüne çıkarın."
+
+msgid "Raise max_execution_time to 30 seconds or more."
+msgstr "max_execution_time değerini 30 saniye veya üstüne çıkarın."
+
+msgid "Raise max_input_vars to 1000 or more."
+msgstr "max_input_vars değerini 1000 veya üstüne çıkarın."
+
+msgid "Raise memory_limit to 256M or more."
+msgstr "memory_limit değerini 256M veya üstüne çıkarın."
+
+msgid "Raise upload_max_filesize and post_max_size; post_max_size must be at least as large."
+msgstr "upload_max_filesize ve post_max_size değerlerini yükseltin; post_max_size en az onun kadar olmalı."
+
+msgid "Read %s ago. Press Refresh to read it again."
+msgstr "%s önce okundu. Yeniden okumak için Yenile'ye basın."
+
+msgid "Reads the server, PHP, WordPress, database and WP-Cron status of this site only. Nothing is changed, run or deleted, and no external request is sent."
+msgstr "Yalnız bu sitenin sunucu, PHP, WordPress, veritabanı ve WP-Cron durumunu okur. Hiçbir şey değiştirilmez, çalıştırılmaz veya silinmez; dış istek gönderilmez."
+
+msgid "Records waiting for cleanup"
+msgstr "Temizlik bekleyen kayıtlar"
+
+msgid "Records waiting for cleanup (read only)"
+msgstr "Temizlik bekleyen kayıtlar (salt okuma)"
+
+msgid "Refresh"
+msgstr "Yenile"
+
+msgid "Required PHP extensions"
+msgstr "Zorunlu PHP eklentileri"
+
+msgid "Rows"
+msgstr "Satır"
+
+msgid "Scheduled events"
+msgstr "Zamanlanmış olaylar"
+
+msgid "Select at least one kit to export."
+msgstr "Dışa aktarmak için en az bir set seçin."
+
+msgid "Server and PHP"
+msgstr "Sunucu ve PHP"
+
+msgid "Server and PHP checks"
+msgstr "Sunucu ve PHP denetimleri"
+
+msgid "Set the site time zone in Settings → General."
+msgstr "Site saat dilimini Ayarlar → Genel'de ayarlayın."
+
+msgid "Setting"
+msgstr "Ayar"
+
+msgid "Settings file (.json, up to 1 MB)"
+msgstr "Ayar dosyası (.json, en fazla 1 MB)"
+
+msgid "Settings that would change"
+msgstr "Değişecek ayarlar"
+
+msgid "Settings transfer"
+msgstr "Ayar aktarımı"
+
+msgid "Status"
+msgstr "Durum"
+
+msgid "Support report"
+msgstr "Destek raporu"
+
+msgid "System health"
+msgstr "Sistem sağlığı"
+
+msgid "Table"
+msgstr "Tablo"
+
+msgid "The MySQL or MariaDB server that stores the site."
+msgstr "Siteyi saklayan MySQL veya MariaDB sunucusu."
+
+msgid "The PHP version that runs WordPress and its plugins."
+msgstr "WordPress'i ve eklentilerini çalıştıran PHP sürümü."
+
+msgid "The WordPress core version this site runs."
+msgstr "Bu sitenin çalıştırdığı WordPress çekirdek sürümü."
+
+msgid "The admin area is served over an encrypted connection."
+msgstr "Yönetim paneli şifreli bağlantı üzerinden sunuluyor."
+
+msgid "The checked file is no longer available. Upload it again."
+msgstr "Denetlenen dosya artık yok. Yeniden yükleyin."
+
+msgid "The database is read only here. Nothing is deleted on this screen; cleanup lives in the Database maintenance module."
+msgstr "Veritabanı burada yalnız okunur. Bu ekranda hiçbir şey silinmez; temizlik Veritabanı bakımı modülündedir."
+
+msgid "The file came from version %1$s; this site runs %2$s. Settings this version does not know are dropped."
+msgstr "Dosya %1$s sürümünden geliyor; bu site %2$s çalıştırıyor. Bu sürümün bilmediği ayarlar düşürülür."
+
+msgid "The file carries settings only: no passwords, keys, licences, e-mail addresses or site addresses. Redirects, 404 records and page content are not settings and do not travel."
+msgstr "Dosya yalnız ayar taşır: parola, anahtar, lisans, e-posta adresi veya site adresi yoktur. Yönlendirmeler, 404 kayıtları ve sayfa içeriği ayar değildir, taşınmaz."
+
+msgid "The file comes from a newer AdminKit; update AdminKit first."
+msgstr "Dosya daha yeni bir AdminKit'ten geliyor; önce AdminKit'i güncelleyin."
+
+msgid "The file does not look like a JSON settings file."
+msgstr "Dosya bir JSON ayar dosyasına benzemiyor."
+
+msgid "The file has a value that this kit would reject; nothing was changed."
+msgstr "Dosyada bu setin reddedeceği bir değer var; hiçbir şey değişmedi."
+
+msgid "The file has no settings for a kit that is active here."
+msgstr "Dosyada burada etkin bir setin ayarları yok."
+
+msgid "The file has no settings in it."
+msgstr "Dosyada hiç ayar yok."
+
+msgid "The file has no usable format version."
+msgstr "Dosyada kullanılabilir biçim sürümü yok."
+
+msgid "The file is a PHP serialized value, not a settings file. Upload the JSON file the export produced."
+msgstr "Dosya bir PHP serileştirilmiş değeri, ayar dosyası değil. Dışa aktarmanın ürettiği JSON dosyasını yükleyin."
+
+msgid "The file is damaged: one of its kits has no settings."
+msgstr "Dosya bozuk: setlerinden birinin ayarı yok."
+
+msgid "The file is damaged: one of its kits is not readable."
+msgstr "Dosya bozuk: setlerinden biri okunamıyor."
+
+msgid "The file is empty or larger than 1 MB."
+msgstr "Dosya boş ya da 1 MB'tan büyük."
+
+msgid "The file is empty."
+msgstr "Dosya boş."
+
+msgid "The file is larger than 1 MB; a settings file should be a few dozen KB."
+msgstr "Dosya 1 MB'tan büyük; bir ayar dosyası birkaç on KB olmalı."
+
+msgid "The file is not a settings file."
+msgstr "Dosya bir ayar dosyası değil."
+
+msgid "The file is not valid JSON (or it nests deeper than a settings file can)."
+msgstr "Dosya geçerli JSON değil (ya da bir ayar dosyasının izin verdiğinden derin iç içe)."
+
+msgid "The file is not valid UTF-8."
+msgstr "Dosya geçerli UTF-8 değil."
+
+msgid "The file must be a .json settings file."
+msgstr "Dosya .json uzantılı bir ayar dosyası olmalı."
+
+msgid "The health data could not be read. Press Refresh and try again."
+msgstr "Sağlık verileri okunamadı. Yenile'ye basıp yeniden deneyin."
+
+msgid "The largest single upload and the largest form post PHP accepts."
+msgstr "PHP'nin kabul ettiği en büyük tek yükleme ve en büyük form gönderimi."
+
+msgid "The last time WP-Cron started a run on this site."
+msgstr "WP-Cron'un bu sitede en son çalışmaya başladığı an."
+
+msgid "The memory WordPress allows itself for normal requests."
+msgstr "WordPress'in normal istekler için kendine tanıdığı bellek."
+
+msgid "The memory WordPress may use in the admin area."
+msgstr "WordPress'in yönetim panelinde kullanabileceği bellek."
+
+msgid "The module is off; nothing was refreshed."
+msgstr "Modül kapalı; hiçbir şey yenilenmedi."
+
+msgid "The most memory one request may use."
+msgstr "Bir isteğin kullanabileceği en fazla bellek."
+
+msgid "The report contains versions, limits and plugin names only: no site address, user name, e-mail address, password, key or salt."
+msgstr "Rapor yalnız sürümleri, limitleri ve eklenti adlarını içerir: site adresi, kullanıcı adı, e-posta adresi, parola, anahtar veya tuz yoktur."
+
+msgid "The settings transfer module is off; nothing was done."
+msgstr "Ayar aktarımı modülü kapalı; hiçbir şey yapılmadı."
+
+msgid "The support report was copied to the clipboard."
+msgstr "Destek raporu panoya kopyalandı."
+
+msgid "The web server software reported by PHP."
+msgstr "PHP'nin bildirdiği web sunucusu yazılımı."
+
+msgid "This file has a value a kit would reject. Nothing can be applied; fix the value in the file and check it again."
+msgstr "Bu dosyada bir setin reddedeceği bir değer var. Hiçbir şey uygulanamaz; değeri dosyada düzeltip yeniden denetleyin."
+
+msgid "This is not an RBN Kit settings file."
+msgstr "Bu bir RBN Kit ayar dosyası değil."
+
+msgid "This screen never runs, lists or deletes cron events; it only reads the status."
+msgstr "Bu ekran cron olaylarını hiç çalıştırmaz, listelemez veya silmez; yalnız durumu okur."
+
+msgid "Timezone"
+msgstr "Saat dilimi"
+
+msgid "Total"
+msgstr "Toplam"
+
+msgid "Turn it on and press Save to export or import settings."
+msgstr "Açıp Kaydet'e basın; ayarları dışa veya içe aktarın."
+
+msgid "Turn it on and press Save to see the health report."
+msgstr "Açıp Kaydet'e basın; sağlık raporunu görün."
+
+msgid "Turn on SSL at the host and set the site address to https in Settings → General."
+msgstr "Barındırıcıda SSL'i açın ve site adresini Ayarlar → Genel'de https yapın."
+
+msgid "Unknown"
+msgstr "Bilinmiyor"
+
+msgid "Unknown action; nothing was done."
+msgstr "Bilinmeyen işlem; hiçbir şey yapılmadı."
+
+msgid "Unlimited"
+msgstr "Sınırsız"
+
+msgid "Update WordPress from Dashboard → Updates."
+msgstr "WordPress'i Panel → Güncellemeler'den güncelleyin."
+
+msgid "Upload"
+msgstr "Yükleme"
+
+msgid "Upload size"
+msgstr "Yükleme boyutu"
+
+msgid "Uploads folder"
+msgstr "Yükleme klasörü"
+
+msgid "Use settings transfer"
+msgstr "Ayar aktarımını kullan"
+
+msgid "Use system health"
+msgstr "Sistem sağlığını kullan"
+
+msgid "Value"
+msgstr "Değer"
+
+msgid "WP-Cron checks"
+msgstr "WP-Cron denetimleri"
+
+msgid "WP-Cron status"
+msgstr "WP-Cron durumu"
+
+msgid "Warnings"
+msgstr "Uyarılar"
+
+msgid "Web server"
+msgstr "Web sunucusu"
+
+msgid "What it means"
+msgstr "Ne anlama gelir"
+
+msgid "What to do:"
+msgstr "Ne yapmalı:"
+
+msgid "When it is on, WordPress does not start cron jobs on page visits; a real server cron must call wp-cron.php."
+msgstr "Açıkken WordPress sayfa ziyaretlerinde cron işlerini başlatmaz; gerçek bir sunucu cron'u wp-cron.php'yi çağırmalı."
+
+msgid "WordPress can write files to wp-content/uploads."
+msgstr "WordPress wp-content/uploads klasörüne dosya yazabiliyor."
+
+msgid "WordPress memory limit"
+msgstr "WordPress bellek sınırı"
+
+msgid "WordPress version"
+msgstr "WordPress sürümü"
+
+msgid "Writable"
+msgstr "Yazılabilir"
+
+msgid "Yes"
+msgstr "Evet"
+
+msgid "blocked key, dropped"
+msgstr "engelli anahtar, düşürüldü"
+
+msgid "disabled in wp-config"
+msgstr "wp-config'te kapalı"
+
+msgid "enabled"
+msgstr "etkin"
+
+msgid "internal value: not a setting"
+msgstr "iç değer: ayar değil"
+
+msgid "invalid key name, dropped"
+msgstr "geçersiz anahtar adı, düşürüldü"
+
+msgid "lock-out risk: tick the box to apply it"
+msgstr "kilitleme riski: uygulamak için kutuyu işaretleyin"
+
+msgid "not portable, dropped"
+msgstr "taşınabilir değil, düşürüldü"
+
+msgid "oldest %s late"
+msgstr "en eskisi %s gecikmiş"
+
+msgid "personal data: include it in the export first"
+msgstr "kişisel veri: önce dışa aktarıma dahil edin"
+
+msgid "secret: never leaves its site"
+msgstr "sır: sitesinden hiç çıkmaz"
+
+msgid "site-specific (address, media id): never applied from a file"
+msgstr "siteye özgü (adres, ortam kimliği): dosyadan hiç uygulanmaz"
+
+msgid "unknown setting, dropped"
+msgstr "bilinmeyen ayar, düşürüldü"
+
+msgid "No run yet"
+msgstr "Henüz çalışmadı"

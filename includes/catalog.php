@@ -58,7 +58,7 @@ return array(
 		'icon'          => 'lock',
 		'plugin_file'   => 'securitykit/securitykit.php',
 		'repo'          => 'RbnCore/wpsecuritykit',
-		'status'        => 'soon',
+		'status'        => 'released',
 		'settings_slug' => 'securitykit',
 	),
 );

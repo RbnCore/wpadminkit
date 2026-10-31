@@ -10,6 +10,8 @@
  * Contracts (docs/ayar-motoru.md):
  * - `update()` has two modes: PATCH (an absent field keeps its old value) and FORM (`'form' => <id>`: an absent
  *   checkbox is off, an absent list is empty; fields of another form are untouched).
+ * - `update_paths()` is PATCH for every kit, `form_required` included: the route a programmatic single-field write
+ *   (the instant switch) takes, so it never builds a form value set from a pre-lock snapshot (WPRJ-728).
  * - `internal` fields are never taken from input; only `set()` / `on_save` write them.
  * - A field marked `invalid => keep` keeps its old value when the submission cannot be cleaned.
  * - Every write (update, set, reset, import) is one locked read-modify-write (WPRJ-726): the row is read AFTER the
@@ -259,6 +261,38 @@ final class Settings {
 	 * @return array{settings:array<string,mixed>,errors:array<string,string>,changed:bool}
 	 */
 	public static function update( string $slug, array $input, array $args = array() ): array {
+		return self::apply( $slug, $input, (string) ( $args['form'] ?? '' ), false );
+	}
+
+	/**
+	 * Applies a partial input set with PATCH semantics EVEN for a kit that requires a form id.
+	 *
+	 * A kit declares `form_required` because its FORM submission must read an absent checkbox as "off"; a programmatic
+	 * single-field write (the instant switch) carries no such meaning. Letting that write build its own value set out of
+	 * a read taken BEFORE the write lock was the lost-update window of WPRJ-728: the snapshot was stale by the time the
+	 * lock was taken and rewrote a sibling another request had just saved. This entry point never posts a form back —
+	 * the write is one path, one locked read-modify-write.
+	 *
+	 * Everything else is `update()`: clean/validate per field, `on_save`, the change log callback, the
+	 * `rbnkit_core_settings_saved` action and the write lock. `$form` is '' for those callbacks (a single-path write
+	 * belongs to no form).
+	 *
+	 * @param array<string,mixed> $input Raw input (dotted keys are read as nested arrays).
+	 * @return array{settings:array<string,mixed>,errors:array<string,string>,changed:bool}
+	 */
+	public static function update_paths( string $slug, array $input ): array {
+		return self::apply( $slug, $input, '', true );
+	}
+
+	/**
+	 * Shared body of `update()` / `update_paths()`.
+	 *
+	 * @param array<string,mixed> $input    Raw input.
+	 * @param string              $form     Form id ('' = PATCH mode).
+	 * @param bool                $partial  True: PATCH semantics regardless of the schema's form requirement.
+	 * @return array{settings:array<string,mixed>,errors:array<string,string>,changed:bool}
+	 */
+	private static function apply( string $slug, array $input, string $form, bool $partial ): array {
 		$def = self::def( $slug );
 		if ( null === $def ) {
 			return array(
@@ -275,10 +309,11 @@ final class Settings {
 				'changed'  => false,
 			);
 		}
-		$form    = (string) ( $args['form'] ?? '' );
-		$unknown = '' !== $form
-			? ( $def['forms'] && ! in_array( $form, (array) $def['forms'], true ) )
-			: ( ! empty( $def['form_required'] ) );
+		$unknown = $partial
+			? false
+			: ( '' !== $form
+				? ( $def['forms'] && ! in_array( $form, (array) $def['forms'], true ) )
+				: ( ! empty( $def['form_required'] ) ) );
 		if ( $unknown ) {
 			$id     = (string) ( $def['messages']['unknown_form_id'] ?? 'form' );
 			$msg    = (string) ( $def['messages']['unknown_form'] ?? '' );

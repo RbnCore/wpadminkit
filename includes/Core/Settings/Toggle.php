@@ -7,9 +7,11 @@
  * and stores it through the engine's own PATCH route (so `on_save` side effects, the change log callback and the
  * `rbnkit_core_settings_saved` action behave exactly as a normal save), and never touches a neighbouring field.
  *
- * A kit whose schema requires a form id (`form_required`, CookieKit and SecurityKit today) refuses a PATCH write with
- * "the form was not recognised"; the engine's rule is not bypassed — the same field is then written in FORM mode with
- * every current value of that form posted back, so no other field of the form can be reset.
+ * A kit whose schema requires a form id (`form_required`, CookieKit and SecurityKit today) refuses a FORM-less `update()`
+ * with "the form was not recognised"; that rule protects form submissions (an absent checkbox is off), not a
+ * programmatic single-field write. The switch therefore goes through `Engine::update_paths()`: PATCH semantics even
+ * for such a kit, so exactly one path is written — no whole form is ever posted back (WPRJ-728: a form value set built
+ * from a pre-lock snapshot rewrote a sibling another request had just saved).
  *
  * Phase 2 (WPRJ-718): `ToggleEndpoint` is wired on `wp_ajax_adminkit_toggle`; screens mark their switches with the
  * attributes `Form::instant()` derives from `switchable()` — one rule for what may be switched from here.
@@ -80,17 +82,12 @@ final class Toggle {
 			return self::result( $slug, $path, $row, $value, false );
 		}
 
+		// ONE path, ONE locked read-modify-write (WPRJ-728). A form-required kit (CookieKit, SecurityKit) is written
+		// through the engine's single-path route too: building a whole FORM value set from a snapshot made BEFORE the
+		// write lock was the lost-update window — the snapshot was stale once the lock was taken, so the toggle rewrote
+		// a sibling another request had just saved (silently, with `changed:true`).
 		$input  = self::put( array(), $path, self::encode( $row, $value ) );
-		$result = Engine::update( $slug, $input );
-
-		// A form-required schema refuses the PATCH write and writes nothing (`changed` stays false). Repeat it through
-		// the engine's FORM route, posting the current value of every field of that form: no neighbour can be reset.
-		// Only when the stored value still is not the wanted one — a concurrent request may already have applied it —
-		// and not after a lock failure: the lock is still held, so the second attempt could only wait again.
-		if ( empty( $result['changed'] ) && empty( $result['errors']['lock'] ) && ! empty( $row['forms'] ) && self::to_bool( $row, Engine::get( $slug, $path ) ) !== $value ) {
-			$form   = (string) $row['forms'][0];
-			$result = Engine::update( $slug, self::form_input( $slug, $form, $path, self::encode( $row, $value ) ), array( 'form' => $form ) );
-		}
+		$result = Engine::update_paths( $slug, $input );
 
 		$now = self::to_bool( $row, Engine::get( $slug, $path ) );
 
@@ -167,32 +164,6 @@ final class Toggle {
 	/** Input value a boolean row expects (`flag` rows keep their 1/0 shape). */
 	private static function encode( array $row, bool $value ) {
 		return 'flag' === $row['type'] ? ( $value ? 1 : 0 ) : $value;
-	}
-
-	/**
-	 * FORM-mode input: every field the form may write, at its current value; the target path carries the new value.
-	 *
-	 * The path set mirrors the engine's own `paths()` rule: internal fields never, a field of another form never, a
-	 * field without a form list always.
-	 *
-	 * @return array<string, mixed>
-	 */
-	private static function form_input( string $slug, string $form, string $path, $value ): array {
-		$input = array();
-		$all   = Engine::all( $slug );
-		foreach ( Engine::fields( $slug ) as $field_path => $row ) {
-			$field_path = (string) $field_path;
-			$row        = (array) $row;
-			if ( ! empty( $row['internal'] ) ) {
-				continue;
-			}
-			if ( ! empty( $row['forms'] ) && ! in_array( $form, (array) $row['forms'], true ) ) {
-				continue;
-			}
-			$current = $field_path === $path ? $value : Engine::value_at( $all, $field_path, $row['default'] );
-			$input   = self::put( $input, $field_path, $current );
-		}
-		return $input;
 	}
 
 	/** Writes one dotted path into a nested array copy. */

@@ -306,7 +306,7 @@ final class DbStats {
 				return (int) Db::get_var(
 					"SELECT COALESCE( SUM( LENGTH( v.option_value ) ), 0 )
 					FROM %i t
-					INNER JOIN %i v ON v.option_name = CONCAT( '_transient_', SUBSTRING( t.option_name, 19 ) )
+					INNER JOIN %i v ON v.option_name = CONCAT( '_transient_', SUBSTRING( t.option_name, 20 ) )
 					WHERE t.option_name LIKE %s AND t.option_value < %d",
 					array( $wpdb->options, $wpdb->options, self::transient_like(), time() )
 				);
@@ -401,7 +401,7 @@ final class DbStats {
 					}
 					$ids = Db::get_col( self::orphan_ids_sql( $map ), array_merge( self::orphan_args( $map ), array( $left ) ) );
 					foreach ( $ids as $id ) {
-						$out[] = array( 'kind' => 'meta', 'table' => $map['table'], 'id' => (int) $id );
+						$out[] = array( 'kind' => 'meta', 'table' => $map['meta_type'], 'id' => (int) $id );
 					}
 				}
 				return $out;
@@ -436,7 +436,7 @@ final class DbStats {
 					return false;
 				}
 				list( $sql, $args ) = self::revision_sql( 'SELECT COUNT(*)', $o, ' AND r.ID = %d' );
-				array_splice( $args, 2, 0, array( $id ) ); // ID koşulu, alt sorgudaki iki %i ve keep'ten ÖNCE.
+				array_splice( $args, 1, 0, array( $id ) ); // Yer tutucu sırası: dış tablo, ID, iç tablo, keep.
 				return (int) Db::get_var( $sql, $args ) > 0;
 			case 'auto_drafts':
 			case 'trash_posts':
@@ -467,7 +467,7 @@ final class DbStats {
 				if ( null === $map || $id <= 0 ) {
 					return false;
 				}
-				return (int) Db::get_var( self::orphan_qualify_sql( $map ), array_merge( array( $id ), self::orphan_args( $map ) ) ) > 0;
+				return (int) Db::get_var( self::orphan_qualify_sql( $map ), array_merge( self::orphan_args( $map ), array( $id ) ) ) > 0;
 		}
 		return false;
 	}

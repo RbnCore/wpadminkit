@@ -2,8 +2,8 @@
 /**
  * AJAX entry point of the instant switches: nonce + capability + rate limit + input whitelist, then `Toggle::apply()`.
  *
- * Phase 2 (WPRJ-718): registered in `Plugin::boot()` as `wp_ajax_adminkit_toggle`; the screen receives `ajaxUrl`,
- * `ajaxAction` and `toggleNonce` through the `RbnUiI18n` localization (see docs/aninda-anahtar.md).
+ * Phase 2 (WPRJ-718): registered from `Plugin::boot()` through `register()` as `wp_ajax_adminkit_toggle`; the screen
+ * receives `ajaxUrl`, `ajaxAction` and `toggleNonce` through the `RbnUiI18n` localization (see docs/aninda-anahtar.md).
  *
  * Request (POST, admin-ajax): action=adminkit_toggle, _wpnonce, slug, path, value (1|0|true|false).
  * Success: HTTP 200 `{ok:true, slug, path, value, changed, label, module?}`.
@@ -44,6 +44,17 @@ final class ToggleEndpoint {
 
 	/** Rate-limit counter key prefix; `RateLimit` digests it before storing. */
 	private const RATE_KEY = 'adminkit_toggle:';
+
+	/**
+	 * Wires the admin-ajax route `wp_ajax_adminkit_toggle`.
+	 *
+	 * Registered from `Plugin::boot()` (admin-ajax requests count as `is_admin()`). The hook name is assembled from
+	 * `ACTION` so the route can never drift from the request contract, and the handler lives in this same class, so
+	 * the security gate (K1) can resolve `handle()`'s body next to its registration.
+	 */
+	public static function register(): void {
+		add_action( 'wp_ajax_' . self::ACTION, array( self::class, 'handle' ) );
+	}
 
 	public static function handle(): void {
 		if ( ! self::is_post() ) {

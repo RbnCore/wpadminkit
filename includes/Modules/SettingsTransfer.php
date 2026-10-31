@@ -222,8 +222,18 @@ final class SettingsTransfer implements Module {
 			),
 			self::PLAN_TTL
 		);
-		wp_safe_redirect( add_query_arg( array( 'tab' => self::id(), 'plan' => $token ), SettingsPage::url() ) );
+		wp_safe_redirect( self::tab_url( array( 'plan' => $token ) ) );
 		exit;
+	}
+
+	/**
+	 * Ayar sayfasının bu modülün sekmesine dönüş adresi. `id()` örnek yöntemidir: statik bağlamdan `self::id()`
+	 * çağrısı PHP'de ölümcül hata verir (önizleme/uygulama yönlendirmesi hiç çalışmazdı), bu yüzden tek yerden.
+	 *
+	 * @param array<string, string> $args Ek sorgu argümanları.
+	 */
+	public static function tab_url( array $args = array() ): string {
+		return add_query_arg( array_merge( array( 'tab' => ( new self() )->id() ), $args ), SettingsPage::url() );
 	}
 
 	/** Onaylanan planı TEK işlemde yazar; hata varsa hiçbir kit yazılmaz (Transfer::apply). */
@@ -557,7 +567,7 @@ final class SettingsTransfer implements Module {
 	/** Bildirim + sayfaya dönüş. */
 	private static function back( string $type, string $message ): void {
 		Toast::flash( $type, $message );
-		wp_safe_redirect( add_query_arg( 'tab', self::id(), SettingsPage::url() ) );
+		wp_safe_redirect( self::tab_url() );
 		exit;
 	}
 }

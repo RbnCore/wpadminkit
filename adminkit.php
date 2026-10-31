@@ -3,7 +3,7 @@
  * Plugin Name:       AdminKit — Admin Area Tools
  * Plugin URI:        https://github.com/RbnCore/wpadminkit
  * Description:       Adds features to the WordPress admin area, module by module: back-to-top button, sticky save bar, notice organizer, color theme and a sample customization. Each module can be turned on or off. Adds nothing visible to the front end; connects to GitHub only for the plugin catalog and for update checks of RBN plugins (can be turned off in the settings).
- * Version:           0.1.2
+ * Version:           0.1.3
  * Requires at least: 6.4
  * Requires PHP:      8.0
  * Author:            RBN Bilişim
@@ -21,7 +21,7 @@ declare(strict_types=1);
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'ADMINKIT_VERSION', '0.1.2' );
+define( 'ADMINKIT_VERSION', '0.1.3' );
 define( 'ADMINKIT_FILE', __FILE__ );
 define( 'ADMINKIT_DIR', plugin_dir_path( __FILE__ ) );
 define( 'ADMINKIT_URL', plugin_dir_url( __FILE__ ) );

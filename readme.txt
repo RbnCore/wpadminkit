@@ -4,7 +4,7 @@ Tags: admin, back to top, sticky save, notices, admin color scheme, dashboard
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 0.1.2
+Stable tag: 0.1.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -28,6 +28,11 @@ Adds features to the WordPress admin area, module by module. You turn each modul
 2. Turn modules on or off under RBN Kit → AdminKit, in the side menu just below Dashboard.
 
 == Changelog ==
+
+= 0.1.3 =
+* Turning a module on or off now updates its panel immediately, no page reload: the Database maintenance and System Health panels (and any other panel that depends on a switch) appear or disappear in place, and their scripts start on the spot. If the panel cannot be refreshed, a notice offers a Reload link instead of leaving a stale panel behind.
+* Setup hints no longer tell you to press Save: they now say the switch applies right away.
+* Fixes: the color theme, Database maintenance and System Health hints all match the new behaviour, and the Turkish translation of the changed strings is updated.
 
 = 0.1.2 =
 * New: System Health module. A read-only report of the server, the database and WP-Cron on tabs of its own, with a button that copies the report for support.

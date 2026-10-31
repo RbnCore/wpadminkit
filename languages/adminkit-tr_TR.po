@@ -1735,3 +1735,12 @@ msgstr "Şu anda bu ayarları başka bir istek kaydediyor; hiçbir şey yazılma
 
 msgid "This request came from another site and was refused."
 msgstr "Bu istek başka bir siteden geldiği için reddedildi."
+
+msgid "%s: the panel was updated."
+msgstr "%s: panel güncellendi."
+
+msgid "The panel could not be refreshed. Reload the page to see the current state."
+msgstr "Panel yenilenemedi. Güncel durumu görmek için sayfayı yenileyin."
+
+msgid "Reload"
+msgstr "Yenile"

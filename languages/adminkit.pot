@@ -2100,3 +2100,16 @@ msgstr ""
 #: includes/Core/Security/Guard.php
 msgid "This request came from another site and was refused."
 msgstr ""
+
+#: includes/Assets.php
+#. translators: %s: module name.
+msgid "%s: the panel was updated."
+msgstr ""
+
+#: includes/Assets.php
+msgid "The panel could not be refreshed. Reload the page to see the current state."
+msgstr ""
+
+#: includes/Assets.php
+msgid "Reload"
+msgstr ""

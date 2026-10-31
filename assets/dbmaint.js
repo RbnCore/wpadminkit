@@ -194,7 +194,19 @@
 		return nextType();
 	};
 
-	d.addEventListener('DOMContentLoaded', function () {
-		d.querySelectorAll('[data-dbmaint]').forEach(function (el) { new Panel(el); });
-	});
+	/* Her panel kökü YALNIZ bir kez bağlanır (işaret kökte): ilk yükleme, geç yüklenen betik ve canlı panel değişimi
+	 * (`rbn:panel-swapped`, WPRJ-738) aynı yoldan geçer; çift tıklama/çift istek olmaz. */
+	function boot(scope) {
+		(scope || d).querySelectorAll('[data-dbmaint]').forEach(function (el) {
+			if (el.__rbnDbmaint) { return; }
+			el.__rbnDbmaint = true;
+			new Panel(el);
+		});
+	}
+	if (d.readyState === 'loading') {
+		d.addEventListener('DOMContentLoaded', function () { boot(); });
+	} else {
+		boot();
+	}
+	d.addEventListener('rbn:panel-swapped', function (e) { boot(e.target && e.target.nodeType === 1 ? e.target : d); });
 }(window));

@@ -171,6 +171,33 @@
 	}
 	document.addEventListener( 'input', mine );
 	document.addEventListener( 'change', mine );
+	/* Canlı panel değişimi (WPRJ-738): değişen bölgenin alanları "kaydedilmemiş" sayılmaz; bölgenin DIŞINDA yazılmış
+	 * değişiklikler olduğu gibi kalır. Eski bölgenin alan adları taban çizgisinden çıkar, yeni bölgeninkiler eklenir. */
+	function names( root ) {
+		var out = [];
+		root.querySelectorAll( '[name]' ).forEach( function ( el ) {
+			if ( el.name && el.form === form ) {
+				out.push( el.name );
+			}
+		} );
+		return out;
+	}
+	var swapped = [];
+	document.addEventListener( 'rbn:panel-swapping', function ( e ) {
+		swapped = e.detail && e.detail.root ? names( e.detail.root ) : [];
+	} );
+	document.addEventListener( 'rbn:panel-swapped', function ( e ) {
+		var now = snapshot();
+		swapped.concat( e.detail && e.detail.root ? names( e.detail.root ) : [] ).forEach( function ( k ) {
+			if ( Object.prototype.hasOwnProperty.call( now, k ) ) {
+				baseline[ k ] = now[ k ];
+			} else {
+				delete baseline[ k ];
+			}
+		} );
+		swapped = [];
+		check();
+	} );
 	form.addEventListener( 'submit', function ( e ) {
 		submitting = true;
 		window.setTimeout( function () {

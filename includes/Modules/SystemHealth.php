@@ -92,6 +92,11 @@ final class SystemHealth implements Module {
 				'type'   => 'custom',
 				'label'  => __( 'Health report', 'adminkit' ),
 				'render' => array( $this, 'render_panel' ),
+				// Anahtar uygulanınca panel yenilemeden değişir; betik modül kapalıyken yüklenmediği için canlı yüklenir (WPRJ-738).
+				'live'   => array(
+					'scripts' => array( 'adminkit-systemhealth' ),
+					'paths'   => array( 'modules.' . $this->id() . '.enabled' ),
+				),
 			),
 		);
 	}

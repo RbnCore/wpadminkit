@@ -49,6 +49,10 @@ final class Assets {
 				'instantOffDone' => __( '%s is off.', 'adminkit' ),
 				'instantFailed' => __( 'The change could not be saved: the switch went back to its old position.', 'adminkit' ),
 				'reloadHint'    => __( 'Reload the page and try again.', 'adminkit' ),
+				// Canlı panel değişimi (WPRJ-738): anahtar sonrası ilgili bölüm yenilemeden değişir.
+				'panelUpdated'  => __( '%s: the panel was updated.', 'adminkit' ),
+				'panelFailed'   => __( 'The panel could not be refreshed. Reload the page to see the current state.', 'adminkit' ),
+				'panelReload'   => __( 'Reload', 'adminkit' ),
 			)
 		);
 	}

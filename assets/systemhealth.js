@@ -64,12 +64,21 @@
 		});
 	}
 
-	d.addEventListener('DOMContentLoaded', function () {
-		var roots = d.querySelectorAll('[data-health]');
+	/* Kök başına bir kez bağlanır (işaret kökte): ilk yükleme, geç yüklenen betik ve canlı panel değişimi
+	 * (`rbn:panel-swapped`, WPRJ-738) aynı yoldan geçer. */
+	function boot(scope) {
+		var roots = (scope || d).querySelectorAll('[data-health]');
 		Array.prototype.forEach.call(roots, function (root) {
 			var btn = root.querySelector('[data-health-copy]');
-			if (!btn) { return; }
+			if (!btn || root.__rbnHealth) { return; }
+			root.__rbnHealth = true;
 			btn.addEventListener('click', function () { onClick(root); });
 		});
-	});
+	}
+	if (d.readyState === 'loading') {
+		d.addEventListener('DOMContentLoaded', function () { boot(); });
+	} else {
+		boot();
+	}
+	d.addEventListener('rbn:panel-swapped', function (e) { boot(e.target && e.target.nodeType === 1 ? e.target : d); });
 }(window));

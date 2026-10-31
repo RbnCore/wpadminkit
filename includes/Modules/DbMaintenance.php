@@ -82,6 +82,11 @@ final class DbMaintenance implements Module {
 				'type'   => 'custom',
 				'label'  => __( 'Cleanup tools', 'adminkit' ),
 				'render' => array( $this, 'render_panel' ),
+				// Anahtar uygulanınca panel yenilemeden değişir; betik modül kapalıyken yüklenmediği için canlı yüklenir (WPRJ-738).
+				'live'   => array(
+					'scripts' => array( 'adminkit-dbmaint' ),
+					'paths'   => array( 'modules.' . $this->id() . '.enabled' ),
+				),
 			),
 		);
 	}

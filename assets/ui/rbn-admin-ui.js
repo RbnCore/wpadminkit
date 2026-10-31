@@ -49,7 +49,9 @@
 		this.start();
 		/* Geri/ileri tuşu: adres çubuğundaki parametreye göre sekmeyi göster (girdi eklemez, odağı çalmaz). */
 		if (this.panels) {
-			window.addEventListener('popstate', function () { self.start(); });
+			window.addEventListener('popstate', function () {
+				if (self.list.isConnected) { self.start(); }
+			});
 		}
 	}
 
@@ -824,6 +826,137 @@
 		});
 	}
 
+	/* ═══ CANLI PANEL DEĞİŞİMİ (WPRJ-738) ═══
+	 * Sunucu, durumuna bağlı bölgeyi `data-rbn-live="<kimlik>"` ile işaretler (PHP: `Helpers\Live::attrs`). Anahtar uygulanınca
+	 * AYNI adres yeniden getirilir ve yalnız o bölgeler değiştirilir: sayfa yenilenmez, formdaki kaydedilmemiş alanlar,
+	 * kaydırma ve odak korunur. Bölgenin betiği kapalıyken sayfaya hiç basılmadıysa (`data-rbn-live-scripts`) yeni sayfadan
+	 * canlı yüklenir. Değişimden sonra `rbn:panel-swapped` olayı bölgenin kendisinde yayınlanır (kabarır): her panel betiği
+	 * KENDİ başlatmasını bu olaya (ve ilk yüklemeye) bağlar — çift bağlanmaması panel betiğinin işidir (kök öğede işaret). */
+	var liveStatus = null;
+
+	function liveSay(text) {
+		if (!liveStatus || !document.body.contains(liveStatus)) {
+			liveStatus = el('div', 'rbn-sr');
+			liveStatus.setAttribute('role', 'status');
+			liveStatus.setAttribute('aria-live', 'polite');
+			document.body.appendChild(liveStatus);
+		}
+		liveStatus.textContent = '';
+		window.setTimeout(function () { liveStatus.textContent = text; }, 30);
+	}
+
+	function liveRegions(input) {
+		var path = input.getAttribute('data-path') || '';
+		return $$('[data-rbn-live]').filter(function (region) {
+			var only = region.getAttribute('data-rbn-live-paths');
+			return !only || only.split(/\s+/).indexOf(path) !== -1;
+		});
+	}
+
+	function liveFind(doc, id) {
+		var found = null;
+		$$('[data-rbn-live]', doc).some(function (node) {
+			if (node.getAttribute('data-rbn-live') === id) { found = node; return true; }
+			return false;
+		});
+		return found;
+	}
+
+	function liveInject(node) {
+		return new Promise(function (resolve, reject) {
+			var tag = document.createElement('script');
+			if (node.src) {
+				tag.src = node.src;
+				tag.onload = function () { resolve(); };
+				tag.onerror = function () { reject(new Error('script')); };
+			}
+			if (node.id) { tag.id = node.id; }
+			if (!node.src) { tag.text = node.textContent; }
+			document.head.appendChild(tag);
+			if (!node.src) { resolve(); }
+		});
+	}
+
+	/** Bölgenin betik tutamaçları (`<tutamaç>-js`) bu sayfada yoksa yeni sayfadaki öncül/ana betikleri sırayla yükler. */
+	function liveScripts(doc, regions) {
+		var chain = Promise.resolve();
+		regions.forEach(function (region) {
+			(region.getAttribute('data-rbn-live-scripts') || '').split(/\s+/).forEach(function (handle) {
+				if (!handle || document.getElementById(handle + '-js')) { return; }
+				['-js-translations', '-js-extra', '-js-before'].forEach(function (suffix) {
+					var inline = doc.getElementById(handle + suffix);
+					if (inline && !document.getElementById(handle + suffix)) {
+						chain = chain.then(function () { return liveInject(inline); });
+					}
+				});
+				var main = doc.getElementById(handle + '-js');
+				if (main) {
+					chain = chain.then(function () { return liveInject(main); });
+				}
+			});
+		});
+		return chain;
+	}
+
+	function liveFail(input, regions) {
+		var reload = location.href;
+		toast({
+			message: i18n('panelFailed', 'The panel could not be refreshed. Reload the page to see the current state.'),
+			type: 'error',
+			duration: 0,
+			action: { label: i18n('panelReload', 'Reload'), url: reload }
+		});
+	}
+
+	function liveRefresh(input) {
+		var regions = liveRegions(input);
+		if (!regions.length || !window.fetch || !window.DOMParser) { return; }
+		var focused = input;
+		fetch(location.href, {
+			method: 'GET',
+			credentials: 'same-origin',
+			cache: 'no-store',
+			headers: { 'X-Requested-With': 'XMLHttpRequest' }
+		}).then(function (res) {
+			if (!res.ok) { throw new Error('http ' + res.status); }
+			return res.text();
+		}).then(function (html) {
+			var doc = new DOMParser().parseFromString(html, 'text/html');
+			var pairs = regions.map(function (old) {
+				var fresh = liveFind(doc, old.getAttribute('data-rbn-live'));
+				if (!fresh) { throw new Error('region'); }
+				return { old: old, fresh: fresh };
+			});
+			return liveScripts(doc, regions).then(function () { return pairs; });
+		}).then(function (pairs) {
+			pairs.forEach(function (pair) {
+				if (!pair.old.isConnected) { return; }
+				var next = document.importNode(pair.fresh, true);
+				pair.old.dispatchEvent(new CustomEvent('rbn:panel-swapping', { bubbles: true, detail: { id: pair.old.getAttribute('data-rbn-live'), root: pair.old } }));
+				pair.old.replaceWith(next);
+				next.dispatchEvent(new CustomEvent('rbn:panel-swapped', { bubbles: true, detail: { id: next.getAttribute('data-rbn-live'), root: next, previous: pair.old } }));
+			});
+			if (focused.isConnected && (document.activeElement === document.body || !document.activeElement)) {
+				focused.focus();
+			}
+			var names = pairs.map(function (pair) { return pair.fresh.getAttribute('data-rbn-live-label'); }).filter(Boolean);
+			if (names.length) {
+				liveSay(instantFormat('panelUpdated', '%s: the panel was updated.', names.join(', ')));
+			}
+		}).catch(function () {
+			liveFail(input, regions);
+		});
+	}
+
+	/* Değişen bölge kendi etkileşimini geri alır: iç sekmeler ve anahtar yazıları (idempotent; çift bağlanmaz). */
+	document.addEventListener('rbn:panel-swapped', function (e) {
+		var root = e.detail && e.detail.root;
+		if (root) {
+			init(root);
+			syncSwitches(root);
+		}
+	});
+
 	/* Anahtar isteği sürerken `disabled` odağı düşürür; iş bitince kullanıcıyı anahtara geri getir
 	 * (yalnız odak gerçekten BODY'ye düştüyse — kullanıcı başka yere geçtiyse çalmayız). */
 	function instantRefocus(input) {
@@ -861,6 +994,7 @@
 			message: instantFormat(now ? 'instantOnDone' : 'instantOffDone', now ? '%s is on.' : '%s is off.', label),
 			type: 'success'
 		});
+		liveRefresh(input);
 	}
 
 	function instantSend(input, want, label) {

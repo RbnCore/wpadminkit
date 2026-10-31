@@ -266,7 +266,9 @@ final class SettingsPage {
 		$value = $settings[ $key ] ?? Settings::default_of( $field );
 		$help  = isset( $field['help'] ) ? '<span class="rbn-help" id="' . esc_attr( $fid ) . '-h">' . esc_html( (string) $field['help'] ) . '</span>' : '';
 		$desc  = isset( $field['help'] ) ? ' aria-describedby="' . esc_attr( $fid ) . '-h"' : '';
-		echo '<div class="rbn-field">';
+		// Bir modülün açık/kapalı durumuna bağlı panel: anahtar uygulanınca sayfa yenilenmeden bu bölge değişir (WPRJ-738).
+		$live = ( 'custom' === $field['type'] && ! empty( $field['live'] ) ) ? Helpers\Live::attrs( $fid, (array) ( $field['live']['scripts'] ?? array() ), (array) ( $field['live']['paths'] ?? array() ), (string) ( $field['label'] ?? '' ) ) : ''; // Live::attrs() kaçışlar.
+		echo '<div class="rbn-field"' . $live . '>'; // phpcs:ignore WordPress.Security.EscapeOutput -- Live::attrs() kaçışlar.
 		switch ( $field['type'] ) {
 			case 'custom':
 				call_user_func( $field['render'], $base, $settings );

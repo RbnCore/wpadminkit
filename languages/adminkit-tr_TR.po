@@ -1729,3 +1729,9 @@ msgid "%d check needs attention"
 msgid_plural "%d checks need attention"
 msgstr[0] "%d denetim ilgi bekliyor"
 msgstr[1] "%d denetim ilgi bekliyor"
+
+msgid "Another request is saving these settings right now, so nothing was written. Try again."
+msgstr "Şu anda bu ayarları başka bir istek kaydediyor; hiçbir şey yazılmadı. Tekrar deneyin."
+
+msgid "This request came from another site and was refused."
+msgstr "Bu istek başka bir siteden geldiği için reddedildi."

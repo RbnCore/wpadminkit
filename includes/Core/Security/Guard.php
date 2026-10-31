@@ -21,7 +21,11 @@ final class Guard {
 	private static array $public_routes = array();
 
 	/**
-	 * Admin action gate: capability + nonce in one call. Call it at the top of an `admin_post_*` / `wp_ajax_*` handler.
+	 * Admin action gate: origin + capability + nonce in one call. Call it at the top of an `admin_post_*` /
+	 * `wp_ajax_*` handler.
+	 *
+	 * The origin check runs FIRST (WPRJ-726): a state-changing request that another site's page started must never
+	 * depend on whether the nonce happens to leak, and a foreign Origin is refused with 403 before anything is read.
 	 *
 	 * @param string $nonce_action Nonce action (`wp_nonce_field()` / `wp_create_nonce()` use the same name).
 	 * @param string $cap          Capability the user must have.
@@ -30,6 +34,9 @@ final class Guard {
 	 * @param string $filter       Optional filter name that may widen the decision (the value is the capability).
 	 */
 	public static function admin_action( string $nonce_action, string $cap = 'manage_options', string $field = '_wpnonce', string $response = 'die', string $filter = '' ): void {
+		if ( ! self::same_origin() ) {
+			self::fail( __( 'This request came from another site and was refused.', 'adminkit' ), $response );
+		}
 		if ( ! self::allowed( $cap, $filter ) ) {
 			self::fail( __( 'You do not have permission for this action.', 'adminkit' ), $response );
 		}
@@ -103,10 +110,22 @@ final class Guard {
 	}
 
 	/**
-	 * Is the request from this site? A request without an Origin header (not a browser cross-site request) is allowed.
+	 * Is the request from this site?
+	 *
+	 * `Origin` decides when the browser sent one; otherwise `Referer` is used (a cross-site POST from an old browser
+	 * still names the page that started it). A request with NEITHER header is allowed: a browser always sends one of
+	 * them for a state-changing request, so an empty pair means a non-browser client (cron, CLI, an internal call),
+	 * and refusing those would break the kits' own background work.
+	 *
+	 * The site answers to more than one spelling (home, site address, the host the request itself arrived on), so the
+	 * check refuses only hosts that are none of them — a www/non-www or proxy spelling stays allowed.
 	 */
 	public static function same_origin(): bool {
-		$origin = isset( $_SERVER['HTTP_ORIGIN'] ) ? esc_url_raw( wp_unslash( (string) $_SERVER['HTTP_ORIGIN'] ) ) : '';
+		$origin = isset( $_SERVER['HTTP_ORIGIN'] ) ? (string) wp_unslash( (string) $_SERVER['HTTP_ORIGIN'] ) : '';
+		if ( '' === $origin && isset( $_SERVER['HTTP_REFERER'] ) ) {
+			$origin = (string) wp_unslash( (string) $_SERVER['HTTP_REFERER'] );
+		}
+		$origin = esc_url_raw( $origin );
 		if ( '' === $origin ) {
 			return true;
 		}
@@ -114,7 +133,18 @@ final class Guard {
 		if ( '' === $host ) {
 			return false;
 		}
-		return Host::same_site_pair( $host, (string) wp_parse_url( home_url(), PHP_URL_HOST ) );
+		$request_host = isset( $_SERVER['HTTP_HOST'] ) ? (string) wp_parse_url( 'http://' . wp_unslash( (string) $_SERVER['HTTP_HOST'] ), PHP_URL_HOST ) : '';
+		$known        = array(
+			(string) wp_parse_url( home_url(), PHP_URL_HOST ),
+			(string) wp_parse_url( site_url(), PHP_URL_HOST ),
+			$request_host,
+		);
+		foreach ( $known as $self ) {
+			if ( '' !== $self && Host::same_site_pair( $host, $self ) ) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/* ------------------------------------------------------------------ internals */

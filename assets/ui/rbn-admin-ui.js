@@ -830,7 +830,9 @@
 		instantBusy(input, false);
 		instantRefocus(input);
 		if (!json || true !== json.ok) {
-			input.checked = !want;
+			/* Sunucu bir çakışmada (409) satırdaki GERÇEK değeri bildirir: anahtar o değere döner, körlemesine
+			 * "eski hâle" değil (WPRJ-726). Bildirmezse istek öncesi hâle dönülür. */
+			input.checked = (json && 'boolean' === typeof json.value) ? json.value : !want;
 			syncSwitch(input);
 			var message = (json && 'string' === typeof json.message && json.message) || i18n('instantFailed', 'The change could not be saved: the switch went back to its old position.');
 			if (403 === status) {
@@ -901,7 +903,10 @@
 			syncSwitch(input);
 			return;
 		}
-		var own = input.getAttribute('data-rbn-confirm');
+		/* Yön metni: bir korumayı KAPATMAK ile AÇMAK aynı cümleyi hak etmez (WPRJ-726). `data-rbn-confirm-off*`
+		 * yalnız kapatırken, `data-rbn-confirm-on*` yalnız açarken okunur; yoksa yönsüz metne düşülür. */
+		var dir = want ? '-on' : '-off';
+		var own = input.getAttribute('data-rbn-confirm' + dir) || input.getAttribute('data-rbn-confirm');
 		var when = input.getAttribute('data-rbn-confirm-when') || 'both';
 		var skip = ('on' === when && !want) || ('off' === when && want);
 
@@ -915,9 +920,12 @@
 		var danger = input.hasAttribute('data-risk') || 'danger' === input.getAttribute('data-rbn-confirm-tone');
 		confirm({
 			message: own || instantHelp(input) || '',
-			title: input.getAttribute('data-rbn-confirm-title') ||
+			title: input.getAttribute('data-rbn-confirm' + dir + '-title') ||
+				input.getAttribute('data-rbn-confirm-title') ||
 				instantFormat(want ? 'instantOn' : 'instantOff', want ? 'Turn on %s?' : 'Turn off %s?', label),
-			confirmLabel: input.getAttribute('data-rbn-confirm-ok') || i18n('instantYes', 'Yes'),
+			confirmLabel: input.getAttribute('data-rbn-confirm' + dir + '-ok') ||
+				input.getAttribute('data-rbn-confirm-ok') ||
+				i18n('instantYes', 'Yes'),
 			cancelLabel: input.getAttribute('data-rbn-confirm-cancel') || i18n('cancel', 'Cancel'),
 			tone: danger ? 'danger' : 'info',
 			/* Esc/Vazgeç'ten sonra odak ANAHTARA döner — programatik tıklamada da (WPRJ-724). */

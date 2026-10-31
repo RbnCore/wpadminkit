@@ -160,6 +160,21 @@ etiketler bozulmaz), yalnız `trim` + `max_len` + `max_entries`. Doğrulama `cle
   iki giriş; arada davranış farkı oluşamaz. `base` verilirse girdi **o değer kümesi** üzerine uygulanır (WPSeoKit
   `Settings::sanitize( $girdi, $taban )` içe aktarma probu böyle çalışır); verilmezse depolanan değerler kullanılır.
 
+### 4.1 Tek yazma yolu: kilit + taze okuma (WPRJ-726)
+
+Satır **tek** olduğu için kilitlenmemiş "oku → değiştir → yaz" kardeş anahtarları eziyordu (kayıp güncelleme: form
+kaydı ile anında anahtar aynı anda geldiğinde biri siliniyordu). Düzeltme eklenti başına değil, **motorda**:
+
+- `Settings::locked( $def, $apply )`: `<seçenek>_lock` adını `Helpers\Lock` ile alır (TTL 30 sn, sahip jetonlu;
+  bayat kilit tek CAS ile devralınır), kilidin İÇİNDE değeri **taze okur**, `$apply` ile değiştirir, tek yazma yapar,
+  `finally` ile bırakır. Taze okuma, istek belleğini ve `options`/`alloptions`/`notoptions` object-cache girdilerini
+  temizler — Redis açıkken de doğrudur.
+- Aynı çağrı yığınında kit yeniden yazılırsa `$holding` sayacı kilidi ikinci kez almaz (öz-kilitlenme yok).
+- Kilit alınamazsa 20 ms'lik denemelerle **~2 sn** beklenir; yine alınamazsa **sessiz üzerine yazma YOK**: yazma
+  yapılmaz, `errors.lock` açık mesajla döner (`update()` `changed:false` + hata; `import_write()` `false`).
+- Kullanıcılar: `update()`, `set()`, `reset()`, `import_write()` — yani form kaydı (`options.php`/`admin-post`/REST),
+  anında anahtar (`Toggle`), ayar aktarımı ve sihirbaz. Eklenti başına ikinci bir kilit/kopya yoktur.
+
 ## 5. Kısmi güncelleme semantiği — **formdaki her alan gönderilir**
 
 İki mod vardır ve hangisinin kullanıldığını **çağıran** söyler:
@@ -295,6 +310,13 @@ istemiyordu; kapı REST `permission_callback` + admin formu `Guard`), `log => ar
 (değişiklik günlüğü yalnız gerçekten değişince; motor no-op'ta çağırmaz). `register()` kendini korur: şema zaten
 kayıtlıysa sessizce döner (test/WP-CLI'de `boot()` iki kez koşabilir; `_doing_it_wrong` debug.log'a düşmez).
 
+**Not (WPRJ-726):** AdminKit ve WPSeoKit dışındaki kitlerde `capability` boş bırakılırsa motor tek denetim noktasını
+delik bırakır. `adminkit/Settings.php` bu kartta `manage_options` yapıldı. `wpseokit/Settings.php` **bilerek boş
+kaldı**: `PreferredAddressApplyService::maybe_rollback()` `init` kancasında (oturum yok) `SettingsRepository::update()`
+ile yazar ve `wpseokit/tests/ayar-motoru-test.php` (satır ~254) bu başsız yazmayı `wp_set_current_user(0)` ile
+doğrular; `manage_options` koymak tercih adresinin geri alınmasını sessizce kırardı. WPSeoKit'in yazma kapıları
+REST `permission_callback` + admin formundaki `Guard`'dır.
+
 **Bu kademede YAPILMAYAN (bilerek):** `Screens\Ui` form yardımcılarının `Settings\Form`'a taşınması. Kademe 3'ün
 kapsamı şema/yol/temizleme + depolamadır; `Ui` çizim kodu **hiç değişmedi** → önce/sonra HTML birebir aynı (20
 ekran/282 alan, bayt ve md5 dahil). Ortak form yardımcıları ayrı bir iş olarak duruyor.
@@ -370,6 +392,7 @@ Kademe 1–3 bitmeden 4'e geçilmez.
 | `contenthealth/tests/ayar-motoru-test.php` (yeni) | kural şeması, desen doğrulama/ret, **gönderilmeyen işaret kutusu = kapalı** (WPRJ-670 regresyonu), REST PATCH, fixture aynı |
 | `wpseokit/tests/ayar-motoru-test.php` (yeni) | **gerçek `wpseokit_settings`** ile `all()` birebir (SQL + kademe yedeği), bölüm/anahtar sırası, PATCH, on türün temizliği (tpl/url/type haritaları dahil), `validate` iletileri, gerçek yazma + SQL'den geri alma |
 | `adminkit/tests/modul-ayar-test.php` (yeni) | şemanın modüllerden türemesi (`custom`/`locked` saklanmaz), `for_module()` depolanan-değer-yoksa-varsayılan, **gerçek `adminkit_settings`** ile `all()` 1:1, FORM modu (gönderilmeyen kutu/modül kapalı, bilinmeyen anahtar yazılmaz), tür temizliği (sayı `invalid=>default`/kırpma, select, renk `Color::hex`, checklist), gerçek yazma + SQL'den geri alma |
+| `adminkit/tests/ayar-yaris-test.php` (yeni, WPRJ-726) | **Gerçek iki süreçle yarış** (`proc_open` + dosya bariyeri + `pre_update_option` süzgeci, 12 tur): farklı anahtarlar → kayıp güncelleme **0**; aynı anahtar → tam **bir** `changed:true`; form zorunlu kit → satır yoksa değer düşmez. Düzeltme öncesi 6/12 kayıp, 11/12 çift yazma, 10/12 yanlış 409; sonrası 0. Kilit kalıntısı ve geçici klasör temizliği de denetlenir |
 | mevcut paket | `schema`, `a-paketi`, `report`, `redirect`, `meta`, `llms`, `score`, `ayar-yol`, `metin-tek-satir`, `settings-rules`, `wpseokit-entegrasyon`, `metinler`, `uninstall`, `core-*`, `guard`, `toast`, `menu-sirasi`, `yukleme`, `uninstall-kapi`, `db-imza` — kırmızı artmaz |
 | kapılar | `kopya-tara.py --calisma-agaci --sinir 0` = 0 izinsiz · `guvenlik-kapisi.py … = 0 kırmızı` · `ceviri-eksik.py = 0` · `debug.log` yeni satır 0 |
 

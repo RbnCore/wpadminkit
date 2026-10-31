@@ -12,6 +12,9 @@
  *   checkbox is off, an absent list is empty; fields of another form are untouched).
  * - `internal` fields are never taken from input; only `set()` / `on_save` write them.
  * - A field marked `invalid => keep` keeps its old value when the submission cannot be cleaned.
+ * - Every write (update, set, reset, import) is one locked read-modify-write (WPRJ-726): the row is read AFTER the
+ *   kit's write lock is taken and stored before it is released, so two concurrent requests can never drop each
+ *   other's key. A request that cannot take the lock inside ~2 s writes nothing and reports an error.
  *
  * @package AdminKit
  */
@@ -21,6 +24,7 @@ declare(strict_types=1);
 namespace AdminKit\Core;
 
 use AdminKit\Core\Security\Host;
+use AdminKit\Helpers\Lock;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -34,6 +38,12 @@ final class Settings {
 
 	/** Guards against a schema that nests forever. */
 	private const MAX_DEPTH = 8;
+
+	/** How long one settings write waits for the kit's write lock, in seconds (a slow save, never a stuck one). */
+	private const LOCK_WAIT = 2.0;
+
+	/** Lock lifetime in seconds: a write holds it for milliseconds, the TTL only reclaims a crashed request's lock. */
+	private const LOCK_TTL = 30;
 
 	/**
 	 * Travel flags a field (or a whole section, inherited by its fields) may carry — settings transfer, see
@@ -55,6 +65,9 @@ final class Settings {
 
 	/** @var array<string, bool> Options the engine is writing right now (stops the sanitize filter re-entering). */
 	private static array $writing = array();
+
+	/** @var array<string, int> Options whose write lock this request already holds (a hook may write the same kit). */
+	private static array $holding = array();
 
 	/**
 	 * Registers one plugin schema. The first registration of a slug wins (one schema, one engine).
@@ -211,7 +224,10 @@ final class Settings {
 	/**
 	 * Writes one path after cleaning it (code-side writes: wizard, flags). Other paths are untouched.
 	 *
+	 * The stored value is read again INSIDE the write lock, so a key another request just wrote is kept.
+	 *
 	 * @param mixed $value Raw value.
+	 * @return bool False when the kit is unknown, the path does not exist or the write lock could not be taken.
 	 */
 	public static function set( string $slug, string $path, $value ): bool {
 		$def = self::def( $slug );
@@ -219,14 +235,20 @@ final class Settings {
 			return false;
 		}
 		$row    = (array) $def['flat'][ $path ];
-		$all    = self::all( $slug );
-		$old    = self::lookup( $all, explode( '.', $path ), $row['default'] );
 		$errors = array();
-		$res    = self::clean( $row, $value, $old, $errors );
-		self::write( $def, self::put( $all, $path, $res['value'] ) );
+		$stored = self::locked(
+			$def,
+			static function () use ( $slug, $path, $row, $value, &$errors ): array {
+				$all    = self::all( $slug );
+				$old    = self::lookup( $all, explode( '.', $path ), $row['default'] );
+				$errors = array();
+				$res    = self::clean( $row, $value, $old, $errors );
+				return self::put( $all, $path, $res['value'] );
+			}
+		);
 		self::reset_cache( $slug );
 		self::$errors[ $slug ] = $errors;
-		return true;
+		return null !== $stored;
 	}
 
 	/**
@@ -271,10 +293,28 @@ final class Settings {
 
 		$before = array();
 		$errors = array();
-		$after  = self::compute( $slug, $def, $input, $form, $errors, $before );
+		$after  = self::locked(
+			$def,
+			static function () use ( $slug, $def, $input, $form, &$before, &$errors ): array {
+				$before = array();
+				$errors = array();
+				return self::compute( $slug, $def, $input, $form, $errors, $before );
+			}
+		);
+
+		if ( null === $after ) {
+			// The write lock could not be taken: nothing was read-modify-written and nothing is stored. Silent
+			// last-writer-wins is exactly the defect this lock exists for (WPRJ-726).
+			$errors                = array( 'lock' => __( 'Another request is saving these settings right now, so nothing was written. Try again.', 'adminkit' ) );
+			self::$errors[ $slug ] = $errors;
+			return array(
+				'settings' => self::all( $slug ),
+				'errors'   => $errors,
+				'changed'  => false,
+			);
+		}
 
 		$changed = $after !== $before;
-		self::write( $def, $after );
 		self::reset_cache( $slug );
 		self::$errors[ $slug ] = $errors;
 		if ( $changed && null !== $def['log'] ) {
@@ -414,20 +454,25 @@ final class Settings {
 		if ( null === $def ) {
 			return false;
 		}
-		$all = self::all( $slug );
-		foreach ( (array) $def['flat'] as $p => $row ) {
-			$p = (string) $p;
-			// Internal fields (revision, wizard flag) are not part of "back to defaults"; an exact path may still reset one.
-			if ( ! empty( $row['internal'] ) && $p !== $path ) {
-				continue;
+		$stored = self::locked(
+			$def,
+			static function () use ( $slug, $def, $path ): array {
+				$all = self::all( $slug );
+				foreach ( (array) $def['flat'] as $p => $row ) {
+					$p = (string) $p;
+					// Internal fields (revision, wizard flag) are not part of "back to defaults"; an exact path may still reset one.
+					if ( ! empty( $row['internal'] ) && $p !== $path ) {
+						continue;
+					}
+					if ( '' === $path || $p === $path || 0 === strpos( $p, $path . '.' ) ) {
+						$all = self::put( $all, $p, $row['default'] );
+					}
+				}
+				return $all;
 			}
-			if ( '' === $path || $p === $path || 0 === strpos( $p, $path . '.' ) ) {
-				$all = self::put( $all, $p, $row['default'] );
-			}
-		}
-		self::write( $def, $all );
+		);
 		self::reset_cache( $slug );
-		return true;
+		return null !== $stored;
 	}
 
 	/* ------------------------------------------------------------ settings transfer (docs/ayar-tasima.md) */
@@ -557,7 +602,10 @@ final class Settings {
 		if ( ! (bool) apply_filters( 'rbnkit_core_settings_import_before_write', true, $slug, $settings ) ) {
 			return false;
 		}
-		self::write( $def, $settings );
+		$stored = self::locked( $def, static fn(): array => $settings );
+		if ( null === $stored ) {
+			return false;
+		}
 		self::reset_cache( $slug );
 		/**
 		 * Fires after one kit's imported value set was written.
@@ -1457,6 +1505,70 @@ final class Settings {
 	private static function cut( string $text, int $max ): string {
 		$max = max( 1, $max );
 		return function_exists( 'mb_substr' ) ? mb_substr( $text, 0, $max ) : substr( $text, 0, $max );
+	}
+
+	/**
+	 * One read-modify-write on the option, protected by the kit's write lock.
+	 *
+	 * A settings row is ONE `wp_options` entry, so "read the row, change one key, write the row back" loses the other
+	 * key when a second request does the same at the same time (WPRJ-726). Nothing is read and nothing is written
+	 * without the lock: `$apply()` runs AFTER a fresh read, and its result is stored before the lock is released.
+	 *
+	 * @param array<string,mixed>           $def   Resolved schema.
+	 * @param callable():array<string,mixed> $apply Returns the value set to store (it reads `self::all()`).
+	 * @return array<string,mixed>|null Stored value, or null when the lock could not be taken (nothing written).
+	 */
+	private static function locked( array $def, callable $apply ): ?array {
+		$option = (string) $def['option'];
+
+		// Re-entrant: a hook (log / on_save / save_post) writing the same kit inside our own lock is the same transaction.
+		if ( isset( self::$holding[ $option ] ) ) {
+			++self::$holding[ $option ];
+			try {
+				return (array) $apply();
+			} finally {
+				--self::$holding[ $option ];
+			}
+		}
+
+		$lock = $option . '_lock';
+		if ( ! self::take_lock( $lock ) ) {
+			return null;
+		}
+		self::$holding[ $option ] = 1;
+		try {
+			self::fresh( $option );
+			$value = (array) $apply();
+			self::write( $def, $value );
+			return $value;
+		} finally {
+			unset( self::$holding[ $option ] );
+			Lock::release( $lock );
+		}
+	}
+
+	/** Takes the kit's write lock, retrying briefly: a concurrent save takes milliseconds, a stuck one must not block. */
+	private static function take_lock( string $lock ): bool {
+		$deadline = microtime( true ) + self::LOCK_WAIT;
+		do {
+			if ( Lock::acquire( $lock, self::LOCK_TTL ) ) {
+				return true;
+			}
+			usleep( 20000 );
+		} while ( microtime( true ) < $deadline );
+		return false;
+	}
+
+	/**
+	 * Drops every cached copy of the option so the next `get_option()` reads the table: this request's value cache, the
+	 * single-option cache, and WordPress' `alloptions`/`notoptions` lists — an autoloaded row is served from
+	 * `alloptions`, so deleting only the option key would keep the stale value on a site with a persistent object cache.
+	 */
+	private static function fresh( string $option ): void {
+		self::$cache = array();
+		wp_cache_delete( $option, 'options' );
+		wp_cache_delete( 'alloptions', 'options' );
+		wp_cache_delete( 'notoptions', 'options' );
 	}
 
 	/**

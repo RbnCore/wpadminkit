@@ -2092,3 +2092,11 @@ msgid "%d check needs attention"
 msgid_plural "%d checks need attention"
 msgstr[0] ""
 msgstr[1] ""
+
+#: includes/Core/Settings.php
+msgid "Another request is saving these settings right now, so nothing was written. Try again."
+msgstr ""
+
+#: includes/Core/Security/Guard.php
+msgid "This request came from another site and was refused."
+msgstr ""

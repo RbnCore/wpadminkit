@@ -76,7 +76,7 @@ final class Toggle {
 
 		$old = self::to_bool( $row, Engine::get( $slug, $path ) );
 		if ( $old === $value ) {
-			// Idempotent: nothing is written, no log row, no side effect.
+			// Idempotent: the engine sees the same value and `update_option()` writes nothing; no log row, no effect.
 			return self::result( $slug, $path, $row, $value, false );
 		}
 
@@ -85,27 +85,38 @@ final class Toggle {
 
 		// A form-required schema refuses the PATCH write and writes nothing (`changed` stays false). Repeat it through
 		// the engine's FORM route, posting the current value of every field of that form: no neighbour can be reset.
-		if ( empty( $result['changed'] ) && ! empty( $row['forms'] ) ) {
-			$form = (string) $row['forms'][0];
+		// Only when the stored value still is not the wanted one — a concurrent request may already have applied it —
+		// and not after a lock failure: the lock is still held, so the second attempt could only wait again.
+		if ( empty( $result['changed'] ) && empty( $result['errors']['lock'] ) && ! empty( $row['forms'] ) && self::to_bool( $row, Engine::get( $slug, $path ) ) !== $value ) {
+			$form   = (string) $row['forms'][0];
 			$result = Engine::update( $slug, self::form_input( $slug, $form, $path, self::encode( $row, $value ) ), array( 'form' => $form ) );
 		}
 
 		$now = self::to_bool( $row, Engine::get( $slug, $path ) );
-		if ( empty( $result['changed'] ) || $now !== $value ) {
+
+		// The wanted value IS the stored value: the change is applied — by this request, or by the request that won the
+		// race. Answering 409 here would be a lie and would flip a switch that in fact holds the right value.
+		if ( $now !== $value ) {
 			return self::error(
 				'rbnkit_toggle_write_failed',
-				__( 'The setting could not be changed.', 'adminkit' ),
+				isset( $result['errors']['lock'] )
+					? (string) $result['errors']['lock']
+					: __( 'The setting could not be changed.', 'adminkit' ),
 				409,
 				array(
-					'slug' => $slug,
-					'path' => $path,
+					'slug'  => $slug,
+					'path'  => $path,
+					'value' => $now,
 				)
 			);
 		}
 
-		self::log( $slug, $path, $old, $now );
+		$changed = ! empty( $result['changed'] );
+		if ( $changed ) {
+			self::log( $slug, $path, $old, $now );
+		}
 
-		return self::result( $slug, $path, $row, $now, true );
+		return self::result( $slug, $path, $row, $now, $changed );
 	}
 
 	/* ------------------------------------------------------------------ internals */

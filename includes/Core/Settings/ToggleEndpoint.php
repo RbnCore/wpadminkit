@@ -7,7 +7,11 @@
  *
  * Request (POST, admin-ajax): action=adminkit_toggle, _wpnonce, slug, path, value (1|0|true|false).
  * Success: HTTP 200 `{ok:true, slug, path, value, changed, label, module?}`.
- * Failure: HTTP 400/403/404/405/409/429 `{ok:false, code, message}`.
+ * Failure: HTTP 400/403/404/405/409/429 `{ok:false, code, message, value?}` — a 409 always names the value the row
+ * holds now, so the screen can put the switch back where the server is (WPRJ-726).
+ *
+ * Origin: `Guard::admin_action()` refuses a foreign Origin/Referer with 403 BEFORE the nonce is checked, so this
+ * handler (and every other `admin_post_*` / `wp_ajax_*` handler of the kits) inherits the same rule — no copy here.
  *
  * @package AdminKit
  */
@@ -60,6 +64,7 @@ final class ToggleEndpoint {
 		if ( ! self::is_post() ) {
 			self::fail( 'rbnkit_toggle_method', __( 'The request must be a POST.', 'adminkit' ), 405 );
 		}
+		// Origin → capability → nonce, in that order: a foreign page cannot make the switch move (WPRJ-726).
 		Guard::admin_action( self::NONCE, self::CAP, self::NONCE_FIELD, 'json' );
 
 		if ( self::limited() ) {
@@ -85,7 +90,8 @@ final class ToggleEndpoint {
 		if ( is_wp_error( $result ) ) {
 			$data   = (array) $result->get_error_data();
 			$status = (int) ( $data['status'] ?? 400 );
-			self::fail( $result->get_error_code(), $result->get_error_message(), $status );
+			unset( $data['status'] );
+			self::fail( $result->get_error_code(), $result->get_error_message(), $status, $data );
 		}
 
 		wp_send_json( array_merge( array( 'ok' => true ), $result ) );
@@ -129,13 +135,20 @@ final class ToggleEndpoint {
 		return null;
 	}
 
-	/** JSON refusal; `wp_send_json()` ends the request (`wp_die`), exactly like Guard's own JSON failure path. */
-	private static function fail( string $code, string $message, int $status ): void {
+	/**
+	 * JSON refusal; `wp_send_json()` ends the request (`wp_die`), exactly like Guard's own JSON failure path.
+	 *
+	 * @param array<string,mixed> $data Extra fields of the body (a 409 carries the current `value`).
+	 */
+	private static function fail( string $code, string $message, int $status, array $data = array() ): void {
 		wp_send_json(
-			array(
-				'ok'      => false,
-				'code'    => $code,
-				'message' => $message,
+			array_merge(
+				array(
+					'ok'      => false,
+					'code'    => $code,
+					'message' => $message,
+				),
+				$data
 			),
 			$status
 		);

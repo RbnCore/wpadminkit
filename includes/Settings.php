@@ -65,8 +65,9 @@ final class Settings {
 				'autoload'   => false,
 				// Bilinmeyen modül/alan anahtarları okurken de düşer (modül kaldırıldığında kalıntı kalmaz).
 				'read_clean' => true,
-				// İzin istemez: kayıt `options.php` üzerinden gelir ve orada manage_options zaten denetlenir.
-				'capability' => '',
+				// İzin motorun kendisinde de yazılı (WPRJ-726): form `options.php`'den, anahtar `admin-ajax` ucundan gelir
+				// ve ikisi de zaten yönetici ister; boş bırakmak motorun tek denetim noktasını delik bırakıyordu.
+				'capability' => 'manage_options',
 				'forms'      => array( self::FORM ),
 			)
 		);

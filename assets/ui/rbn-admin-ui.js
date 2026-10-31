@@ -405,7 +405,9 @@
 		var backdropClose = opts.backdropClose !== false;
 
 		return new Promise(function (resolve) {
-			var prevActive = document.activeElement;
+			/* `returnFocus`: çağıran öğe (anında anahtar) odağı geri ister; yoksa açılıştaki öğe. */
+			var prevActive = (opts.returnFocus && opts.returnFocus.focus) ? opts.returnFocus : document.activeElement;
+			var messageText = null == opts.message ? '' : String(opts.message);
 
 			var dlg = el('dialog', 'rbn-dlg rbn-confirm-dlg' + (isDanger ? ' rbn-dlg--danger' : ''));
 			var koyu = document.querySelector('.rbn-wrap[data-tone="koyu"]') ||
@@ -421,7 +423,9 @@
 			var titleId = dlgId + '-title';
 			var descId = dlgId + '-desc';
 			dlg.setAttribute('aria-labelledby', titleId);
-			dlg.setAttribute('aria-describedby', descId);
+			if ('' !== messageText) {
+				dlg.setAttribute('aria-describedby', descId);
+			}
 
 			// Başlık
 			var head = el('div', 'rbn-dlg__h');
@@ -440,14 +444,22 @@
 			head.appendChild(closeBtn);
 			dlg.appendChild(head);
 
-			// Gövde
-			var body = el('div', 'rbn-dlg__b');
-			var msgP = el('p', '', opts.message || '');
-			msgP.id = descId;
-			body.appendChild(msgP);
+			// Gövde — YALNIZ doluysa basılır (WPRJ-724): yardım metni olmayan onayda boş şerit kalmaz.
+			var body = null;
+			function bodyBox() {
+				if (!body) {
+					body = el('div', 'rbn-dlg__b');
+				}
+				return body;
+			}
+			if ('' !== messageText) {
+				var msgP = el('p', '', messageText);
+				msgP.id = descId;
+				bodyBox().appendChild(msgP);
+			}
 			if (opts.details) {
 				var det = el('div', 'rbn-dlg__details', opts.details);
-				body.appendChild(det);
+				bodyBox().appendChild(det);
 			}
 
 			// Çift kontrol metin kutusu (requireText: 'DELETE')
@@ -465,10 +477,12 @@
 				requireInput.setAttribute('data-confirm-input', '1');
 				reqWrap.appendChild(reqLabel);
 				reqWrap.appendChild(requireInput);
-				body.appendChild(reqWrap);
+				bodyBox().appendChild(reqWrap);
 			}
 
-			dlg.appendChild(body);
+			if (body) {
+				dlg.appendChild(body);
+			}
 
 			// Altlık
 			var foot = el('div', 'rbn-dlg__f');
@@ -716,14 +730,12 @@
 		return i18n(key, fallback).replace('%s', label);
 	}
 
+	/* Modal başlığı ve toast YALNIZ `data-label`'dan kurulur (WPRJ-724): görünen başlık sunucuda
+	 * `Form::instant()` ile anahtara yazılır. Etiket yoksa anahtar anında UYGULANMAZ — yolun son
+	 * parçası gibi bir yedek yoktur, çünkü o yedek yanlış ada ("Log kapatıldı") yol açıyordu. */
 	function instantLabel(input) {
 		var attr = input.getAttribute('data-label');
-		if (attr) {
-			return attr;
-		}
-		var box = input.closest ? input.closest('.rbn-switch') : null;
-		var text = box ? box.querySelector('b, .ak-switch-txt, .rbn-switch__st') : null;
-		return text ? text.textContent.trim() : '';
+		return attr ? attr.trim() : '';
 	}
 
 	function instantHelp(input) {
@@ -804,10 +816,19 @@
 		});
 	}
 
+	/* Anahtar isteği sürerken `disabled` odağı düşürür; iş bitince kullanıcıyı anahtara geri getir
+	 * (yalnız odak gerçekten BODY'ye düştüyse — kullanıcı başka yere geçtiyse çalmayız). */
+	function instantRefocus(input) {
+		if (input.isConnected && document.activeElement === document.body) {
+			input.focus();
+		}
+	}
+
 	/** Ucun yanıtı: başarı → anahtarı sunucunun değerine sabitle; hata → eski hâle dön + toast. */
 	function instantSettle(input, want, label, status, json) {
 		input.__rbnInstantBusy = false;
 		instantBusy(input, false);
+		instantRefocus(input);
 		if (!json || true !== json.ok) {
 			input.checked = !want;
 			syncSwitch(input);
@@ -824,8 +845,10 @@
 		if (json.module) {
 			paintModule(input, json.module, true === json.changed);
 		}
+		/* Etiket SUNUCU yanıtından değil, anahtarın kendi `data-label`'ından: yanıtın yolu son parçadan
+		 * türeyen yedeği ("Log kapatıldı") kullanıcıya yanlış ad gösteriyordu (WPRJ-724). */
 		toast({
-			message: instantFormat(now ? 'instantOnDone' : 'instantOffDone', now ? '%s is on.' : '%s is off.', json.label || label),
+			message: instantFormat(now ? 'instantOnDone' : 'instantOffDone', now ? '%s is on.' : '%s is off.', label),
 			type: 'success'
 		});
 	}
@@ -871,6 +894,13 @@
 		}
 		var want = input.checked;
 		var label = instantLabel(input);
+		if ('' === label) {
+			/* Etiketsiz anahtar anında uygulanmaz: görünüm geri alınır, istek atılmaz (WPRJ-724).
+			 * Sunucu tarafı da etiketsiz anahtarı `data-rbn-instant` ile işaretlemez. */
+			input.checked = !want;
+			syncSwitch(input);
+			return;
+		}
 		var own = input.getAttribute('data-rbn-confirm');
 		var when = input.getAttribute('data-rbn-confirm-when') || 'both';
 		var skip = ('on' === when && !want) || ('off' === when && want);
@@ -889,7 +919,9 @@
 				instantFormat(want ? 'instantOn' : 'instantOff', want ? 'Turn on %s?' : 'Turn off %s?', label),
 			confirmLabel: input.getAttribute('data-rbn-confirm-ok') || i18n('instantYes', 'Yes'),
 			cancelLabel: input.getAttribute('data-rbn-confirm-cancel') || i18n('cancel', 'Cancel'),
-			tone: danger ? 'danger' : 'info'
+			tone: danger ? 'danger' : 'info',
+			/* Esc/Vazgeç'ten sonra odak ANAHTARA döner — programatik tıklamada da (WPRJ-724). */
+			returnFocus: input
 		}).then(function (yes) {
 			if (!yes) {
 				// Vazgeç: görünümü geri al, `change` YAYINLAMA (yoksa döngü olur).

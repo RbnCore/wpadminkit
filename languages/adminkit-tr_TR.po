@@ -792,7 +792,7 @@ msgstr "Tamam"
 
 #: includes/Assets.php:38
 msgid "Cancel"
-msgstr "İptal"
+msgstr "Vazgeç"
 
 #: includes/Assets.php:40
 #, php-format

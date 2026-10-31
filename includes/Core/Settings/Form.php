@@ -140,7 +140,9 @@ final class Form {
 	 * accepts the path (registered, `bool`/`flag`, and not `internal`/`secret`/`site_specific`). A switch that stays
 	 * a normal form switch simply gets no attributes — no screen has to decide on its own.
 	 *
-	 * `data-label` carries what the confirmation question names; the script falls back to the visible switch title.
+	 * `data-label` carries the visible switch title: the confirmation question AND the result toast are built from it
+	 * (WPRJ-724). A switch that has no label is NOT marked instant — there is no path-segment fallback, because that
+	 * fallback named the wrong thing ("Log is off"). The screen must pass its translated title.
 	 *
 	 * @param string $kit   Engine slug (`adminkit`, `wpseokit`, `securitykit`, …).
 	 * @param string $path  Dotted schema path (`modules.toast_notices.enabled`, `headers.hsts`, …).
@@ -155,17 +157,20 @@ final class Form {
 		if ( null === $row ) {
 			return array();
 		}
+		$label = trim( $label );
+		if ( '' === $label ) {
+			$label = trim( (string) ( $row['label'] ?? '' ) );
+		}
+		// Etiketsiz anahtar anında OLMASIN: modal başlığı ve toast bu etiketten kurulur (WPRJ-724).
+		if ( '' === $label ) {
+			return array();
+		}
 		$attrs = array(
 			'data-rbn-instant' => '1',
 			'data-kit'         => $kit,
 			'data-path'        => $path,
+			'data-label'       => $label,
 		);
-		if ( '' === $label ) {
-			$label = trim( (string) ( $row['label'] ?? '' ) );
-		}
-		if ( '' !== $label ) {
-			$attrs['data-label'] = $label;
-		}
 		if ( ! empty( $row['risky'] ) ) {
 			$attrs['data-risk'] = '1';
 		}

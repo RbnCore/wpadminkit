@@ -713,7 +713,7 @@ msgid "To"
 msgstr ""
 
 #: includes/Modules/ColorTheme.php:61
-msgid "To use it, turn the switch on and press Save."
+msgid "Turn the switch on to use it; it applies right away."
 msgstr ""
 
 #: includes/Modules/ColorTheme.php:210
@@ -844,7 +844,7 @@ msgid "You have unsaved changes"
 msgstr ""
 
 #: includes/Modules/ColorTheme.php:292
-msgid "Your chosen theme is saved but not applied, because the color theme is off. Turn the switch on and press Save to apply it."
+msgid "Your chosen theme is saved but not applied, because the color theme is off. Turn the switch on to apply it right away."
 msgstr ""
 
 #: includes/Modules/ColorTheme.php:246
@@ -1053,7 +1053,7 @@ msgid "Use database maintenance"
 msgstr ""
 
 #: includes/Modules/DbMaintenance.php
-msgid "Turn it on and press Save to open the cleanup tools."
+msgid "Turn it on to open the cleanup tools."
 msgstr ""
 
 #: includes/Modules/DbMaintenance.php
@@ -1121,7 +1121,7 @@ msgid "Some rows could not be deleted; they may have changed meanwhile."
 msgstr ""
 
 #: includes/Modules/DbMaintenance.php
-msgid "Turn the module on and press Save to use the cleanup tools."
+msgid "Turn the module on to use the cleanup tools."
 msgstr ""
 
 #: includes/Modules/DbMaintenance.php
@@ -1873,12 +1873,8 @@ msgstr ""
 msgid "Total"
 msgstr ""
 
-#: includes/Modules/SettingsTransfer.php
-msgid "Turn it on and press Save to export or import settings."
-msgstr ""
-
 #: includes/Modules/SystemHealth.php
-msgid "Turn it on and press Save to see the health report."
+msgid "Turn it on to see the health report."
 msgstr ""
 
 #: includes/Modules/SystemHealth.php

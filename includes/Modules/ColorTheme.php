@@ -62,7 +62,7 @@ final class ColorTheme implements Module {
 
 	/** Anahtar kapalıyken kartta duran tek satırlık yönlendirme. */
 	public function off_hint(): string {
-		return __( 'To use it, turn the switch on and press Save.', 'adminkit' );
+		return __( 'Turn the switch on to use it; it applies right away.', 'adminkit' );
 	}
 
 	public function settings_schema(): array {
@@ -297,7 +297,7 @@ final class ColorTheme implements Module {
 		?>
 		<div class="ak-ct" data-ck-ctx="<?php echo esc_attr( $ctx ); ?>">
 			<?php if ( 'default' === $ctx && ! $on && 'wp' !== $scheme ) : ?>
-				<?php echo Assets::note( 'warn', __( 'Your chosen theme is saved but not applied, because the color theme is off. Turn the switch on and press Save to apply it.', 'adminkit' ) ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+				<?php echo Assets::note( 'warn', __( 'Your chosen theme is saved but not applied, because the color theme is off. Turn the switch on to apply it right away.', 'adminkit' ) ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 			<?php endif; ?>
 			<fieldset class="ak-ct__themes" role="radiogroup">
 				<legend><?php esc_html_e( 'Theme', 'adminkit' ); ?></legend>

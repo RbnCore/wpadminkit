@@ -62,7 +62,7 @@ final class DbMaintenance implements Module {
 	}
 
 	public function off_hint(): string {
-		return __( 'Turn it on and press Save to open the cleanup tools.', 'adminkit' );
+		return __( 'Turn it on to open the cleanup tools.', 'adminkit' );
 	}
 
 	public function settings_schema(): array {
@@ -144,7 +144,7 @@ final class DbMaintenance implements Module {
 	 */
 	public function render_panel( string $base, array $settings ): void {
 		if ( empty( $settings['enabled'] ) ) {
-			echo Assets::note( 'info', __( 'Turn the module on and press Save to use the cleanup tools.', 'adminkit' ) ); // phpcs:ignore WordPress.Security.EscapeOutput -- Assets::note() kaçışlar.
+			echo Assets::note( 'info', __( 'Turn the module on to use the cleanup tools.', 'adminkit' ) ); // phpcs:ignore WordPress.Security.EscapeOutput -- Assets::note() kaçışlar.
 			return;
 		}
 		$counts = DbStats::counts( array( 'keep' => (int) ( $settings['keep_revisions'] ?? DbStats::DEFAULT_KEEP ) ) );

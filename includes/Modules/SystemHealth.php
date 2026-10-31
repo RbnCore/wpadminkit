@@ -82,7 +82,7 @@ final class SystemHealth implements Module {
 	}
 
 	public function off_hint(): string {
-		return __( 'Turn it on and press Save to see the health report.', 'adminkit' );
+		return __( 'Turn it on to see the health report.', 'adminkit' );
 	}
 
 	public function settings_schema(): array {

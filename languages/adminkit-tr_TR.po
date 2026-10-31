@@ -259,11 +259,11 @@ msgstr "Karşıtlık (WCAG AA en az 4,5:1 ister)"
 msgid "Use the color theme"
 msgstr "Renk temasını kullan"
 
-msgid "To use it, turn the switch on and press Save."
-msgstr "Kullanmak için anahtarı açıp Kaydet'e basın."
+msgid "Turn the switch on to use it; it applies right away."
+msgstr "Kullanmak için anahtarı açın; hemen uygulanır."
 
-msgid "Your chosen theme is saved but not applied, because the color theme is off. Turn the switch on and press Save to apply it."
-msgstr "Seçtiğiniz tema kaydedildi ama renk teması kapalı olduğu için uygulanmıyor. Uygulamak için anahtarı açıp Kaydet'e basın."
+msgid "Your chosen theme is saved but not applied, because the color theme is off. Turn the switch on to apply it right away."
+msgstr "Seçtiğiniz tema kaydedildi ama renk teması kapalı olduğu için uygulanmıyor. Anahtarı açın; hemen uygulanır."
 
 msgid "Custom colors"
 msgstr "Özel renkler"
@@ -891,8 +891,8 @@ msgid "Use database maintenance"
 msgstr "Veritabanı bakımını kullan"
 
 #: includes/Modules/DbMaintenance.php
-msgid "Turn it on and press Save to open the cleanup tools."
-msgstr "Açın ve Kaydet'e basın; temizlik araçları görünür."
+msgid "Turn it on to open the cleanup tools."
+msgstr "Açın; temizlik araçları görünür."
 
 #: includes/Modules/DbMaintenance.php
 msgid "Revisions to keep per post"
@@ -959,8 +959,8 @@ msgid "Some rows could not be deleted; they may have changed meanwhile."
 msgstr "Bazı satırlar silinemedi; bu sırada değişmiş olabilirler."
 
 #: includes/Modules/DbMaintenance.php
-msgid "Turn the module on and press Save to use the cleanup tools."
-msgstr "Temizlik araçlarını kullanmak için modülü açın ve Kaydet'e basın."
+msgid "Turn the module on to use the cleanup tools."
+msgstr "Temizlik araçlarını kullanmak için modülü açın."
 
 #: includes/Modules/DbMaintenance.php
 msgid "There is no undo. Deleted rows are gone for good. Take a full database backup before you run this; this tool does not create or download backups."
@@ -1548,11 +1548,8 @@ msgstr "Saat dilimi"
 msgid "Total"
 msgstr "Toplam"
 
-msgid "Turn it on and press Save to export or import settings."
-msgstr "Açıp Kaydet'e basın; ayarları dışa veya içe aktarın."
-
-msgid "Turn it on and press Save to see the health report."
-msgstr "Açıp Kaydet'e basın; sağlık raporunu görün."
+msgid "Turn it on to see the health report."
+msgstr "Açın; sağlık raporunu görün."
 
 msgid "Turn on SSL at the host and set the site address to https in Settings → General."
 msgstr "Barındırıcıda SSL'i açın ve site adresini Ayarlar → Genel'de https yapın."

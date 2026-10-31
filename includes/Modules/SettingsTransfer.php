@@ -462,7 +462,7 @@ final class SettingsTransfer implements Module {
 						<button type="submit" class="rbn-btn rbn-btn--danger">
 							<?php
 							/* translators: 1: field count, 2: kit count */
-							printf( esc_html__( 'Apply %1$d change(s) to %2$d kit(s)…', 'adminkit' ), absint( $fields ), count( $kits ) );
+							printf( esc_html__( 'Apply %1$d change(s) to %2$d kit(s)…', 'adminkit' ), absint( $fields ), count( array_filter( $kits, static fn( $k ) => ! empty( $k['changes'] ) ) ) );
 							?>
 						</button>
 					</div>

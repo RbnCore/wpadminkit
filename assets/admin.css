@@ -13,3 +13,15 @@
 .ak-network{margin:var(--rbn-s5) 0 0}                        /* merkezi ağ ayarı: kart değil, tek satırlık genel tercih */
 .ak-network h2{font-size:var(--rbn-fs-h3);line-height:var(--rbn-lh-h3);margin:0 0 var(--rbn-s2)}
 .ak-updates{margin-top:var(--rbn-s5)}
+/* Veritabanı bakımı ve ayar taşıma ekranları (WPRJ-712): başlık hücresindeki yardım metni ve kit onay kutusu kalıpları */
+.ak-db__t th[scope=row]{font-weight:var(--rbn-fw);vertical-align:top}
+.ak-db__t td{vertical-align:top}
+.ak-db__t .rbn-check{min-height:0}   /* sayı sütunları etiketin ilk satırıyla aynı hizada başlar */
+.ak-db__t th .rbn-help{margin:var(--rbn-s1) 0 0 calc(1.25rem + var(--rbn-s2));font-weight:var(--rbn-fw)}   /* yardım metni onay kutusunun değil, etiketin altına hizalanır */
+.rbn-wrap .ak-db p.rbn-help,.rbn-wrap .ak-transfer p.rbn-help{font-size:var(--rbn-fs-sm);line-height:var(--rbn-lh-sm)}   /* `.rbn-wrap p{inherit}` yardım boyutunu ezmesin */
+.ak-transfer .rbn-field>.rbn-check{display:flex;margin:0;font-weight:var(--rbn-fw)}   /* `.rbn-field>label` onay kutusunu kalın blok yapmasın */
+.ak-transfer .rbn-field>.rbn-check+.rbn-help,.ak-transfer .rbn-field>.rbn-input+.rbn-check{margin-top:var(--rbn-s2)}
+@media (max-width:48.875rem){
+	.ak-db__t th[scope=row]{grid-template-columns:minmax(0,1fr)}   /* istif görünümünde etiket ve yardım alt alta */
+}
+.ak-transfer__plan h4{margin:var(--rbn-s4) 0 var(--rbn-s1)}   /* kit blokları arasında nefes: başlıklar birbirine yapışmasın */

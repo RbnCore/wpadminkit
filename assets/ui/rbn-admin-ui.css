@@ -5,7 +5,7 @@
   --rbn-text:#1d2327;--rbn-muted:#50575e;
   /* durum renkleri: metin + zemin çifti (AA ≥4.5:1) */
   --rbn-ok:#007017;--rbn-ok-bg:#edfaef;--rbn-warn:#8a4b00;--rbn-warn-bg:#fcf9e8;
-  --rbn-err:#b32d2e;--rbn-err-bg:#fcf0f1;--rbn-info:#0a4b78;--rbn-info-bg:#eaf3fa;--rbn-dbg:#3c434a;--rbn-dbg-bg:#e6e8ea;--rbn-mark:#fff0a6;
+  --rbn-err:#b32d2e;--rbn-err-bg:#fcf0f1;--rbn-info:#3d5a6c;--rbn-info-bg:#eaf3fa;--rbn-dbg:#3c434a;--rbn-dbg-bg:#e6e8ea;--rbn-mark:#fff0a6;
   /* vurgu: TEK renk. AdminKit renk teması --adminkit-accent-hover verir; yoksa WP yönetim şeması; yoksa varsayılan */
   --rbn-ac:var(--adminkit-accent-hover,var(--wp-admin-theme-color-darker-10,#2145e6));--rbn-ac-fg:#fff;
   --rbn-ac-soft:color-mix(in srgb,var(--rbn-ac) 9%,var(--rbn-surface));
@@ -31,7 +31,7 @@
 .rbn-wrap[data-tone=koyu],.rbn-dlg[data-tone=koyu],.rbn-sticky[data-tone=koyu],.rbn-toasts[data-tone=koyu],body[data-tone=koyu] .rbn-toasts,body:has(.rbn-wrap[data-tone=koyu]) .rbn-toasts,html[data-tone=koyu] .rbn-toasts{
   --rbn-bg:#0f1316;--rbn-surface:#1a2025;--rbn-surface-2:#222a30;--rbn-line:#343d44;--rbn-line-strong:#8695a0;
   --rbn-text:#e8edf0;--rbn-muted:#a9b4bb;--rbn-ok:#5fd07c;--rbn-ok-bg:#12301c;--rbn-warn:#f0b44c;--rbn-warn-bg:#33270f;
-  --rbn-err:#ff9a9a;--rbn-err-bg:#3a1a1c;--rbn-info:#8cc8ff;--rbn-info-bg:#122a3d;--rbn-dbg:#c3ccd2;--rbn-dbg-bg:#2a3238;--rbn-mark:#5c4a00;
+  --rbn-err:#ff9a9a;--rbn-err-bg:#3a1a1c;--rbn-info:#a9c8de;--rbn-info-bg:#122a3d;--rbn-dbg:#c3ccd2;--rbn-dbg-bg:#2a3238;--rbn-mark:#5c4a00;
   --rbn-ac:#8aa4ff;--rbn-ac-fg:#0b1020;--rbn-shadow:none;color-scheme:dark;
 }
 .rbn-wrap{margin:0 auto;padding:var(--rbn-s5) var(--rbn-s5) var(--rbn-s7);max-width:76rem}

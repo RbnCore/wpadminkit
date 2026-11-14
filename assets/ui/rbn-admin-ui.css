@@ -28,7 +28,8 @@
   --rbn-shadow:0 1px 2px rgb(0 0 0/.05);--rbn-ring:2px;--rbn-ring-off:2px;--rbn-t:.15s;
   color:var(--rbn-text);font-family:var(--rbn-font);font-size:var(--rbn-fs);line-height:var(--rbn-lh);
 }
-.rbn-wrap[data-tone=koyu],.rbn-dlg[data-tone=koyu],.rbn-sticky[data-tone=koyu],.rbn-toasts[data-tone=koyu],body[data-tone=koyu] .rbn-toasts,body:has(.rbn-wrap[data-tone=koyu]) .rbn-toasts,html[data-tone=koyu] .rbn-toasts{
+/* Koyu ton tek jeton kümesidir; iki kaynaktan tetiklenir: sunucu `data-tone=koyu` (WP Gece yarısı / `adminkit_tone`) ve istemci tarafında açılıp kapanan "Dark Mode" eklentisinin `html.dark-mode` sınıfı (sunucu bunu göremez; sınıf yalnız yazıyı açık yapıp yüzeyi beyaz bırakıyordu). */
+.rbn-wrap[data-tone=koyu],.rbn-dlg[data-tone=koyu],.rbn-sticky[data-tone=koyu],.rbn-toasts[data-tone=koyu],body[data-tone=koyu] .rbn-toasts,body:has(.rbn-wrap[data-tone=koyu]) .rbn-toasts,html[data-tone=koyu] .rbn-toasts,html.dark-mode .rbn-wrap,html.dark-mode .rbn-dlg,html.dark-mode .rbn-sticky,html.dark-mode .rbn-toasts{
   --rbn-bg:#0f1316;--rbn-surface:#1a2025;--rbn-surface-2:#222a30;--rbn-line:#343d44;--rbn-line-strong:#8695a0;
   --rbn-text:#e8edf0;--rbn-muted:#a9b4bb;--rbn-ok:#5fd07c;--rbn-ok-bg:#12301c;--rbn-warn:#f0b44c;--rbn-warn-bg:#33270f;
   --rbn-err:#ff9a9a;--rbn-err-bg:#3a1a1c;--rbn-info:#a9c8de;--rbn-info-bg:#122a3d;--rbn-dbg:#c3ccd2;--rbn-dbg-bg:#2a3238;--rbn-mark:#5c4a00;
@@ -40,14 +41,14 @@ html:has(.rbn-wrap){scrollbar-gutter:stable}
 @supports not (scrollbar-gutter:stable){html:has(.rbn-wrap){overflow-y:scroll}}
 /* Kapsayıcı geometrisi TEK: .rbn-wrap'i WP'nin .wrap kabuğu (margin 10px 20px 0 2px) sarmışsa o kenar boşlukları sıfırlanır */
 .wrap:has(>.rbn-wrap){margin:0}
-.rbn-wrap[data-tone=koyu]{background:var(--rbn-bg)}
+.rbn-wrap[data-tone=koyu],html.dark-mode .rbn-wrap{background:var(--rbn-bg)}
 /* Koyu ton + WP "Gece yarısı": `body` ve `#wpfooter` kit kökünün DIŞINDA kalır; WP gövde zemini açık (#f0f0f1) olduğundan panel kısa kalınca altta açık şerit çıkıp altbilgi okunmuyordu. Yalnız kit sayfasında (body:has) aynı koyu jetonlar altbilgiye ve gövde zeminine verilir; açık ton ve öteki şemalar etkilenmez. */
-body:has(.rbn-wrap[data-tone=koyu]) #wpfooter{
+body:has(.rbn-wrap[data-tone=koyu]) #wpfooter,html.dark-mode body:has(.rbn-wrap) #wpfooter{
   --rbn-bg:#0f1316;--rbn-muted:#a9b4bb;--rbn-ac:#8aa4ff;color-scheme:dark;
 }
-body:has(.rbn-wrap[data-tone=koyu]){background:#0f1316}
-body:has(.rbn-wrap[data-tone=koyu]) #wpfooter{background:var(--rbn-bg);color:var(--rbn-muted)}
-body:has(.rbn-wrap[data-tone=koyu]) #wpfooter a{color:var(--rbn-ac)}
+body:has(.rbn-wrap[data-tone=koyu]),html.dark-mode body:has(.rbn-wrap){background:#0f1316}
+body:has(.rbn-wrap[data-tone=koyu]) #wpfooter,html.dark-mode body:has(.rbn-wrap) #wpfooter{background:var(--rbn-bg);color:var(--rbn-muted)}
+body:has(.rbn-wrap[data-tone=koyu]) #wpfooter a,html.dark-mode body:has(.rbn-wrap) #wpfooter a{color:var(--rbn-ac)}
 .rbn-wrap *,.rbn-wrap *::before,.rbn-wrap *::after,.rbn-dlg *,.rbn-sticky *,.rbn-toasts *,.rbn-toasts *::before,.rbn-toasts *::after{box-sizing:border-box}
 .rbn-wrap [hidden],.rbn-dlg [hidden],.rbn-toasts [hidden]{display:none!important}
 .rbn-wrap h1,.rbn-wrap h2,.rbn-wrap h3,.rbn-wrap h4{color:var(--rbn-text);margin:0;padding:0;font-weight:var(--rbn-fw-m)}
@@ -97,6 +98,9 @@ body:has(.rbn-wrap[data-tone=koyu]) #wpfooter a{color:var(--rbn-ac)}
 .rbn-btn:hover{background:var(--rbn-surface-2);border-color:var(--rbn-text)}
 .rbn-btn--pri{background:var(--rbn-ac);border-color:var(--rbn-ac);color:var(--rbn-ac-fg)}
 .rbn-btn--pri:hover{background:var(--rbn-ac);border-color:var(--rbn-ac);color:var(--rbn-ac-fg);filter:brightness(.92)}
+/* "Dark Mode" eklentisi `html.dark-mode body a` ile her bağlantıyı turkuaza boyar (özgüllük 0,2,3); bağlantı olan kit düğmeleri kendi jetonunu geri alır. */
+html.dark-mode .rbn-wrap a.rbn-btn{color:var(--rbn-text)}
+html.dark-mode .rbn-wrap a.rbn-btn--pri{color:var(--rbn-ac-fg)}
 .rbn-btn--danger{color:var(--rbn-err);border-color:var(--rbn-err)}
 .rbn-btn--danger:hover{background:var(--rbn-err-bg);border-color:var(--rbn-err)}
 .rbn-btn--link{border-color:transparent;background:none;color:var(--rbn-ac);padding:0 var(--rbn-s2)}

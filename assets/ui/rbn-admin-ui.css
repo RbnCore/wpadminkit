@@ -53,8 +53,8 @@ body:has(.rbn-wrap[data-tone=koyu]) #wpfooter a,html.dark-mode body:has(.rbn-wra
 .rbn-wrap [hidden],.rbn-dlg [hidden],.rbn-toasts [hidden]{display:none!important}
 .rbn-wrap h1,.rbn-wrap h2,.rbn-wrap h3,.rbn-wrap h4{color:var(--rbn-text);margin:0;padding:0;font-weight:var(--rbn-fw-m)}
 .rbn-wrap p{margin:0 0 var(--rbn-s3);font-size:inherit;line-height:inherit}   /* WP `p{13px}` kuralını ezer */
-/* Başkasının WP öğeleri kendi rengini korur: WP düğmeleri (a.button*, .page-title-action) ve kit dışı bildirimlerin (.notice) bağlantıları. Vurgu rengi zemin rengiyle aynı olup düğme yazısını siliyor, koyu tonda açık bildirim zemininde bağlantıyı okunmaz yapıyordu. Kitin kendi bildirimi (.rbn-note) vurgu rengini almaya devam eder. */
-.rbn-wrap a:not(.rbn-btn):not(.rbn-tabs__tab):not(.button):not(.page-title-action):not(.notice:not(.rbn-note) a){color:var(--rbn-ac)}
+/* TEK bağlantı yazı rengi kuralı: kit bağlantısının (düğme, sekme, menü, sayfalayıcı, düz bağlantı) yazı rengi `--rbn-a` jetonundan okunur; bileşen jetonu tanımlar (durum başına değişir), jetonsuz bağlantı vurgu rengini alır. Kural durum sözde sınıflarını da kapsar (özgüllük 0,2,1): WP çekirdeğinin `a:hover{color}` kuralı kit düğmesinin yazısını zemin rengine boyuyordu (birincil düğme hover'ında 1,0:1). Başkasının WP öğeleri kendi rengini korur: WP düğmeleri (a.button*, .page-title-action) ve kit dışı bildirimlerin (.notice) bağlantıları (koyu tonda açık bildirim zemininde bağlantı okunmaz olurdu). Kitin kendi bildirimi (.rbn-note) vurgu rengini alır. Dışlama `:where` içinde: özgüllüğü şişirmez, bileşen kuralı (sayfalayıcı geçerli sayfa vb.) ezebilir; önceden 0,7,2'ydi ve vurgu zeminli geçerli sayfa numarasını zeminle aynı renge boyuyordu (1,0:1). */
+:is(.rbn-wrap,.rbn-dlg,.rbn-sticky) :is(a,a:hover,a:focus,a:active):where(:not(.button):not(.page-title-action):not(.notice:not(.rbn-note) a)){color:var(--rbn-a,var(--rbn-ac))}
 .rbn-wrap :focus-visible,.rbn-dlg :focus-visible,.rbn-sticky :focus-visible,.rbn-toasts :focus-visible{outline:var(--rbn-ring) solid var(--rbn-ac);outline-offset:var(--rbn-ring-off);border-radius:3px}
 .rbn-sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .rbn-muted{color:var(--rbn-muted)}.rbn-nowrap{white-space:nowrap}
@@ -71,10 +71,10 @@ body:has(.rbn-wrap[data-tone=koyu]) #wpfooter a,html.dark-mode body:has(.rbn-wra
 .rbn-menu{position:relative}
 .rbn-menu__list{position:absolute;z-index:20;top:calc(100% + var(--rbn-s1));inset-inline-end:0;min-width:16rem;margin:0;padding:var(--rbn-s1);list-style:none;background:var(--rbn-surface);border:var(--rbn-bw) solid var(--rbn-line);border-radius:var(--rbn-r-lg);box-shadow:var(--rbn-shadow-lg,var(--rbn-shadow))}
 .rbn-menu__list[hidden]{display:none}
-.rbn-wrap .rbn-menu__list a:not(.rbn-btn):not(.rbn-tabs__tab){color:var(--rbn-text)}
-.rbn-wrap .rbn-menu__list a{display:flex;align-items:center;gap:var(--rbn-s2);min-height:var(--rbn-ctl);padding:0 var(--rbn-s3);border-radius:var(--rbn-r);color:var(--rbn-text);text-decoration:none;font-weight:600}
+.rbn-wrap .rbn-menu__list a:not(.rbn-btn):not(.rbn-tabs__tab){--rbn-a:var(--rbn-text);color:var(--rbn-a)}
+.rbn-wrap .rbn-menu__list a{display:flex;align-items:center;gap:var(--rbn-s2);min-height:var(--rbn-ctl);padding:0 var(--rbn-s3);border-radius:var(--rbn-r);--rbn-a:var(--rbn-text);color:var(--rbn-a);text-decoration:none;font-weight:600}
 .rbn-wrap .rbn-menu__list a:hover{background:var(--rbn-surface-2)}
-.rbn-wrap .rbn-menu__list a:not(.rbn-btn):not(.rbn-tabs__tab)[aria-current=page]{background:var(--rbn-ac-soft,var(--rbn-surface-2));color:var(--rbn-ac)}
+.rbn-wrap .rbn-menu__list a:not(.rbn-btn):not(.rbn-tabs__tab)[aria-current=page]{background:var(--rbn-ac-soft,var(--rbn-surface-2));--rbn-a:var(--rbn-ac);color:var(--rbn-a)}
 .rbn-menu__list a:focus-visible,.rbn-menu>.rbn-btn:focus-visible{outline:var(--rbn-ring) solid var(--rbn-ac);outline-offset:var(--rbn-ring-off)}
 .rbn-menu>.rbn-btn .rbn-ico:last-child{transition:transform .15s}
 .rbn-menu>.rbn-btn[aria-expanded=true] .rbn-ico:last-child{transform:rotate(180deg)}
@@ -94,36 +94,35 @@ body:has(.rbn-wrap[data-tone=koyu]) #wpfooter a,html.dark-mode body:has(.rbn-wra
 .rbn-count{display:inline-flex;align-items:center;justify-content:center;min-width:1.5rem;height:1.5rem;padding:0 .4rem;border-radius:var(--rbn-r-pill);background:var(--rbn-surface-2);border:var(--rbn-bw) solid var(--rbn-line);color:var(--rbn-text);font-size:var(--rbn-fs-sm);font-weight:var(--rbn-fw-m);font-variant-numeric:tabular-nums}
 
 /* ═══ DÜĞMELER ═══ */
-.rbn-btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;min-height:var(--rbn-ctl);padding:0 var(--rbn-s4);border:var(--rbn-bw) solid var(--rbn-line-strong);border-radius:var(--rbn-r);background:var(--rbn-surface);color:var(--rbn-text);font:inherit;font-size:var(--rbn-fs);font-weight:var(--rbn-fw-m);line-height:1;text-decoration:none;cursor:pointer;white-space:nowrap;transition:background-color var(--rbn-t),border-color var(--rbn-t)}
+.rbn-btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;min-height:var(--rbn-ctl);padding:0 var(--rbn-s4);border:var(--rbn-bw) solid var(--rbn-line-strong);border-radius:var(--rbn-r);background:var(--rbn-surface);--rbn-a:var(--rbn-text);color:var(--rbn-a);font:inherit;font-size:var(--rbn-fs);font-weight:var(--rbn-fw-m);line-height:1;text-decoration:none;cursor:pointer;white-space:nowrap;transition:background-color var(--rbn-t),border-color var(--rbn-t)}
 .rbn-btn:hover{background:var(--rbn-surface-2);border-color:var(--rbn-text)}
-.rbn-btn--pri{background:var(--rbn-ac);border-color:var(--rbn-ac);color:var(--rbn-ac-fg)}
-.rbn-btn--pri:hover{background:var(--rbn-ac);border-color:var(--rbn-ac);color:var(--rbn-ac-fg);filter:brightness(.92)}
-/* "Dark Mode" eklentisi `html.dark-mode body a` ile her bağlantıyı turkuaza boyar (özgüllük 0,2,3); bağlantı olan kit düğmeleri kendi jetonunu geri alır. */
-html.dark-mode .rbn-wrap a.rbn-btn{color:var(--rbn-text)}
-html.dark-mode .rbn-wrap a.rbn-btn--pri{color:var(--rbn-ac-fg)}
-.rbn-btn--danger{color:var(--rbn-err);border-color:var(--rbn-err)}
+.rbn-btn--pri{background:var(--rbn-ac);border-color:var(--rbn-ac);--rbn-a:var(--rbn-ac-fg);color:var(--rbn-a)}
+.rbn-btn--pri:hover{background:var(--rbn-ac);border-color:var(--rbn-ac);--rbn-a:var(--rbn-ac-fg);color:var(--rbn-a);filter:brightness(.92)}
+/* Koyu tonda "Dark Mode" eklentisi `html.dark-mode body:not(.block-editor-page) a` (+ `:hover`/`:focus`, özgüllük 0,3,3; hover'da turkuaz #4092d2, açık düğme zemininde 1,4:1) üstteki tek kuralı ezerdi; aynı kural eklentinin özgüllüğünü aşan önekle tekrarlanır (başka kural/!important yok). */
+html.dark-mode body:not(.block-editor-page) :is(.rbn-wrap,.rbn-dlg,.rbn-sticky) :is(a,a:hover,a:focus,a:active):where(:not(.button):not(.page-title-action):not(.notice:not(.rbn-note) a)){color:var(--rbn-a,var(--rbn-ac))}
+.rbn-btn--danger{--rbn-a:var(--rbn-err);color:var(--rbn-a);border-color:var(--rbn-err)}
 .rbn-btn--danger:hover{background:var(--rbn-err-bg);border-color:var(--rbn-err)}
-.rbn-btn--link{border-color:transparent;background:none;color:var(--rbn-ac);padding:0 var(--rbn-s2)}
+.rbn-btn--link{border-color:transparent;background:none;--rbn-a:var(--rbn-ac);color:var(--rbn-a);padding:0 var(--rbn-s2)}
 .rbn-btn--link:hover{background:var(--rbn-surface-2);border-color:transparent}
 .rbn-btn--sm{padding:0 var(--rbn-s3)}   /* yalnız dolgu dar; yazı 17/600 ve yükseklik 2.5rem (hedef ≥40 px) normal düğmeyle AYNI */
 .rbn-btn--icon{width:var(--rbn-ctl);padding:0}
-.rbn-btn[disabled],.rbn-btn[aria-disabled=true]{opacity:1;color:var(--rbn-muted);background:var(--rbn-surface-2);border-color:var(--rbn-line);cursor:not-allowed}
+.rbn-btn[disabled],.rbn-btn[aria-disabled=true]{opacity:1;--rbn-a:var(--rbn-muted);color:var(--rbn-a);background:var(--rbn-surface-2);border-color:var(--rbn-line);cursor:not-allowed}
 .rbn-btn[aria-busy=true]{cursor:progress}
 .rbn-switch.is-busy,.rbn-switch:has(input[aria-busy=true]){opacity:.6;cursor:progress}   /* anında anahtar uçuşta (WPRJ-718) */
 
 /* ═══ SEKMELER: üst (alt çizgili) + alt (hap) — TEK bileşen ═══ */
 .rbn-tabs{display:flex;gap:var(--rbn-s1);margin:0 0 var(--rbn-s5);padding:0;list-style:none;border-bottom:var(--rbn-bw) solid var(--rbn-line);overflow-x:auto;overflow-y:hidden;scrollbar-width:thin}   /* alt çizgi 1 px taşmasın: dikey kaydırma çubuğu çıkmaz */
-.rbn-tabs__tab{position:relative;display:inline-flex;align-items:center;gap:var(--rbn-s2);min-height:var(--rbn-ctl);padding:0 var(--rbn-s4);border:0;border-radius:var(--rbn-r) var(--rbn-r) 0 0;background:none;color:var(--rbn-muted);font:inherit;font-size:var(--rbn-fs);font-weight:var(--rbn-fw-m);text-decoration:none;white-space:nowrap;cursor:pointer}
-.rbn-tabs__tab:hover{color:var(--rbn-text);background:var(--rbn-surface-2)}
-.rbn-tabs__tab[aria-selected=true],.rbn-tabs__tab[aria-current=page]{color:var(--rbn-text)}
+.rbn-tabs__tab{position:relative;display:inline-flex;align-items:center;gap:var(--rbn-s2);min-height:var(--rbn-ctl);padding:0 var(--rbn-s4);border:0;border-radius:var(--rbn-r) var(--rbn-r) 0 0;background:none;--rbn-a:var(--rbn-muted);color:var(--rbn-a);font:inherit;font-size:var(--rbn-fs);font-weight:var(--rbn-fw-m);text-decoration:none;white-space:nowrap;cursor:pointer}
+.rbn-tabs__tab:hover{--rbn-a:var(--rbn-text);color:var(--rbn-a);background:var(--rbn-surface-2)}
+.rbn-tabs__tab[aria-selected=true],.rbn-tabs__tab[aria-current=page]{--rbn-a:var(--rbn-text);color:var(--rbn-a)}
 .rbn-tabs__tab[aria-selected=true]::after,.rbn-tabs__tab[aria-current=page]::after{content:"";position:absolute;left:var(--rbn-s2);right:var(--rbn-s2);bottom:0;height:3px;border-radius:3px 3px 0 0;background:var(--rbn-ac)}
 .rbn-tabs__tab:focus{box-shadow:none}                                          /* WP çekirdeği `a:focus{box-shadow:0 0 0 2px}` fareyle tıklanan sekmeye KUTU çizer: kapalı */
 .rbn-tabs__tab:focus-visible{outline-offset:-5px;border-radius:var(--rbn-r)}   /* klavye halkası sekmenin İÇİNDE, seçili alt çizgiyle çakışmaz */
 .rbn-mouse .rbn-tabs__tab:focus-visible{outline:0}                              /* fare/dokunma: halka yok (JS, kök sınıf rbn-mouse); klavyede ve JS'siz kalır */
 .rbn-tabs--sub{gap:var(--rbn-s2);margin:0 0 var(--rbn-s4);border-bottom:0;overflow-x:visible;flex-wrap:wrap}
-.rbn-tabs--sub .rbn-tabs__tab{border:var(--rbn-bw) solid var(--rbn-line-strong);border-radius:var(--rbn-r-pill);background:var(--rbn-surface);color:var(--rbn-text)}
+.rbn-tabs--sub .rbn-tabs__tab{border:var(--rbn-bw) solid var(--rbn-line-strong);border-radius:var(--rbn-r-pill);background:var(--rbn-surface);--rbn-a:var(--rbn-text);color:var(--rbn-a)}
 .rbn-tabs--sub .rbn-tabs__tab:hover{background:var(--rbn-surface-2)}
-.rbn-tabs--sub .rbn-tabs__tab[aria-selected=true],.rbn-tabs--sub .rbn-tabs__tab[aria-current=page]{background:var(--rbn-ac-soft);border-color:var(--rbn-ac);color:var(--rbn-text);box-shadow:inset 0 0 0 var(--rbn-bw) var(--rbn-ac)}
+.rbn-tabs--sub .rbn-tabs__tab[aria-selected=true],.rbn-tabs--sub .rbn-tabs__tab[aria-current=page]{background:var(--rbn-ac-soft);border-color:var(--rbn-ac);--rbn-a:var(--rbn-text);color:var(--rbn-a);box-shadow:inset 0 0 0 var(--rbn-bw) var(--rbn-ac)}
 .rbn-tabs--sub .rbn-tabs__tab[aria-selected=true]::after,.rbn-tabs--sub .rbn-tabs__tab[aria-current=page]::after{content:none}
 .rbn-tabpanel{outline:none}
 
@@ -258,6 +257,7 @@ html.dark-mode .rbn-wrap a.rbn-btn--pri{color:var(--rbn-ac-fg)}
 .rbn-pager:empty{display:none}                                                         /* JS doldurmadan önce boş şerit yer tutmaz */
 .rbn-card__b--flush>.rbn-pager:last-child{padding-bottom:0}                            /* gövde zaten alt 16 veriyor: çift boşluk olmaz */
 .rbn-pager__n{margin-right:auto;color:var(--rbn-muted)}
+.rbn-pager a{--rbn-a:var(--rbn-text)}.rbn-pager a[aria-current=page]{--rbn-a:var(--rbn-ac-fg)}.rbn-pager a[aria-disabled=true]{--rbn-a:var(--rbn-muted)}   /* bağlantı yazı jetonu: sayfa numarası / geçerli sayfa (vurgu zemini) / pasif ok */
 
 /* ═══ DİYALOG VE ONAY MODALI (RbnUi.confirm) ═══ */
 .rbn-dlg{border:var(--rbn-bw) solid var(--rbn-line);border-radius:var(--rbn-r-lg);padding:0;max-width:min(32rem,calc(100vw - 2rem));background:var(--rbn-surface);color:var(--rbn-text);box-shadow:0 10px 30px rgb(0 0 0/.2)}

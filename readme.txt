@@ -4,7 +4,7 @@ Tags: admin, back to top, sticky save, notices, admin color scheme, dashboard
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 0.1.4
+Stable tag: 0.1.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -28,6 +28,12 @@ Adds features to the WordPress admin area, module by module. You turn each modul
 2. Turn modules on or off under RBN Kit → AdminKit, in the side menu just below Dashboard.
 
 == Changelog ==
+
+= 0.1.5 =
+* New: a bell icon (`i-bell`) in the shared RBN icon set, used by the SecurityKit notification bell.
+* Fix: the "Leave site? Changes you made may not be saved" prompt no longer appears when you have not touched anything; the hidden `_wp_http_referer` field is no longer counted as an edit.
+* Fix: kit link text color is read from the single `--rbn-a` token, so a Dark Mode plugin can no longer override the hover and focus color, and the WordPress hover color no longer paints the buttons.
+* Fix: a Dark Mode plugin (`html.dark-mode`) now triggers the dark token set, and kit buttons get the link color back.
 
 = 0.1.4 =
 * Fix: the "Leave site? Changes you made may not be saved" prompt no longer appears when you only browse between tabs and sub tabs without changing anything. WordPress rewrites a hidden referer field on its own after the page loads, and the save bar counted that as your edit; that field is now ignored. Real edits still show the prompt and the Save bar.

@@ -28,6 +28,7 @@ final class Plugin {
 		SettingsPage::hooks(); // Menü başlıkları çevrilir; çeviri yüklendikten sonra kaydedilir.
 		Assets::hooks();
 		Helpers\Toast::hooks();
+		Helpers\Notices::hooks(); // Tek bildirim merkezi: zil + rozet + pencere (WPRJ-948).
 		// Ayarlar aktarımı kancaları modül KAPALIYKEN de kayıtlı olmalı: açma anahtarı bu uçtan geçer.
 		Modules\SettingsTransfer::hooks();
 		Core\Admin::hooks();

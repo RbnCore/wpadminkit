@@ -2109,3 +2109,20 @@ msgstr ""
 #: includes/Assets.php
 msgid "Reload"
 msgstr ""
+
+msgid "Update rejected: the package address does not belong to this plugin's own release (repository or version). The old version was kept."
+msgstr ""
+
+msgid "Notifications"
+msgstr ""
+
+msgid "No notifications."
+msgstr ""
+
+msgid "Notifications, none"
+msgstr ""
+
+msgid "Notifications, %d item"
+msgid_plural "Notifications, %d items"
+msgstr[0] ""
+msgstr[1] ""

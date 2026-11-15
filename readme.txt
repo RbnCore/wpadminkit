@@ -30,6 +30,7 @@ Adds features to the WordPress admin area, module by module. You turn each modul
 == Changelog ==
 
 = 0.1.5 =
+* New: one notification centre for every RBN Kit plugin (`Notices`): warnings and errors no longer appear as boxes on the page. A bell with a count sits in the header of each kit screen (and in the admin bar on other screens) and opens one dialog.
 * New: a bell icon (`i-bell`) in the shared RBN icon set, used by the SecurityKit notification bell.
 * Fix: the "Leave site? Changes you made may not be saved" prompt no longer appears when you have not touched anything; the hidden `_wp_http_referer` field is no longer counted as an edit.
 * Fix: kit link text color is read from the single `--rbn-a` token, so a Dark Mode plugin can no longer override the hover and focus color, and the WordPress hover color no longer paints the buttons.

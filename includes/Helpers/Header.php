@@ -49,7 +49,8 @@ final class Header {
 			$ident .= self::chip( (string) ( $chip['label'] ?? '' ), (string) ( $chip['tone'] ?? '' ), false );
 		}
 
-		$act = self::nav( $args ) . self::actions( (array) ( $args['actions'] ?? array() ) );
+		// The notification bell is part of the fixed head: every kit screen gets the same one (WPRJ-948).
+		$act = self::nav( $args ) . self::actions( (array) ( $args['actions'] ?? array() ) ) . Notices::bell();
 		$out = '<div class="rbn-head"><div class="rbn-head__id">' . $ident . '</div>'
 			. ( '' !== $act ? '<div class="rbn-head__act">' . $act . '</div>' : '' ) . '</div>';
 

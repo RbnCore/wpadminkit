@@ -30,6 +30,7 @@ Adds features to the WordPress admin area, module by module. You turn each modul
 == Changelog ==
 
 = 0.1.4 =
+* Fix: the "Leave site? Changes you made may not be saved" prompt no longer appears when you only browse between tabs and sub tabs without changing anything. WordPress rewrites a hidden referer field on its own after the page loads, and the save bar counted that as your edit; that field is now ignored. Real edits still show the prompt and the Save bar.
 * Fix: the Info badge color in the admin UI now meets the contrast rules (readable text on every admin color scheme).
 
 = 0.1.3 =

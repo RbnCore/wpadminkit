@@ -71,13 +71,13 @@
 		} );
 		return names;
 	}
-	/** Alan adı -> değer birleşimi. Anında anahtarlar, `_wpnonce` ve dosya alanları dışarıda kalır. */
+	/** Alan adı -> değer birleşimi. Anında anahtarlar, `_wpnonce`, `_wp_http_referer` (WordPress çekirdeği adres çubuğunu temizleyince bu gizli alanı kendisi yeniden yazar, WPRJ-910) ve dosya alanları dışarıda kalır. */
 	function snapshot() {
 		var map = {};
 		var skip = instantNames();
 		var data = new FormData( form );
 		data.forEach( function ( v, k ) {
-			if ( 'string' === typeof v && '_wpnonce' !== k && ! skip[ k ] ) {
+			if ( 'string' === typeof v && '_wpnonce' !== k && '_wp_http_referer' !== k && ! skip[ k ] ) {
 				map[ k ] = ( map[ k ] || '' ) + '' + v;
 			}
 		} );

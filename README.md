@@ -4,11 +4,11 @@ AdminKit adds small, independent tools to the WordPress admin area. Every tool i
 
 ## The other RBN plugins need AdminKit
 
-AdminKit is the base of the RBN plugin family: **WPSeoKit, ContentHealth and CookieKit do not work without it.**
+AdminKit is the base of the RBN plugin family: **WPSeoKit, ContentHealth, CookieKit and SecurityKit do not work without it.**
 
 - Each of them declares `Requires Plugins: adminkit` in its plugin header. On WordPress 6.5 and later that is a real check: while AdminKit is missing or inactive WordPress refuses to activate them, and while one of them is active WordPress does not offer the Deactivate link for AdminKit.
 - The header only looks at the moment of activation. A second check runs on every request: a plugin starts only when AdminKit is loaded and its `ADMINKIT_CORE_API` level is high enough. If AdminKit is deleted over FTP or is too old, the plugin adds no hook, prints nothing and shows one admin notice with a link to activate AdminKit (when it is installed) or to its release page.
-- Install order: **AdminKit first**, then WPSeoKit, ContentHealth and CookieKit.
+- Install order: **AdminKit first**, then WPSeoKit, ContentHealth, CookieKit and SecurityKit.
 
 What they get from AdminKit: one admin design language (the RBN Kit menu and the `rbn-admin-ui` component kit), one cache, one log and one switch for GitHub requests. The [Used by](#used-by) table lists the exact pieces each plugin takes.
 
@@ -55,7 +55,7 @@ Defaults after activation: back to top, sticky save bar and notice organizer are
 - PHP 8.0 or later
 - No other plugin, library or build step
 
-The `Requires Plugins` dependency check used by WPSeoKit, ContentHealth and CookieKit needs WordPress 6.5 or later. On older versions the header is ignored and only the runtime check applies.
+The `Requires Plugins` dependency check used by WPSeoKit, ContentHealth, CookieKit and SecurityKit needs WordPress 6.5 or later. On older versions the header is ignored and only the runtime check applies.
 
 ## Installation
 
@@ -63,7 +63,7 @@ The `Requires Plugins` dependency check used by WPSeoKit, ContentHealth and Cook
 2. In WordPress go to **Plugins → Add New → Upload Plugin**, choose the zip, install and activate.
 3. Open **RBN Kit → AdminKit** in the sidebar (just below Dashboard) and switch the modules you want. Save.
 
-If you also use WPSeoKit, ContentHealth or CookieKit, do this first: they cannot be activated until AdminKit is active.
+If you also use WPSeoKit, ContentHealth, CookieKit or SecurityKit, do this first: they cannot be activated until AdminKit is active.
 
 You can also copy the `adminkit` folder into `wp-content/plugins/`.
 

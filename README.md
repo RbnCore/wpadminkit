@@ -59,7 +59,7 @@ The `Requires Plugins` dependency check used by WPSeoKit, ContentHealth and Cook
 
 ## Installation
 
-1. Download `adminkit-0.1.2.zip` from [Releases](https://github.com/RbnCore/wpadminkit/releases). If you downloaded the package by hand, compare its SHA-256 with the `.sha256` asset next to it.
+1. Download `adminkit-0.1.5.zip` from [Releases](https://github.com/RbnCore/wpadminkit/releases). If you downloaded the package by hand, compare its SHA-256 with the `.sha256` asset next to it.
 2. In WordPress go to **Plugins → Add New → Upload Plugin**, choose the zip, install and activate.
 3. Open **RBN Kit → AdminKit** in the sidebar (just below Dashboard) and switch the modules you want. Save.
 
@@ -93,7 +93,7 @@ All RBN plugins appear under one **RBN Kit** top-level menu just below Dashboard
 
 ## Version and license
 
-- Version 0.1.2
+- Version 0.1.5
 - License: GPL-2.0-or-later (see [LICENSE](LICENSE))
 - Text domain: `adminkit`
 
